@@ -1,7 +1,7 @@
 /*************************************************************************
-   > File Name:   wr_addr_driver.sv
-   > Description: This class implements a write address driver for an AXI protocol
-                  interface. It drives address and control signals based on received 
+   > File Name:   wr_data_driver.sv
+   > Description: This class implements a write data driver for an AXI protocol
+                  interface. It drives data and control signals based on received 
                   sequence items and manages the AXI handshake.
    > Author:      Ahmed Raza
    > Modified:    Ahmed Raza
@@ -12,16 +12,16 @@
 ************************************************************************/
 
 
-`ifndef WR_ADDR_DRIVER
-`define WR_ADDR_DRIVER
+`ifndef WR_DATA_DRIVER
+`define WR_DATA_DRIVER
 
-class wr_addr_driver extends uvm_driver #(axi_seq_item);
+class wr_data_driver extends uvm_driver #(axi_seq_item);
 
-  `uvm_component_utils(wr_addr_driver)
+  `uvm_component_utils(wr_data_driver)
   virtual axi_interface axi_vif;         // Virtual interface for AXI signals
 
   // Constructor
-  function new(string name = "wr_addr_driver", uvm_component parent = null);
+  function new(string name = "wr_data_driver", uvm_component parent = null);
     super.new(name, parent);
   endfunction
 
@@ -51,13 +51,11 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
       wait(!axi_vif.ARESETn);
 
       // Reset AXI interface signals to default
-      axi_vif.AWADDR    <= 'b0;
-      axi_vif.AWID      <= 'b0;
-      axi_vif.AWLEN     <= 'b0;
-      axi_vif.AWSIZE    <= 'b0;
-      axi_vif.AWBURST   <= 'b0;
-      axi_vif.AWLOCK    <= 'b0;
-      axi_vif.AWVALID   <= 1'b0;
+      axi_vif.WSTRB      <= 'b0;
+      axi_vif.WDATA      <= 'b0;
+      axi_vif.WID        <= 'b0;
+      axi_vif.WLAST      <= 'b0;
+      axi_vif.WVALID     <= 1'b0;
 
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
@@ -80,34 +78,37 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   task main_phase(uvm_phase phase);
     `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
     forever begin
-      drive_write_addr();
+      drive_write_data();
     end
     `uvm_info(get_name(), $sformatf("Main Phase Ended"), UVM_LOW)
   endtask
 
   //-----------------------------------------------------------------------------
-  // Task drive_write_addr
+  // Task drive_write_data
   //-----------------------------------------------------------------------------
-  task drive_write_addr();
-    `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
+  task drive_write_data();
+    `uvm_info(get_full_name(), "Driving write Data transaction", UVM_LOW)
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
     req.print();
 
-    @(posedge axi_vif.ACLK);
-       // Drive AXI write address and control signals
-      axi_vif.AWBURST <= req.burst;
-      axi_vif.AWADDR  <= req.addr;
-      axi_vif.AWID    <= req.id;
-      axi_vif.AWSIZE  <= req.awsize_val;
-      axi_vif.AWLEN   <= req.burst_length - 1;
 
-      axi_vif.AWVALID <= 1'b1;
-      wait(axi_vif.AWREADY);
-      @(posedge axi_vif.ACLK);
-      axi_vif.AWVALID <= 1'b0;
-    `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)
+    @(posedge axi_vif.ACLK);
+
+      for (int beat = 0; beat < req.burst_length ; beat++) begin
+        axi_vif.WID     <= req.id;
+        axi_vif.WDATA   <= req.write_data[beat];
+        axi_vif.WSTRB   <= req.write_strobe[beat];
+        axi_vif.WLAST   <= (beat == req.burst_length - 1)? 1'b1: 1'b0;
+
+        axi_vif.WVALID <= 1'b1;
+        wait(axi_vif.WREADY);
+        @(posedge axi_vif.ACLK);
+        axi_vif.WVALID <= 1'b0;
+      end
+
+    `uvm_info(get_full_name(), "Write Data transaction completed", UVM_LOW)
     seq_item_port.item_done();
   endtask
 endclass
