@@ -19,11 +19,7 @@ class axi2ahb_test extends uvm_test;
 
     // Environment and sequence handles
     axi2ahb_env env;                   // Environment handle
-    axi_sequence wr_addr_seq;          // Write address sequence
-    axi_sequence rd_addr_seq;          // Read address sequence
-    axi_sequence wr_data_seq;          // Write data sequence
-    axi_sequence rd_data_seq;          // Read data sequence
-    ahb_sequence ahb_seq;              // AHB sequence
+    multi_seq mul_seq;                 // Virtual Seq Handle
 
     //-----------------------------------------------------------------------------  
     // Function: new
@@ -41,6 +37,8 @@ class axi2ahb_test extends uvm_test;
         
         // Create environment
         env = axi2ahb_env::type_id::create("env", this);
+        mul_seq = multi_seq::type_id::create("mul_seq");
+
     endfunction : build_phase
 
     //-----------------------------------------------------------------------------  
@@ -58,21 +56,7 @@ class axi2ahb_test extends uvm_test;
         `uvm_info(get_full_name(), "MAIN PHASE STARTED", UVM_LOW);
         phase.raise_objection(this, "MAIN - raise_objection");
 
-        // Create test sequences
-        wr_addr_seq = axi_sequence::type_id::create("wr_addr_seq", this);
-        rd_addr_seq = axi_sequence::type_id::create("rd_addr_seq", this);
-        wr_data_seq = axi_sequence::type_id::create("wr_data_seq", this);
-        rd_data_seq = axi_sequence::type_id::create("rd_data_seq", this);
-        ahb_seq = ahb_sequence::type_id::create("ahb_seq", this);
-
-        // Start sequences concurrently
-        fork
-            wr_addr_seq.start(env.wr_addr_agnt.wr_addr_sqr);
-            rd_addr_seq.start(env.rd_addr_agnt.rd_addr_sqr);
-            wr_data_seq.start(env.wr_data_agnt.wr_data_sqr);
-            rd_data_seq.start(env.rd_data_agnt.rd_data_sqr);
-            ahb_seq.start(env.ahb_agnt.ahb_sqr);
-        join
+        mul_seq.start(env.vseqr);
 
         // Wait for a specific time to ensure operations complete
         #1000ns;

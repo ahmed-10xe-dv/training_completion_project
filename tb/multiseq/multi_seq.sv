@@ -1,38 +1,63 @@
-// // ╔════════════════════════════════════════════════════════════════════════════╗
-// // ║                         CLASS: multi_seq                                   ║
-// // ║     Author      : Ahmed Raza                                               ║
-// // ║     Date        : 25 Nov 2024                                              ║
-// // ║     Description : This sequence manages the parallel execution of both     ║
-// // ║                   instruction and data sequences. It coordinates the       ║
-// // ║                   interaction between the instruction and data sequences   ║
-// // ║                   by starting them concurrently in the `body` task.        ║
-// // ╚════════════════════════════════════════════════════════════════════════════╝
+/*************************************************************************
+   > File Name:   multi_seq.sv
+   > Description: Multi-sequence class to manage concurrent AXI and AHB 
+                  sequences in a UVM testbench.
+   > Author:      Ahmed Raza
+   > Modified:    Ahmed Raza
+   > Mail:        ahmed.raza@10xengineers.ai
+   ---------------------------------------------------------------
+   Copyright   (c)2024 10xEngineers
+   ---------------------------------------------------------------
+************************************************************************/
 
-// class multi_seq extends uvm_sequence;
-//     `uvm_object_utils(multi_seq)
-//     `uvm_declare_p_sequencer (virtual_sequencer)
+class multi_seq extends uvm_sequence;
 
-//     mem_model mem;
-//     inst_sequence inst_seq;
-//     data_sequence data_seq;
+    //-------------------------------------------------------------------------
+    // Factory Registration and Sequencer Declaration
+    //-------------------------------------------------------------------------
+    `uvm_object_utils(multi_seq)
+    `uvm_declare_p_sequencer(virtual_sequencer)
 
-//     function new(string name="multi_seq");
-//       super.new(name);
-//     endfunction
+    //-------------------------------------------------------------------------
+    // Member Variables
+    //-------------------------------------------------------------------------
+    axi_sequence wr_addr_seq;  // AXI Write Address Sequence
+    axi_sequence rd_addr_seq;  // AXI Read Address Sequence
+    axi_sequence wr_data_seq;  // AXI Write Data Sequence
+    axi_sequence rd_data_seq;  // AXI Read Data Sequence
+    ahb_sequence ahb_seq;      // AHB Sequence
 
-//     task pre_body();
-// 		m_apb_rd_wr_seq = apb_rd_wr_seq::type_id::create ("m_apb_rd_wr_seq");
-// 		m_wb_reset_seq  = wb_reset_seq::type_id::create ("m_wb_reset_seq");
-// 		m_pcie_gen_seq  = pcie_gen_seq::type_id::create ("m_pcie_gen_seq");
-// 	endtask
+    //-------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------
+    function new(string name = "multi_seq");
+        super.new(name);
+    endfunction
 
-//     virtual task body();
-//       inst_seq.mem = mem;           // Pass the memory model to both sequences
-//       data_seq.mem = mem;
-      
-//       fork
-//         inst_seq.start(p_sequencer.instr_seqr);
-//         data_seq.start(p_sequencer.data_seqr);
-//       join
-//     endtask
-// endclass
+    //-------------------------------------------------------------------------
+    // Pre-body Task
+    // Creates test sequences for AXI and AHB
+    //-------------------------------------------------------------------------
+    task pre_body();
+        wr_addr_seq = axi_sequence::type_id::create("wr_addr_seq");
+        rd_addr_seq = axi_sequence::type_id::create("rd_addr_seq");
+        wr_data_seq = axi_sequence::type_id::create("wr_data_seq");
+        rd_data_seq = axi_sequence::type_id::create("rd_data_seq");
+        ahb_seq = ahb_sequence::type_id::create("ahb_seq");
+    endtask
+
+    //-------------------------------------------------------------------------
+    // Main Body Task
+    // Starts the AXI and AHB sequences concurrently
+    //-------------------------------------------------------------------------
+    virtual task body();
+        fork
+            wr_addr_seq.start(p_sequencer.wr_addr_sqr);
+            rd_addr_seq.start(p_sequencer.rd_addr_sqr);
+            wr_data_seq.start(p_sequencer.wr_data_sqr);
+            rd_data_seq.start(p_sequencer.rd_data_sqr);
+            ahb_seq.start(p_sequencer.ahb_sqr);
+        join
+    endtask
+
+endclass

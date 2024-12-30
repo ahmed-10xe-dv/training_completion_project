@@ -59,6 +59,10 @@ import uvm_pkg::*;
 `include "../agent/ahb_agent/ahb_monitor.sv"
 `include "../agent/ahb_agent/ahb_agent.sv"
 
+// Multi-Seq
+`include "../multiseq/multi_sequencer.sv"
+`include "../multiseq/multi_seq.sv"
+
 //Axi2Ahb Environment and test
 `include "../env/axi2ahb_scoreboard.sv"
 `include "../env/axi2ahb_env.sv"

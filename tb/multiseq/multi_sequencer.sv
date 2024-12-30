@@ -1,20 +1,36 @@
-// // ╔════════════════════════════════════════════════════════════════════════════╗
-// // ║                         CLASS: virtual_sequencer                           ║
-// // ║     Author      : Ahmed Raza                                               ║
-// // ║     Date        : 25 Nov 2024                                              ║
-// // ║     Description : This class defines a virtual sequencer that coordinates  ║
-// // ║                   the execution of instruction and data sequencers.        ║
-// // ║                   It ensures that the instruction and data sequences       ║
-// // ║                   run under the same control, synchronizing them as needed.║
-// // ╚════════════════════════════════════════════════════════════════════════════╝
+/*************************************************************************
+   > File Name:   virtual_sequencer.sv
+   > Description: Virtual sequencer managing AHB and AXI sequencers.
+   > Author:      Ahmed Raza
+   > Modified:    Ahmed Raza
+   > Mail:        ahmed.raza@10xengineers.ai
+   ---------------------------------------------------------------
+   Copyright   (c)2024 10xEngineers
+   ---------------------------------------------------------------
+************************************************************************/
 
-// class virtual_sequencer extends uvm_sequencer;
+class virtual_sequencer extends uvm_sequencer;
 
-//     // Data and instruction sequencers managed by the virtual sequencer
-//     data_sequencer                   data_seqr;
-//     inst_sequencer                   instr_seqr;
-  
-//     `uvm_component_utils(virtual_sequencer)
-//     `uvm_component_new
-  
-//   endclass
+    //-------------------------------------------------------------------------
+    // Member Variables
+    // The virtual sequencer manages individual AXI and AHB sequencers.
+    //-------------------------------------------------------------------------
+    wr_addr_sequencer wr_addr_sqr;     // Write address sequencer for AXI
+    rd_addr_sequencer rd_addr_sqr;     // Read address sequencer for AXI
+    wr_data_sequencer wr_data_sqr;     // Write data sequencer for AXI
+    rd_data_sequencer rd_data_sqr;     // Read data sequencer for AXI
+    ahb_sequencer     ahb_sqr;         // Sequencer for AHB transactions
+
+    //-------------------------------------------------------------------------
+    // Factory Registration
+    //-------------------------------------------------------------------------
+    `uvm_component_utils(virtual_sequencer)
+
+    //-------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+endclass

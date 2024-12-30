@@ -14,10 +14,7 @@
 
 interface ahb_interface #(
   parameter ADDR_WIDTH = 32,  // Address bus width
-  parameter DATA_WIDTH = 32,  // Data bus width
-  parameter SIZE_WIDTH = 3,   // Transfer size width
-  parameter BURST_WIDTH = 3,  // Burst type width
-  parameter TRANS_WIDTH = 2   // Transfer type width
+  parameter DATA_WIDTH = 32   // Data bus width
 )(
   input logic HCLK,           // AHB clock signal
   input logic HRESETn         // AHB active-low reset signal

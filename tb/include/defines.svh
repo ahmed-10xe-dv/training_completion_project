@@ -590,45 +590,45 @@
 
 
 
-  // Task to write data
-  task write_data();
-   `uvm_info(get_full_name(), "Entering AHB Driver Write Data Task", UVM_LOW)
-   foreach (array[m]) begin
-     array[m] = 32'hffffffff;
-   end
+  // // Task to write data
+  // task write_data();
+  //  `uvm_info(get_full_name(), "Entering AHB Driver Write Data Task", UVM_LOW)
+  //  foreach (array[m]) begin
+  //    array[m] = 32'hffffffff;
+  //  end
 
-   @(posedge ahb_vif.HCLK); //Okay?
-   ahb_vif.HREADY <= 1'b1;
+  //  @(posedge ahb_vif.HCLK); //Okay?
+  //  ahb_vif.HREADY <= 1'b1;
 
-   while (!ahb_vif.HTRANS[1]) begin
-       if (ahb_vif.HTRANS == 2'b01) begin // Busy state
-        @(posedge ahb_vif.HCLK);
-        continue;
-       `uvm_info(get_full_name(), "AHB Driver Write - Slave Busy", UVM_LOW)
-       end
-   end
+  //  while (!ahb_vif.HTRANS[1]) begin
+  //      if (ahb_vif.HTRANS == 2'b01) begin // Busy state
+  //       @(posedge ahb_vif.HCLK);
+  //       continue;
+  //      `uvm_info(get_full_name(), "AHB Driver Write - Slave Busy", UVM_LOW)
+  //      end
+  //  end
 
-   // wait(ahb_vif.HTRANS[1]);                  //Only When the transfer is seq or no seq, not for idle or busy
+  //  // wait(ahb_vif.HTRANS[1]);                  //Only When the transfer is seq or no seq, not for idle or busy
  
-   // if (ahb_vif.HTRANS != 2'b00) begin
-   `uvm_info(get_full_name(), "AHB Driver Write - Valid Transfer Detected", UVM_LOW)
+  //  // if (ahb_vif.HTRANS != 2'b00) begin
+  //  `uvm_info(get_full_name(), "AHB Driver Write - Valid Transfer Detected", UVM_LOW)
 
-   //   // while (1) begin
-   //   if (ahb_vif.HTRANS == 2'b01) begin // Busy state
-   //     @(posedge ahb_vif.HCLK);
-   //     // continue;
-   //   `uvm_info(get_full_name(), "AHB Driver Write - Slave Busy", UVM_LOW)
-   //   end
+  //  //   // while (1) begin
+  //  //   if (ahb_vif.HTRANS == 2'b01) begin // Busy state
+  //  //     @(posedge ahb_vif.HCLK);
+  //  //     // continue;
+  //  //   `uvm_info(get_full_name(), "AHB Driver Write - Slave Busy", UVM_LOW)
+  //  //   end
 
-     // if (ahb_vif.HTRANS != 2'b00) begin
-       for (int i = 0; i < 2**ahb_vif.HSIZE; ++i)
-         for (int j = 0; j < 8; ++j)
-           array[ahb_vif.HADDR][j] = ahb_vif.HWDATA[(i*8)+j];
-       `uvm_info(get_full_name(), "AHB Driver Write - Write Completed", UVM_LOW)
-       ahb_vif.HRESP <= 1'b0;   //Response is okay
-     // end 
-     ahb_vif.HREADY <= 1'b0;
-     @(posedge ahb_vif.HCLK);
-     ahb_vif.HREADY <= 1'b1;
-   //  end
-   endtask: write_data
+  //    // if (ahb_vif.HTRANS != 2'b00) begin
+  //      for (int i = 0; i < 2**ahb_vif.HSIZE; ++i)
+  //        for (int j = 0; j < 8; ++j)
+  //          array[ahb_vif.HADDR][j] = ahb_vif.HWDATA[(i*8)+j];
+  //      `uvm_info(get_full_name(), "AHB Driver Write - Write Completed", UVM_LOW)
+  //      ahb_vif.HRESP <= 1'b0;   //Response is okay
+  //    // end 
+  //    ahb_vif.HREADY <= 1'b0;
+  //    @(posedge ahb_vif.HCLK);
+  //    ahb_vif.HREADY <= 1'b1;
+  //  //  end
+  //  endtask: write_data
