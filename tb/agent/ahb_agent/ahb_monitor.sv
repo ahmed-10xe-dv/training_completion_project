@@ -71,11 +71,11 @@ class ahb_monitor extends uvm_monitor;
     //-----------------------------------------------------------------------------
     // Task: main_phase
     //-----------------------------------------------------------------------------
-    task main_phase(uvm_phase phase);
-        forever begin
-            monitor();
-        end
-    endtask
+    // task main_phase(uvm_phase phase);
+    //     forever begin
+    //         monitor();
+    //     end
+    // endtask
 
     //-----------------------------------------------------------------------------
     // Task: monitor
@@ -118,10 +118,9 @@ class ahb_monitor extends uvm_monitor;
     task capture_data(
         int transaction_count,            
         output bit [7:0] data_array[$],   
-        output bit resp              
+        output bit response_ahb             
     );
         int transaction_index = 0;
-        bit resp ;
 
         while (transaction_index < transaction_count) begin
             for (int byte_index = 0; byte_index < (1 << ahb_vif.HSIZE); byte_index++) begin
@@ -133,7 +132,7 @@ class ahb_monitor extends uvm_monitor;
             transaction_index++;
             @(posedge ahb_vif.HCLK);
         end
-        resp = ahb_vif.HRESP;
+        response_ahb = ahb_vif.HRESP;
     endtask
 
 endclass

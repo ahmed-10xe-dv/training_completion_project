@@ -1,4 +1,4 @@
-/*************************************************************************
+    /*************************************************************************
    > File Name:   ahb_driver.sv
    > Description: This file implements the AHB driver class, which extends 
                   the UVM driver to handle AHB transactions based on sequence items.
@@ -84,29 +84,26 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   task main_phase(uvm_phase phase);
     `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
     forever begin
-      fork
-        write_data();
-        read_data();
-      join
+      drive();
     end
     `uvm_info(get_name(), "Main Phase Ended", UVM_LOW)
   endtask : main_phase
 
   //-----------------------------------------------------------------------------
-  // Task: write_data
+  // Task: drive
   //-----------------------------------------------------------------------------
-  task write_data();
+  task drive();
     seq_item_port.get_next_item(req);
+    
+    ahb_vif.HREADY <= 1'b1;
 
     if (ahb_vif.HWRITE) begin
-    `uvm_info(get_full_name(), "Entering AHB Driver Write Data Task", UVM_LOW)
+      `uvm_info(get_full_name(), "Entering AHB Driver Write Data Task", UVM_LOW)
 
       foreach (wr_array[m]) begin  //Initialize Array
         wr_array[m] = 32'hffffffff;
       end
-  
-      ahb_vif.HREADY <= 1'b1;
-  
+
       wait(ahb_vif.HTRANS);
       while (!ahb_vif.HTRANS[1]) begin     //Handle IDLE and BUSY transfer
         if (ahb_vif.HTRANS == 2'b01) begin // Busy state
@@ -124,29 +121,13 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
       end
   
       `uvm_info(get_full_name(), "AHB Driver Write - Write Completed", UVM_LOW)
-      ahb_vif.HRESP  <= req.resp;   // Collect Response
-      ahb_vif.HREADY <= 1'b0;      // Extend transfer if necessary
-      @(posedge ahb_vif.HCLK);
-      ahb_vif.HREADY <= 1'b1;
     end
-    
-    seq_item_port.item_done();
-  endtask : write_data
 
-    //-----------------------------------------------------------------------------
-  // Task: read_data
-  //-----------------------------------------------------------------------------
-  task read_data();
-
-    seq_item_port.get_next_item(req);
-    if (!ahb_vif.HWRITE) begin
-
+    else begin
       `uvm_info(get_full_name(), "Entering AHB Driver Read Data Task", UVM_LOW)
       foreach (req.data[m]) begin  //Initialize Array
         rd_array[m] = req.data[m];
       end
-  
-      ahb_vif.HREADY <= 1'b1;
   
       wait(ahb_vif.HTRANS);
       while (!ahb_vif.HTRANS[1]) begin     //Handle IDLE and BUSY transfer
@@ -165,15 +146,15 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
       end
   
       `uvm_info(get_full_name(), "AHB Driver Read - Read Completed", UVM_LOW)
-      ahb_vif.HRESP  <= req.resp;   // Collect esponse
-      ahb_vif.HREADY <= 1'b0;      // Extend transfer if necessary
-      @(posedge ahb_vif.HCLK);
-      ahb_vif.HREADY <= 1'b1;
     end
+
+    ahb_vif.HRESP  <= req.resp;   // Collect Response
+    ahb_vif.HREADY <= 1'b0;      // Extend transfer if necessary
+    @(posedge ahb_vif.HCLK);
+    ahb_vif.HREADY <= 1'b1;
     
     seq_item_port.item_done();
-  endtask : read_data
-
+  endtask : drive
 
 endclass : ahb_driver
 

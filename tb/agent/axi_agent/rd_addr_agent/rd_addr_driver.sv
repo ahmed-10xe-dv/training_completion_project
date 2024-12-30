@@ -91,11 +91,11 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
   // Task drive_read_addr
   //-----------------------------------------------------------------------------
   task drive_read_addr();
-    `uvm_info(get_full_name(), "Driving read address transaction", UVM_LOW)
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
     if (req.access == READ_TRAN) begin
+      `uvm_info(get_full_name(), "Driving read address transaction", UVM_LOW)
       req.print();
       // @(posedge axi_vif.ACLK);
        // Drive AXI read address and control signals

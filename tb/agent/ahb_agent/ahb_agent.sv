@@ -19,7 +19,7 @@ class ahb_agent extends uvm_agent;
 
   // Components
   ahb_sequencer ahb_sqr;
-  ahb_driver    ahb_dri;
+  ahb_driver    ahb_drv;
   ahb_monitor   ahb_mon;
 
   // Constructor
@@ -32,7 +32,7 @@ class ahb_agent extends uvm_agent;
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    ahb_dri = ahb_driver::type_id::create("ahb_dri", this);
+    ahb_drv = ahb_driver::type_id::create("ahb_drv", this);
     ahb_sqr = ahb_sequencer::type_id::create("ahb_sqr", this);
     ahb_mon = ahb_monitor::type_id::create("ahb_mon", this);
     `uvm_info(get_full_name(), "Build Phase completed for AHB Agent", UVM_LOW)
@@ -42,7 +42,7 @@ class ahb_agent extends uvm_agent;
   // Connect Phase
   //-----------------------------------------------------------------------------
   function void connect_phase(uvm_phase phase);
-    ahb_dri.seq_item_port.connect(ahb_sqr.seq_item_export);
+    ahb_drv.seq_item_port.connect(ahb_sqr.seq_item_export);
     `uvm_info(get_full_name(), "Connect Phase completed for AHB Agent", UVM_LOW)
   endfunction : connect_phase
 

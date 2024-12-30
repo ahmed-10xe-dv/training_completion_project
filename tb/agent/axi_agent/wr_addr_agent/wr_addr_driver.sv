@@ -91,11 +91,11 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   // Task drive_write_addr
   //-----------------------------------------------------------------------------
   task drive_write_addr();
-    `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
     if (req.access == WRITE_TRAN) begin
+    `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
       req.print();
       @(posedge axi_vif.ACLK);
        // Drive AXI write address and control signals

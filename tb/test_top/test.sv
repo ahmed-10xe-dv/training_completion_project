@@ -68,9 +68,9 @@ class axi2ahb_test extends uvm_test;
         // Start sequences concurrently
         fork
             wr_addr_seq.start(env.wr_addr_agnt.wr_addr_sqr);
-            // rd_addr_seq.start(env.rd_addr_agnt.rd_addr_sqr);
+            rd_addr_seq.start(env.rd_addr_agnt.rd_addr_sqr);
             wr_data_seq.start(env.wr_data_agnt.wr_data_sqr);
-            // rd_data_seq.start(env.rd_data_agnt.rd_data_sqr);
+            rd_data_seq.start(env.rd_data_agnt.rd_data_sqr);
             ahb_seq.start(env.ahb_agnt.ahb_sqr);
         join
 
