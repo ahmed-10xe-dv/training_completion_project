@@ -30,12 +30,12 @@ interface ahb_interface #(
   logic [DATA_WIDTH-1:0]  HWDATA;       // Write data bus
   logic [DATA_WIDTH-1:0]  HRDATA;       // Read data bus
   logic                   HWRITE;       // Write control signal
-  logic [SIZE_WIDTH-1:0]  HSIZE;        // Transfer size
-  logic [BURST_WIDTH-1:0] HBURST;       // Burst type
-  logic [TRANS_WIDTH-1:0] HTRANS;       // Transfer type
+  logic [2:0]             HSIZE;        // Transfer size
+  logic [2:0]             HBURST;       // Burst type
+  logic [1:0]             HTRANS;       // Transfer type
   logic                   HREADY;       // Ready input signal to master
   logic                   HRESP;        // Response signal
-  logic  [3:0]            HPROT;        // Protection
+  logic [3:0]             HPROT;        // Protection
   logic                   HMASTLOCK;    // Master Lock
 
 

@@ -19,10 +19,12 @@ typedef enum bit [1:0] {okay, ERROR} resp_type;
 
 class ahb_seq_item extends uvm_sequence_item;
   // Randomized variables
-  rand        bit [7:0]       data[];
-  bit         [31:0]          addr;
-  rand        resp_type       resp;
-  access_type                access;
+  rand bit         [7:0]           data[];
+  bit              [31:0]          addr;
+  resp_type                   resp;
+  access_type                 access;
+
+  //TODO : Use 80 20 const for resp
 
   // Field registration macros
   `uvm_object_utils_begin(ahb_seq_item)

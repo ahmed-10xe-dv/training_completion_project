@@ -56,6 +56,8 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
       axi_vif.WID        <= 'b0;
       axi_vif.WLAST      <= 'b0;
       axi_vif.WVALID     <= 1'b0;
+      axi_vif.BREADY     <= 1'b0;
+
 
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
@@ -78,7 +80,12 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
   task main_phase(uvm_phase phase);
     `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
     forever begin
-      drive_write_data();
+
+      fork
+        drive_write_data();
+        drive_write_rsp_channel();
+      join
+
     end
     `uvm_info(get_name(), $sformatf("Main Phase Ended"), UVM_LOW)
   endtask
@@ -91,10 +98,12 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
+    if (req.access == WRITE_TRAN) begin
+
     req.print();
 
 
-    @(posedge axi_vif.ACLK);
+    // @(posedge axi_vif.ACLK);
 
       for (int beat = 0; beat < req.burst_length ; beat++) begin
         axi_vif.WID     <= req.id;
@@ -107,10 +116,20 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
         @(posedge axi_vif.ACLK);
         axi_vif.WVALID <= 1'b0;
       end
-
     `uvm_info(get_full_name(), "Write Data transaction completed", UVM_LOW)
+    end
+
     seq_item_port.item_done();
   endtask
+
+  task drive_write_rsp_channel();
+    @(posedge axi_vif.ACLK);
+    axi_vif.BREADY <= 1'b1;
+    wait(axi_vif.BVALID);
+    @(posedge axi_vif.ACLK);
+    axi_vif.BREADY <= 1'b0;
+  endtask
+
 endclass
 
 `endif

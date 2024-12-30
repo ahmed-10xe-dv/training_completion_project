@@ -1,6 +1,6 @@
 /*************************************************************************
-   > File Name:   wr_addr_driver.sv
-   > Description: This class implements a write address driver for an AXI protocol
+   > File Name:   rd_addr_driver.sv
+   > Description: This class implements a read address driver for an AXI protocol
                   interface. It drives address and control signals based on received 
                   sequence items and manages the AXI handshake.
    > Author:      Ahmed Raza
@@ -12,16 +12,16 @@
 ************************************************************************/
 
 
-`ifndef WR_ADDR_DRIVER
-`define WR_ADDR_DRIVER
+`ifndef RD_ADDR_DRIVER
+`define RD_ADDR_DRIVER
 
-class wr_addr_driver extends uvm_driver #(axi_seq_item);
+class rd_addr_driver extends uvm_driver #(axi_seq_item);
 
-  `uvm_component_utils(wr_addr_driver)
+  `uvm_component_utils(rd_addr_driver)
   virtual axi_interface axi_vif;         // Virtual interface for AXI signals
 
   // Constructor
-  function new(string name = "wr_addr_driver", uvm_component parent = null);
+  function new(string name = "rd_addr_driver", uvm_component parent = null);
     super.new(name, parent);
   endfunction
 
@@ -51,15 +51,15 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
       wait(!axi_vif.ARESETn);
 
       // Reset AXI interface signals to default
-      axi_vif.AWADDR    <= 'b0;
-      axi_vif.AWID      <= 'b0;
-      axi_vif.AWLEN     <= 'b0;
-      axi_vif.AWSIZE    <= 'b0;
-      axi_vif.AWBURST   <= 'b0;
-      axi_vif.AWLOCK    <= 'b0;
-      axi_vif.AWVALID   <= 1'b0;
-      axi_vif.AWCACHE   <= 'b1111;
-      axi_vif.AWPROT    <= 'b1;
+      axi_vif.ARADDR    <= 'b0;
+      axi_vif.ARID      <= 'b0;
+      axi_vif.ARLEN     <= 'b0;
+      axi_vif.ARSIZE    <= 'b0;
+      axi_vif.ARBURST   <= 'b0;
+      axi_vif.ARLOCK    <= 'b0;
+      axi_vif.ARVALID   <= 1'b0;
+      axi_vif.ARCACHE   <= 'b1111;
+      axi_vif.ARPROT    <= 'b1;
 
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
@@ -82,36 +82,36 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   task main_phase(uvm_phase phase);
     `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
     forever begin
-      drive_write_addr();
+      drive_read_addr();
     end
     `uvm_info(get_name(), $sformatf("Main Phase Ended"), UVM_LOW)
   endtask
 
   //-----------------------------------------------------------------------------
-  // Task drive_write_addr
+  // Task drive_read_addr
   //-----------------------------------------------------------------------------
-  task drive_write_addr();
-    `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
+  task drive_read_addr();
+    `uvm_info(get_full_name(), "Driving read address transaction", UVM_LOW)
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
-    if (req.access == WRITE_TRAN) begin
+    if (req.access == READ_TRAN) begin
       req.print();
-      @(posedge axi_vif.ACLK);
-       // Drive AXI write address and control signals
-      axi_vif.AWBURST <= req.burst;
-      axi_vif.AWADDR  <= req.addr;
-      axi_vif.AWID    <= req.id;
-      axi_vif.AWSIZE  <= req.awsize_val;
-      axi_vif.AWLEN   <= req.burst_length - 1;
+      // @(posedge axi_vif.ACLK);
+       // Drive AXI read address and control signals
+      axi_vif.ARBURST <= req.burst;
+      axi_vif.ARADDR  <= req.addr;
+      axi_vif.ARID    <= req.id;
+      axi_vif.ARSIZE  <= req.awsize_val;
+      axi_vif.ARLEN   <= req.burst_length - 1;
 
-      axi_vif.AWVALID <= 1'b1;
-      wait(axi_vif.AWREADY);
+      axi_vif.ARVALID <= 1'b1;
+      wait(axi_vif.ARREADY);
       @(posedge axi_vif.ACLK);
-      axi_vif.AWVALID <= 1'b0;
-      `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)
+      axi_vif.ARVALID <= 1'b0;
+     `uvm_info(get_full_name(), "Read address transaction completed", UVM_LOW)
     end
-    seq_item_port.item_done();
+    seq_item_port.item_done(); 
   endtask
 endclass
 

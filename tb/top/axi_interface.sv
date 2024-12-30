@@ -36,7 +36,6 @@ interface axi_interface #(
   logic                    ARREADY;    // Address ready
   logic [3:0]              ARCACHE;    // For Cache
   logic [2:0]              ARPROT;     // For Protection
-  logic                    ARLOCK;     // Locked Transfers 
   
 
   /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +61,6 @@ interface axi_interface #(
   logic                    AWREADY;    // Address ready
   logic [3:0]              AWCACHE;    // For Cache
   logic [2:0]              AWPROT;     // For Protection
-  logic                    AWLOCK;     // Locked Transfers 
 
 
 

@@ -1,6 +1,6 @@
 /*************************************************************************
    > File Name:   wr_data_monitor.sv
-   > Description: < Short description of what this file contains >
+   > Description: AXI write data channel monitor for capturing transactions
    > Author:      Ahmed Raza
    > Modified:    Ahmed Raza
    > Mail:        ahmed.raza@10xengineers.ai
@@ -9,78 +9,102 @@
    ---------------------------------------------------------------
 ************************************************************************/
 
-`ifndef WR_ADDR_MONITOR
-`define WR_ADDR_MONITOR
+`ifndef WR_DATA_MONITOR
+`define WR_DATA_MONITOR
 
 class wr_data_monitor extends uvm_monitor;
     `uvm_component_utils(wr_data_monitor)
-  
-    // AXI Interface and temporary write address item
-    virtual axi_interface axi_vif;
-    axi_seq_item temp_w;
-    axi_seq_item wr_addr_comb[$];
 
-  
-    // Analysis Port for write address items
-    uvm_analysis_port #(axi_seq_item) axi_write_analysis_port;
-  
+    // Virtual interface for AXI signals
+    virtual axi_interface axi_vif;
+
+    // Analysis port to send captured transactions
+    uvm_analysis_port #(axi_seq_item) wr_data_ap;
+
     // Constructor
     function new(string name, uvm_component parent);
         super.new(name, parent);
     endfunction
-  
-    // Build Phase: Initializes analysis port
+
+    // Build phase to initialize analysis port
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        `uvm_info(get_full_name(), ":: Build Phase @ AXI Monitor::", UVM_LOW);
-        axi_write_analysis_port = new("axi_write_analysis_port", this);
+        wr_data_ap = new("wr_data_ap", this);
     endfunction
-  
-    // Connect Phase: Establishes connection to AXI interface
+
+    //-----------------------------------------------------------------------------
+    // Function: connect_phase
+    //-----------------------------------------------------------------------------
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        `uvm_info(get_full_name(), ":: Connect Phase @ AXI Monitor::", UVM_LOW);
         if (!uvm_config_db#(virtual axi_interface)::get(this, "*", "axi_vif", axi_vif)) begin
-            `uvm_error(get_full_name(), ":: Failed to Connect AXI INTF @ AXI Monitor::");
+            `uvm_error("Connect Phase", "Configuration failed for axi_monitor")
         end
     endfunction
-  
-    // Task to Monitor Write Address Channel
-    task mon_write_addr_channel();
+
+    //----------------------------------------------------------------------------- 
+    // Task: main_phase
+    // Description: Continuously monitors write data channel
+    //-----------------------------------------------------------------------------
+    task main_phase(uvm_phase phase);
         forever begin
-            @(posedge axi_vif.ACLK);
-            wait(axi_vif.AWVALID);
-            // Create and populate the write address item
-            temp_w = axi_seq_item::type_id::create("write_addr_monitor");
-            temp_w.addr   = axi_vif.AWADDR;
-            temp_w.id     = axi_vif.AWID;
-            temp_w.size   = axi_vif.AWSIZE;
-            temp_w.access = WRITE_TRAN;
-            // temp_w.burst   = axi_vif.AWBURST;
-
-            // Set burst type based on AWBURST
-            case (axi_vif.AWBURST)
-                2'b00: temp_w.burst = FIXED;
-                2'b01: temp_w.burst = INCR;
-                2'b10: temp_w.burst = WRAP;
-            endcase
-
-            // wait(axi_vif.AWREADY);
-            @(posedge axi_vif.ACLK);
-            wr_addr_comb.push_front(temp_w);
+            monitor_wr_data();
         end
-        endtask
+    endtask
 
+    //----------------------------------------------------------------------------- 
+    // Task: monitor_wr_data
+    // Description: Captures write data transactions and sends them via analysis port
+    //-----------------------------------------------------------------------------
+    task monitor_wr_data();
+        axi_seq_item temp_data_item;
+        bit [7:0] mon_data[$]; // Dynamic array for monitored data
 
-  
-    // // Run Phase: Starts monitoring the AXI write address channel
-    // task run_phase(uvm_phase phase);
-    //     `uvm_info(get_full_name(), ":: Run Phase @ AXI Monitor::", UVM_LOW);
-    //     fork
-    //         // mon_write_addr_channel();
-    //         // monitor_write_data_channel();
-    //     join
-    // endtask
-endclass : wr_data_monitor
+        // Wait for valid write data transaction
+        @(posedge axi_vif.ACLK);
+        wait(axi_vif.WVALID);
+        temp_data_item = axi_seq_item::type_id::create("write_data_monitor");
+        temp_data_item.id = axi_vif.WID;
+
+        // Capture write data beats
+        mon_data = {};
+        while (!axi_vif.WLAST) begin
+            for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
+                if (axi_vif.WSTRB[byte_lane]) begin
+                    for (int bit_index = 0; bit_index < 8; bit_index++) begin
+                        mon_data.push_back(axi_vif.WDATA[(byte_lane * 8) + bit_index]);
+                    end
+                end
+            end
+            wait(axi_vif.WREADY);
+            @(posedge axi_vif.ACLK);
+        end
+
+        // Collect last beat
+        wait(axi_vif.WVALID && axi_vif.WLAST);
+        for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
+            if (axi_vif.WSTRB[byte_lane]) begin
+                for (int bit_index = 0; bit_index < 8; bit_index++) begin
+                    mon_data.push_back(axi_vif.WDATA[(byte_lane * 8) + bit_index]);
+                end
+            end
+        end
+        temp_data_item.data = mon_data;
+
+        // Monitor write response
+        wait(axi_vif.BVALID);
+        temp_data_item.id = axi_vif.BID;
+        case (axi_vif.BRESP)
+            2'b00: temp_data_item.response = OKAY;
+            2'b01: temp_data_item.response = EXOKAY;
+            2'b10: temp_data_item.response = SLVERR;
+            2'b11: temp_data_item.response = DECERR;
+        endcase
+
+        wait(axi_vif.BREADY);
+        @(posedge axi_vif.ACLK);
+        wr_data_ap.write(temp_data_item);
+    endtask
+endclass
 
 `endif
