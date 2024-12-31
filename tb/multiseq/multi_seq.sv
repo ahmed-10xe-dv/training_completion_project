@@ -27,6 +27,8 @@ class multi_seq extends uvm_sequence;
     axi_sequence rd_data_seq;  // AXI Read Data Sequence
     ahb_sequence ahb_seq;      // AHB Sequence
 
+    mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
+
     //-------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------
@@ -51,6 +53,7 @@ class multi_seq extends uvm_sequence;
     // Starts the AXI and AHB sequences concurrently
     //-------------------------------------------------------------------------
     virtual task body();
+        ahb_seq.mem = mem;
         fork
             wr_addr_seq.start(p_sequencer.wr_addr_sqr);
             rd_addr_seq.start(p_sequencer.rd_addr_sqr);

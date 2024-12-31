@@ -1,14 +1,3 @@
-/*************************************************************************
-   > File Name:   tb_top.sv
-   > Description: Tesstbench top module for AXI to AHB Bridge Verification
-   > Author:      Ahmed Raza
-   > Modified:    Ahmed Raza
-   > Mail:        ahmed.raza@10xengineers.ai
-   ---------------------------------------------------------------
-   Copyright   (c)2024 10xEngineers
-   ---------------------------------------------------------------
-************************************************************************/
-
 
 // `ifndef TB_TOP
 // `define TB_TOP
@@ -17,6 +6,14 @@
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
+
+
+`include "../include/bus_params_pkg.sv"
+`include "../include/mem_model_pkg.sv"
+import mem_model_pkg::*;
+`include "../include/dv_macros.svh"
+`include "../include/mem_model.sv"
+
 
 //Interfaces and Defines
 // `include "../include/defines.svh"

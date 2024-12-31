@@ -20,9 +20,8 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
 
   `uvm_component_utils(ahb_driver)
 
-  ahb_seq_item seq;                     // Sequence item for AHB transactions
-  bit [7:0] wr_array[4095:0];              // Data array for transactions
-  bit [7:0] rd_array[4095:0];              // Data array for transactions
+  ahb_seq_item req;
+  ahb_seq_item rsp;
 
   virtual ahb_interface ahb_vif;        // Virtual interface for AHB protocol
 
@@ -36,7 +35,6 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    seq = ahb_seq_item::type_id::create("RESPONSE_HANDLER", this);
     `uvm_info(get_full_name(), "BUILD PHASE @ Driver", UVM_LOW)
   endfunction : build_phase
 
@@ -93,63 +91,35 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   // Task: drive
   //-----------------------------------------------------------------------------
   task drive();
+
     seq_item_port.get_next_item(req);
     
-    ahb_vif.HREADY <= 1'b1;
+    req.ACCESS_o   <=  (ahb_vif.HWRITE)? write : read;
+    req.HADDR_o    <=  ahb_vif.HADDR;
+    req.HWDATA_o   <=  ahb_vif.HWDATA;
+    req.HSIZE_o    <=  ahb_vif.HSIZE;
+    req.HBURST_o   <=  ahb_vif.HBURST;
+    req.HTRANS_o   <=  ahb_vif.HTRANS;
+
+    seq_item_port.item_done();
+
+    seq_item_port.get_next_item(rsp);
+
+    // wait(ahb_vif.HTRANS[1]);
 
     if (ahb_vif.HWRITE) begin
-      `uvm_info(get_full_name(), "Entering AHB Driver Write Data Task", UVM_LOW)
-
-      foreach (wr_array[m]) begin  //Initialize Array
-        wr_array[m] = 32'hffffffff;
-      end
-
-      wait(ahb_vif.HTRANS);
-      while (!ahb_vif.HTRANS[1]) begin     //Handle IDLE and BUSY transfer
-        if (ahb_vif.HTRANS == 2'b01) begin // Busy state
-          @(posedge ahb_vif.HCLK);
-          `uvm_info(get_full_name(), "AHB Driver Write - Slave Busy", UVM_LOW)
-          continue;
-        end
-      end
-  
-      `uvm_info(get_full_name(), "AHB Driver Write - Valid Transfer Detected", UVM_LOW)
-      for (int i = 0; i < 2**ahb_vif.HSIZE; ++i) begin
-        for (int j = 0; j < 8; ++j) begin
-          wr_array[ahb_vif.HADDR][j] = ahb_vif.HWDATA[(i * 8) + j];
-        end
-      end
-  
-      `uvm_info(get_full_name(), "AHB Driver Write - Write Completed", UVM_LOW)
+      ahb_vif.HREADY  <= rsp.HREADY_i;
+      ahb_vif.HRESP   <= (rsp.RESP_i == okay) ? 1'b0 : 1'b1; 
     end
-
     else begin
-      `uvm_info(get_full_name(), "Entering AHB Driver Read Data Task", UVM_LOW)
-      foreach (req.data[m]) begin  //Initialize Array
-        rd_array[m] = req.data[m];
-      end
-  
-      wait(ahb_vif.HTRANS);
-      while (!ahb_vif.HTRANS[1]) begin     //Handle IDLE and BUSY transfer
-        if (ahb_vif.HTRANS == 2'b01) begin // Busy state
-          @(posedge ahb_vif.HCLK);
-          `uvm_info(get_full_name(), "AHB Driver READ - Slave Busy", UVM_LOW)
-          continue;
-        end
-      end
-  
-      `uvm_info(get_full_name(), "AHB Driver Read - Valid Transfer Detected", UVM_LOW)
-      for (int i = 0; i < 2**ahb_vif.HSIZE; ++i) begin
-        for (int j = 0; j < 8; ++j) begin
-          ahb_vif.HRDATA[(i * 8) + j] <= rd_array[ahb_vif.HADDR][j];
-        end
-      end
-  
-      `uvm_info(get_full_name(), "AHB Driver Read - Read Completed", UVM_LOW)
+      ahb_vif.HREADY  <= 1'b1;
+      ahb_vif.HRDATA  <= rsp.HRDATA_i;
+      ahb_vif.HRESP   <= (rsp.RESP_i == okay) ? 1'b0 : 1'b1; 
     end
 
-    ahb_vif.HRESP  <= req.resp;   // Collect Response
-    ahb_vif.HREADY <= 1'b0;      // Extend transfer if necessary
+    ahb_vif.HREADY <=  1'b1 ;     // Extend transfer if necessary
+    @(posedge ahb_vif.HCLK);
+    ahb_vif.HREADY <= 1'b0;
     @(posedge ahb_vif.HCLK);
     ahb_vif.HREADY <= 1'b1;
     

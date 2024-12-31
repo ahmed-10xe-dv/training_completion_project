@@ -86,20 +86,20 @@ class ahb_monitor extends uvm_monitor;
         if (ahb_vif.HTRANS[1]) begin
             ahb_mon_item = ahb_seq_item::type_id::create("ahb_mon_item", this);
             wait(ahb_vif.HREADY);
-            ahb_mon_item.addr = ahb_vif.HADDR;
-            case (ahb_vif.HBURST)
-                single:         capture_data(0,  ahb_mon_item.data,  resp);
-                incr4, wrap4:   capture_data(4,  ahb_mon_item.data,  resp);
-                incr8, wrap8:   capture_data(8,  ahb_mon_item.data,  resp);
-                incr16, wrap16: capture_data(16, ahb_mon_item.data,  resp);
-            endcase
-            ahb_mon_item.resp = (resp == 1) ? ERROR : okay;
+            ahb_mon_item.HADDR_o = ahb_vif.HADDR;
+            // case (ahb_vif.HBURST)
+            //     single:         capture_data(0,  ahb_mon_item.HRDATA_i,  resp);
+            //     incr4, wrap4:   capture_data(4,  ahb_mon_item.HRDATA_i,  resp);
+            //     incr8, wrap8:   capture_data(8,  ahb_mon_item.HRDATA_i,  resp);
+            //     incr16, wrap16: capture_data(16, ahb_mon_item.HRDATA_i,  resp);
+            // endcase
+            ahb_mon_item.RESP_i = (resp == 1) ? ERROR : okay;
             if (ahb_vif.HWRITE) begin
-                ahb_mon_item.access = write;
+                ahb_mon_item.ACCESS_o = write;
                 ahb_ap.write(ahb_mon_item);
             end
             else begin
-                ahb_mon_item.access = read;
+                ahb_mon_item.ACCESS_o = read;
                 ahb_ap.write(ahb_mon_item);
             end
         end
