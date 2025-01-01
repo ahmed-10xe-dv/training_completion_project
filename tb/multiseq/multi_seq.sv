@@ -27,6 +27,7 @@ class multi_seq extends uvm_sequence;
     axi_sequence rd_data_seq;  // AXI Read Data Sequence
     ahb_sequence ahb_seq;      // AHB Sequence
 
+    //Parameterized Memory Model
     mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
 
     //-------------------------------------------------------------------------

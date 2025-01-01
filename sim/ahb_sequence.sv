@@ -57,7 +57,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
 
     // Have to do it in forever block
     // forever begin
-    repeat (5) begin
+    repeat (10) begin
       start_item(req);  
       finish_item(req);
 

@@ -13,7 +13,6 @@
 `ifndef AXI_SEQ_ITEM
 `define AXI_SEQ_ITEM
 
-`define WIDTH 4
 
 typedef enum bit [1:0] {FIXED, INCR, WRAP} burst_type;
 typedef enum bit [1:0] {OKAY, EXOKAY, SLVERR, DECERR} response_type;

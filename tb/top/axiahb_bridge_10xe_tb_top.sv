@@ -1,70 +1,23 @@
 
+/*************************************************************************
+   > File Name:   tb_top.sv
+   > Description: This is the top module from where we run the test 
+                  in this module we're generating clock, and instantiating 
+                  DUT
+   > Author:      Ahmed Raza
+   > Modified:    Ahmed Raza
+   > Mail:        ahmed.raza@10xengineers.ai
+   ---------------------------------------------------------------
+   Copyright   (c)2024 10xEngineers
+   ---------------------------------------------------------------
+************************************************************************/
+
+
 // `ifndef TB_TOP
 // `define TB_TOP
 
 `timescale 1ns/1ps
-
-`include "uvm_macros.svh"
-import uvm_pkg::*;
-
-
-`include "../include/bus_params_pkg.sv"
-`include "../include/mem_model_pkg.sv"
-import mem_model_pkg::*;
-`include "../include/dv_macros.svh"
-`include "../include/mem_model.sv"
-
-
-//Interfaces and Defines
-// `include "../include/defines.svh"
-`include "axi_interface.sv"
-`include "ahb_interface.sv"
-
-//Sequences and Sequence Items
-`include "../../sim/axi_seq_item.sv"
-`include "../../sim/axi_sequence.sv"
-`include "../../sim/ahb_seq_item.sv"
-`include "../../sim/ahb_sequence.sv"
-
-//Write Address Agent
-`include "../agent/axi_agent/wr_addr_agent/wr_addr_sequencer.sv"
-`include "../agent/axi_agent/wr_addr_agent/wr_addr_driver.sv"
-`include "../agent/axi_agent/wr_addr_agent/wr_addr_monitor.sv"
-`include "../agent/axi_agent/wr_addr_agent/wr_addr_agent.sv"
-
-//Read Address Agent
-`include "../agent/axi_agent/rd_addr_agent/rd_addr_sequencer.sv"
-`include "../agent/axi_agent/rd_addr_agent/rd_addr_driver.sv"
-`include "../agent/axi_agent/rd_addr_agent/rd_addr_monitor.sv"
-`include "../agent/axi_agent/rd_addr_agent/rd_addr_agent.sv"
-
-//Write Data Agent
-`include "../agent/axi_agent/wr_data_agent/wr_data_sequencer.sv"
-`include "../agent/axi_agent/wr_data_agent/wr_data_driver.sv"
-`include "../agent/axi_agent/wr_data_agent/wr_data_monitor.sv"
-`include "../agent/axi_agent/wr_data_agent/wr_data_agent.sv"
-
-//Read Data Agent
-`include "../agent/axi_agent/rd_data_agent/rd_data_sequencer.sv"
-`include "../agent/axi_agent/rd_data_agent/rd_data_driver.sv"
-`include "../agent/axi_agent/rd_data_agent/rd_data_monitor.sv"
-`include "../agent/axi_agent/rd_data_agent/rd_data_agent.sv"
-
-//AHB Agent
-`include "../agent/ahb_agent/ahb_sequencer.sv"
-`include "../agent/ahb_agent/ahb_driver.sv"
-`include "../agent/ahb_agent/ahb_monitor.sv"
-`include "../agent/ahb_agent/ahb_agent.sv"
-
-// Multi-Seq
-`include "../multiseq/multi_sequencer.sv"
-`include "../multiseq/multi_seq.sv"
-
-//Axi2Ahb Environment and test
-`include "../env/axi2ahb_scoreboard.sv"
-`include "../env/axi2ahb_env.sv"
-`include "../test_top/test.sv"
-
+`include "../include/files.f"
 
 module tb_top;
 
@@ -79,10 +32,6 @@ module tb_top;
     reset = 1'b0;
     #100;
     reset = 1'b1;
-    // #500;
-    // reset = 1'b0;
-    // #100;
-    // reset = 1'b1;
   end
 
   initial begin

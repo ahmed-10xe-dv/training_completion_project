@@ -6,6 +6,8 @@
   `include "uvm_macros.svh"
 `endif
 
+`define WIDTH 4
+
 // UVM speficic macros
 `ifndef gfn
 `ifdef UVM

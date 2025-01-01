@@ -20,9 +20,8 @@ class axi2ahb_test extends uvm_test;
     // Environment and sequence handles
     axi2ahb_env env;                   // Environment handle
     multi_seq mul_seq;                 // Virtual Seq Handle
+    // Parameterized Memory Model
     mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem_model_inst;
-
-
 
     //-----------------------------------------------------------------------------  
     // Function: new
@@ -44,8 +43,6 @@ class axi2ahb_test extends uvm_test;
 
         // Instantiate 4kB memory
         mem_model_inst = mem_model_pkg::mem_model#()::type_id::create("mem_model_inst"); 
-        // mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem_model_inst;
-
 
     endfunction : build_phase
 
@@ -66,10 +63,7 @@ class axi2ahb_test extends uvm_test;
 
         // TO DO :  Load memory here
         mul_seq.mem = mem_model_inst;   // Assign memory to multi sequence
-        
-        mul_seq.start(env.vseqr);
-
-        // Wait for a specific time to ensure operations complete
+        mul_seq.start(env.vseqr);       // Start sequences through virtual sequencer
         #1000ns;
 
         phase.drop_objection(this, "MAIN - drop_objection");
