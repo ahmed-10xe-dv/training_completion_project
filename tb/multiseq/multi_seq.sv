@@ -25,6 +25,7 @@ class multi_seq extends uvm_sequence;
     axi_sequence rd_addr_seq;  // AXI Read Address Sequence
     axi_sequence wr_data_seq;  // AXI Write Data Sequence
     axi_sequence rd_data_seq;  // AXI Read Data Sequence
+    axi_sequence wr_rsp_seq;  // AXI Write Response Sequence
     ahb_sequence ahb_seq;      // AHB Sequence
 
     //Parameterized Memory Model
@@ -46,6 +47,7 @@ class multi_seq extends uvm_sequence;
         rd_addr_seq = axi_sequence::type_id::create("rd_addr_seq");
         wr_data_seq = axi_sequence::type_id::create("wr_data_seq");
         rd_data_seq = axi_sequence::type_id::create("rd_data_seq");
+        wr_rsp_seq = axi_sequence::type_id::create("wr_rsp_seq");
         ahb_seq = ahb_sequence::type_id::create("ahb_seq");
     endtask
 
@@ -60,7 +62,11 @@ class multi_seq extends uvm_sequence;
             rd_addr_seq.start(p_sequencer.rd_addr_sqr);
             wr_data_seq.start(p_sequencer.wr_data_sqr);
             rd_data_seq.start(p_sequencer.rd_data_sqr);
-            ahb_seq.start(p_sequencer.ahb_sqr);
+            wr_rsp_seq.start(p_sequencer.wr_rsp_sqr);
+            begin
+                #140;
+                ahb_seq.start(p_sequencer.ahb_sqr);
+            end
         join
     endtask
 

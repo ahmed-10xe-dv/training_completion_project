@@ -90,18 +90,7 @@ class wr_data_monitor extends uvm_monitor;
             end
         end
         temp_data_item.data = mon_data;
-
-        // Monitor write response
-        wait(axi_vif.BVALID);
-        temp_data_item.id = axi_vif.BID;
-        case (axi_vif.BRESP)
-            2'b00: temp_data_item.response = OKAY;
-            2'b01: temp_data_item.response = EXOKAY;
-            2'b10: temp_data_item.response = SLVERR;
-            2'b11: temp_data_item.response = DECERR;
-        endcase
-
-        wait(axi_vif.BREADY);
+        
         @(posedge axi_vif.ACLK);
         wr_data_ap.write(temp_data_item);
     endtask

@@ -49,6 +49,8 @@ class ahb_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         ahb_ap = new("ahb_ap", this);
+        ahb_mon_item = ahb_seq_item::type_id::create("ahb_mon_item", this);
+
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -71,68 +73,33 @@ class ahb_monitor extends uvm_monitor;
     //-----------------------------------------------------------------------------
     // Task: main_phase
     //-----------------------------------------------------------------------------
-    // task main_phase(uvm_phase phase);
-    //     forever begin
-    //         monitor();
-    //     end
-    // endtask
+    task main_phase(uvm_phase phase);
+        forever begin
+            monitor();
+        end
+    endtask
 
     //-----------------------------------------------------------------------------
     // Task: monitor
     //-----------------------------------------------------------------------------
     task monitor();
-        bit resp;
-        wait(ahb_vif.HTRANS)
-        if (ahb_vif.HTRANS[1]) begin
-            ahb_mon_item = ahb_seq_item::type_id::create("ahb_mon_item", this);
             wait(ahb_vif.HREADY);
             ahb_mon_item.HADDR_o = ahb_vif.HADDR;
-            // case (ahb_vif.HBURST)
-            //     single:         capture_data(0,  ahb_mon_item.HRDATA_i,  resp);
-            //     incr4, wrap4:   capture_data(4,  ahb_mon_item.HRDATA_i,  resp);
-            //     incr8, wrap8:   capture_data(8,  ahb_mon_item.HRDATA_i,  resp);
-            //     incr16, wrap16: capture_data(16, ahb_mon_item.HRDATA_i,  resp);
-            // endcase
-            ahb_mon_item.RESP_i = (resp == 1) ? ERROR : okay;
+            
+            wait(ahb_vif.HTRANS[1]);
             if (ahb_vif.HWRITE) begin
                 ahb_mon_item.ACCESS_o = write;
-                ahb_ap.write(ahb_mon_item);
+                ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
             end
             else begin
                 ahb_mon_item.ACCESS_o = read;
-                ahb_ap.write(ahb_mon_item);
+                ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
             end
-        end
-    endtask
-
-    //*************************************************************************
-    // Task: capture_data
-    // Description: Captures AHB transaction data and stores it in `data_array`. 
-    //              It also retrieves the response signal (`HRESP`) at the end.
-    // Parameters:
-    //   - int transaction_count: Number of transactions to capture.
-    //   - output bit [7:0] data_array[$]: Dynamic array to store transaction data.
-    //   - output bit response: Captured response signal from the interface.
-    //*************************************************************************
-
-    task capture_data(
-        int transaction_count,            
-        output bit [7:0] data_array[$],   
-        output bit response_ahb             
-    );
-        int transaction_index = 0;
-
-        while (transaction_index < transaction_count) begin
-            for (int byte_index = 0; byte_index < (1 << ahb_vif.HSIZE); byte_index++) begin
-                data_array[transaction_index] = ahb_vif.HWRITE 
-                    ? ahb_vif.HWDATA[(byte_index * 8) +: 8] // Write data
-                    : ahb_vif.HRDATA[(byte_index * 8) +: 8]; // Read data
-            end
-
-            transaction_index++;
+            
+            ahb_mon_item.RESP_i = (ahb_vif.HRESP == 1) ? ERROR : okay;
+            ahb_mon_item.print();
+            ahb_ap.write(ahb_mon_item);
             @(posedge ahb_vif.HCLK);
-        end
-        response_ahb = ahb_vif.HRESP;
     endtask
 
 endclass

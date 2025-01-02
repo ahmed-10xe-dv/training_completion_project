@@ -64,7 +64,7 @@ class axi2ahb_test extends uvm_test;
         // TO DO :  Load memory here
         mul_seq.mem = mem_model_inst;   // Assign memory to multi sequence
         mul_seq.start(env.vseqr);       // Start sequences through virtual sequencer
-        #1000ns;
+        #200ns;
 
         phase.drop_objection(this, "MAIN - drop_objection");
         `uvm_info(get_full_name(), "MAIN PHASE ENDED", UVM_LOW);

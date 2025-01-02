@@ -34,10 +34,14 @@ class axi_seq_item extends uvm_sequence_item;
   bit                            [2:0]                            awsize_val;               // AWSIZE value
   bit                            [`WIDTH-1:0]                     write_strobe[$];          // Write strobe array
   bit                            [`WIDTH*8-1:0]                   write_data[$];            // Write data array
+  // bit                                                             bready;                   // Write Response        
+
 
   // Constraints
   constraint data_con { data.size inside {[1:1024]}; }
   constraint size_con { size inside {1, 2, 4 ,8,16,32,64,128}; }
+  // constraint bready_con { bready == 1; }
+
 
   // UVM Macros for field registration
   `uvm_object_utils_begin(axi_seq_item)
@@ -48,6 +52,7 @@ class axi_seq_item extends uvm_sequence_item;
     `uvm_field_enum(response_type, response, UVM_DEFAULT)
     `uvm_field_enum(operation_type, access, UVM_DEFAULT)
     `uvm_field_sarray_int(data, UVM_DEFAULT)
+    // `uvm_field_int(bready, UVM_DEFAULT)
   `uvm_object_utils_end
 
   // Constructor

@@ -22,10 +22,11 @@ class axi2ahb_scoreboard extends uvm_component;
     uvm_tlm_analysis_fifo #(axi_seq_item) axi_rd_addr_fifo;
     uvm_tlm_analysis_fifo #(axi_seq_item) axi_wr_data_fifo;
     uvm_tlm_analysis_fifo #(axi_seq_item) axi_rd_data_fifo;
+    uvm_tlm_analysis_fifo #(axi_seq_item) axi_wr_rsp_fifo;
     uvm_tlm_analysis_fifo #(ahb_seq_item) ahb_data_fifo;
 
     // Transaction items for comparison
-    axi_seq_item axi_wr_addr_item, axi_wr_data_item, axi_rd_addr_item, axi_rd_data_item;
+    axi_seq_item axi_wr_addr_item, axi_wr_data_item, axi_rd_addr_item, axi_rd_data_item, axi_wr_rsp_item;
     ahb_seq_item ahb_data_item;
 
     /*************************************************************************
@@ -44,6 +45,7 @@ class axi2ahb_scoreboard extends uvm_component;
         axi_rd_addr_fifo = new("axi_rd_addr_fifo", this);
         axi_wr_data_fifo = new("axi_wr_data_fifo", this);
         axi_rd_data_fifo = new("axi_rd_data_fifo", this);
+        axi_wr_rsp_fifo = new("axi_wr_rsp_fifo", this);
         ahb_data_fifo    = new("ahb_data_fifo", this);
     endfunction
 

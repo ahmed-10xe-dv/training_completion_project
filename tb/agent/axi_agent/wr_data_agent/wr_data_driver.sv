@@ -56,7 +56,7 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
       axi_vif.WID        <= 'b0;
       axi_vif.WLAST      <= 'b0;
       axi_vif.WVALID     <= 1'b0;
-      axi_vif.BREADY     <= 1'b0;
+      // axi_vif.BREADY     <= 1'b0;
 
 
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
@@ -83,7 +83,7 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
 
       fork
         drive_write_data();
-        drive_write_rsp_channel();
+        // drive_write_rsp_channel();
       join
 
     end

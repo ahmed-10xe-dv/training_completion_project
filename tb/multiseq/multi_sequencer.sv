@@ -19,6 +19,7 @@ class virtual_sequencer extends uvm_sequencer;
     rd_addr_sequencer rd_addr_sqr;     // Read address sequencer for AXI
     wr_data_sequencer wr_data_sqr;     // Write data sequencer for AXI
     rd_data_sequencer rd_data_sqr;     // Read data sequencer for AXI
+    wr_rsp_sequencer wr_rsp_sqr;     // Write Response sequencer for AXI
     ahb_sequencer     ahb_sqr;         // Sequencer for AHB transactions
 
     //-------------------------------------------------------------------------

@@ -61,7 +61,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
       start_item(req);  
       finish_item(req);
 
-      req.print();
+      // req.print();
 
       // if (req.HTRANS_o[1]) begin
               // Perform write or read operation based on request
@@ -75,6 +75,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
         else begin
             `uvm_info("AHB Read Transaction",
             $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
+            req.HREADY_i <= 1'b1;
             req.HRDATA_i = mem.read(req.HADDR_o);
             `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
             req.HADDR_o, req.HRDATA_i), UVM_LOW)
