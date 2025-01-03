@@ -35,8 +35,10 @@ class wr_addr_agent extends uvm_agent;
     super.build_phase(phase);
 
     // Create agent components
-    wr_addr_driv = wr_addr_driver::type_id::create("wr_addr_driv", this);
-    wr_addr_sqr  = wr_addr_sequencer::type_id::create("wr_addr_sqr", this);
+    if(get_is_active() == UVM_ACTIVE) begin
+      wr_addr_driv = wr_addr_driver::type_id::create("wr_addr_driv", this);
+      wr_addr_sqr  = wr_addr_sequencer::type_id::create("wr_addr_sqr", this);
+    end
     wr_addr_mon  = wr_addr_monitor::type_id::create("wr_addr_mon", this);
 
     `uvm_info(get_full_name(), "Build phase completed for Write Address Agent", UVM_LOW)
@@ -48,7 +50,12 @@ class wr_addr_agent extends uvm_agent;
   function void connect_phase(uvm_phase phase);
 
     // Connect driver to sequencer
-    wr_addr_driv.seq_item_port.connect(wr_addr_sqr.seq_item_export);
+    if(get_is_active() == UVM_ACTIVE) begin
+      wr_addr_driv.seq_item_port.connect(wr_addr_sqr.seq_item_export);
+    end
+    else begin
+      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+    end
 
     `uvm_info(get_full_name(), "Connect phase completed for Write Address Agent", UVM_LOW)
   endfunction

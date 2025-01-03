@@ -28,9 +28,6 @@ class multi_seq extends uvm_sequence;
     axi_sequence wr_rsp_seq;  // AXI Write Response Sequence
     ahb_sequence ahb_seq;      // AHB Sequence
 
-    //Parameterized Memory Model
-    mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
-
     //-------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------
@@ -56,7 +53,6 @@ class multi_seq extends uvm_sequence;
     // Starts the AXI and AHB sequences concurrently
     //-------------------------------------------------------------------------
     virtual task body();
-        ahb_seq.mem = mem;
         fork
             wr_addr_seq.start(p_sequencer.wr_addr_sqr);
             rd_addr_seq.start(p_sequencer.rd_addr_sqr);
@@ -64,7 +60,7 @@ class multi_seq extends uvm_sequence;
             rd_data_seq.start(p_sequencer.rd_data_sqr);
             wr_rsp_seq.start(p_sequencer.wr_rsp_sqr);
             begin
-                #140;
+                #140; // Added Delay to make sure that AHB sequence starts once the valid axi transactions have started 
                 ahb_seq.start(p_sequencer.ahb_sqr);
             end
         join

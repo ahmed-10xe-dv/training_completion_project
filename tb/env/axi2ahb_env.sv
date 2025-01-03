@@ -23,13 +23,8 @@ class axi2ahb_env extends uvm_env;
     //-------------------------------------------------------------------------
     // Member Variables
     //-------------------------------------------------------------------------
-    wr_addr_agent      wr_addr_agnt;      // AXI Write Address Agent
-    rd_addr_agent      rd_addr_agnt;      // AXI Read Address Agent
-    wr_data_agent      wr_data_agnt;      // AXI Write Data Agent
-    rd_data_agent      rd_data_agnt;      // AXI Read Data Agent
-    wr_rsp_agent       wr_rsp_agnt;      // AXI Write Response Agent
-
-    ahb_agent          ahb_agnt;          // AHB Agent
+    axi_environmet axi_env;
+    ahb_environment ahb_env;
     virtual_sequencer  vseqr;             // Virtual Sequencer
     axi2ahb_scoreboard scoreboard;        // Scoreboard
 
@@ -48,17 +43,11 @@ class axi2ahb_env extends uvm_env;
         super.build_phase(phase);
         `uvm_info(get_full_name(), "BUILD Phase of Env", UVM_LOW);
 
-        // Create Agents
-        wr_addr_agnt = wr_addr_agent::type_id::create("wr_addr_agnt", this);
-        rd_addr_agnt = rd_addr_agent::type_id::create("rd_addr_agnt", this);
-        wr_data_agnt = wr_data_agent::type_id::create("wr_data_agnt", this);
-        rd_data_agnt = rd_data_agent::type_id::create("rd_data_agnt", this);
-        wr_rsp_agnt  = wr_rsp_agent::type_id::create("wr_rsp_agnt", this);
-
-        ahb_agnt     = ahb_agent::type_id::create("ahb_agnt", this);
+        // Create Env
+        axi_env = axi_environmet::type_id::create("axi_env", this);
+        ahb_env      = ahb_environment::type_id::create("ahb_env", this);
+        // Create Virtual Sequencer
         vseqr        = virtual_sequencer::type_id::create("vseqr", this);
-
-
         // Create Scoreboard
         scoreboard   = axi2ahb_scoreboard::type_id::create("scoreboard", this);
     endfunction
@@ -71,23 +60,22 @@ class axi2ahb_env extends uvm_env;
         super.connect_phase(phase);
         `uvm_info(get_full_name(), "CONNECT Phase of Env", UVM_LOW);
 
-        vseqr.wr_addr_sqr  =  wr_addr_agnt.wr_addr_sqr;
-        vseqr.rd_addr_sqr  = rd_addr_agnt.rd_addr_sqr;
-        vseqr.wr_data_sqr  = wr_data_agnt.wr_data_sqr;
-        vseqr.rd_data_sqr  = rd_data_agnt.rd_data_sqr;
-        vseqr.wr_rsp_sqr  =  wr_rsp_agnt.wr_rsp_sqr;
-        vseqr.ahb_sqr      = ahb_agnt.ahb_sqr;
+        vseqr.wr_addr_sqr  =  axi_env.wr_addr_agnt.wr_addr_sqr;
+        vseqr.rd_addr_sqr  =  axi_env.rd_addr_agnt.rd_addr_sqr;
+        vseqr.wr_data_sqr  =  axi_env.wr_data_agnt.wr_data_sqr;
+        vseqr.rd_data_sqr  =  axi_env.rd_data_agnt.rd_data_sqr;
+        vseqr.wr_rsp_sqr   =  axi_env.wr_rsp_agnt.wr_rsp_sqr;
+        vseqr.ahb_sqr      =  ahb_env.ahb_agnt.ahb_sqr;
 
         // Connect AXI Monitors to Scoreboard
-        wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_fifo.analysis_export);
-        rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(scoreboard.axi_rd_addr_fifo.analysis_export);
-        wr_data_agnt.wr_data_mon.wr_data_ap.connect(scoreboard.axi_wr_data_fifo.analysis_export);
-        rd_data_agnt.rd_data_mon.rd_data_ap.connect(scoreboard.axi_rd_data_fifo.analysis_export);
-        wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(scoreboard.axi_wr_rsp_fifo.analysis_export);
-
+        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_fifo.analysis_export);
+        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(scoreboard.axi_rd_addr_fifo.analysis_export);
+        axi_env.wr_data_agnt.wr_data_mon.wr_data_ap.connect(scoreboard.axi_wr_data_fifo.analysis_export);
+        axi_env.rd_data_agnt.rd_data_mon.rd_data_ap.connect(scoreboard.axi_rd_data_fifo.analysis_export);
+        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(scoreboard.axi_wr_rsp_fifo.analysis_export);
 
         // Connect AHB Monitor to Scoreboard
-        ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_fifo.analysis_export);
+        ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_fifo.analysis_export);
     endfunction
 
 endclass

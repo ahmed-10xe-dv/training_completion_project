@@ -34,12 +34,25 @@ class axi_seq_item extends uvm_sequence_item;
   bit                            [2:0]                            awsize_val;               // AWSIZE value
   bit                            [`WIDTH-1:0]                     write_strobe[1023:0];     // Write strobe array
   bit                            [`WIDTH*8-1:0]                   write_data[$];            // Write data array
-  rand bit                                                             bready;              // Write Response        
+  rand bit                                                             bready;              // Write Response 
+  rand bit                                                             aw_valid;            // Write Address Valid 
+  rand bit                                                             w_valid;             // Write Data Valid         
+  rand bit                                                             ar_valid;            // Read Address Valid 
+  rand bit                                                             rready;              // Read Response 
+
 
 
   // Constraints
   constraint data_con { data.size inside {[1:1024]}; }
   constraint size_con { size inside {1, 2, 4 ,8,16,32,64,128}; }
+  constraint wr_res_con { bready == 1; }
+  constraint rd_res_con { rready == 1; }
+  constraint wr_addr_valid_con { aw_valid == 1; }
+  constraint wr_data_valid_con { w_valid == 1; }
+  constraint rd_addr_valid_con { ar_valid == 1; }
+
+
+
 
 
   // UVM Macros for field registration

@@ -47,47 +47,67 @@ class rd_data_monitor extends uvm_monitor;
         end
     endtask
 
+     //----------------------------------------------------------------------------- 
+    // Task: monitor_rd_data
+    // Description: Captures Read data transactions and sends them via analysis port
+    //-----------------------------------------------------------------------------
     task monitor_rd_data();
         axi_seq_item temp_rd_data_item;
-        bit [7:0] mon_data[$];
-
-        @(posedge axi_vif.ACLK);
-        wait(axi_vif.RVALID);
         temp_rd_data_item         = axi_seq_item::type_id::create("read_data_monitor");
-        temp_rd_data_item.id      = axi_vif.RID;
-        mon_data                  = {};
 
-        while (!axi_vif.RLAST) begin
-            for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
-                for (int bit_index = 0; bit_index < 8; bit_index++) begin
-                    mon_data.push_back(axi_vif.RDATA[(byte_lane * 8) + bit_index]);
-                end
-            end
+        // Wait for valid Read data transaction
+        wait(axi_vif.RVALID);
+
+        do begin
+            int beat =0;
+            `uvm_info(get_full_name(), "Monitoring AXI_Read_data_monitor transactions", UVM_LOW)
+            temp_rd_data_item.id = axi_vif.RID;
+            temp_rd_data_item.write_data[beat] = axi_vif.RDATA;
+            beat++;
             wait(axi_vif.RREADY);
+
+            rd_data_ap.write(temp_rd_data_item);
+            temp_rd_data_item.print();
             @(posedge axi_vif.ACLK);
+            `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+            
         end
+        while (!axi_vif.RLAST);
 
-        // Collect last beat
-        wait(axi_vif.RVALID && axi_vif.RLAST);
-        for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
-            for (int bit_index = 0; bit_index < 8; bit_index++) begin
-                mon_data.push_back(axi_vif.RDATA[(byte_lane * 8) + bit_index]);
-            end
-        end
+        // temp_rd_data_item.id      = axi_vif.RID;
+        // mon_data                  = {};
 
-        temp_rd_data_item.data = mon_data;
+        // while (!axi_vif.RLAST) begin
+        //     for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
+        //         for (int bit_index = 0; bit_index < 8; bit_index++) begin
+        //             mon_data.push_back(axi_vif.RDATA[(byte_lane * 8) + bit_index]);
+        //         end
+        //     end
+        //     wait(axi_vif.RREADY);
+        //     @(posedge axi_vif.ACLK);
+        // end
 
-        case (axi_vif.RRESP)
-            2'b00: temp_rd_data_item.response = OKAY;
-            2'b01: temp_rd_data_item.response = EXOKAY;
-            2'b10: temp_rd_data_item.response = SLVERR;
-            2'b11: temp_rd_data_item.response = DECERR;
-        endcase
+        // // Collect last beat
+        // wait(axi_vif.RVALID && axi_vif.RLAST);
+        // for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
+        //     for (int bit_index = 0; bit_index < 8; bit_index++) begin
+        //         mon_data.push_back(axi_vif.RDATA[(byte_lane * 8) + bit_index]);
+        //     end
+        // end
 
-        temp_rd_data_item.access = READ_TRAN;
-        // wait(axi_vif.RREADY);
-        // @(posedge axi_vif.ACLK);
-        rd_data_ap.write(temp_rd_data_item);
+        // temp_rd_data_item.data = mon_data;
+
+        // case (axi_vif.RRESP)
+        //     2'b00: temp_rd_data_item.response = OKAY;
+        //     2'b01: temp_rd_data_item.response = EXOKAY;
+        //     2'b10: temp_rd_data_item.response = SLVERR;
+        //     2'b11: temp_rd_data_item.response = DECERR;
+        // endcase
+
+        // temp_rd_data_item.access = READ_TRAN;
+        // // wait(axi_vif.RREADY);
+        // // @(posedge axi_vif.ACLK);
+        // rd_data_ap.write(temp_rd_data_item);
     endtask
 endclass
 

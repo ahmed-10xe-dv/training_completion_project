@@ -57,7 +57,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
 
     // Have to do it in forever block
     // forever begin
-    repeat (5) begin
+    repeat (1) begin
       start_item(req);  
       finish_item(req);
 
@@ -69,17 +69,17 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
             `uvm_info("AHB Write Transaction", 
             $sformatf("Writing to address %0h: data %0h", req.HADDR_o, 
             req.HWDATA_o), UVM_LOW)
-            req.HREADY_i <= 1'b1;
             req.RESP_i <= okay;
         end
         else begin
             `uvm_info("AHB Read Transaction",
             $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
-            req.HREADY_i <= 1'b1;
             req.HRDATA_i = mem.read(req.HADDR_o);
             `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
             req.HADDR_o, req.HRDATA_i), UVM_LOW)
         end
+        
+        req.HREADY_i <= 1'b1;
       // end 
       // else `uvm_info("AHB SEQ", $sformatf("Slave is busy or IDLE HTRANS is:%0b ", req.HTRANS_o), UVM_LOW)
 

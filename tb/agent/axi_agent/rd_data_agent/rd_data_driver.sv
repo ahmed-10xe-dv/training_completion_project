@@ -80,12 +80,7 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
   task main_phase(uvm_phase phase);
     `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
     forever begin
-
-      fork
         drive_read_data();
-        drive_read_rsp_channel();
-      join
-
     end
     `uvm_info(get_name(), $sformatf("Main Phase Ended"), UVM_LOW)
   endtask
@@ -94,62 +89,15 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
   // Task drive_read_data
   //-----------------------------------------------------------------------------
   task drive_read_data();
+    seq_item_port.get_next_item(req);
 
-    // Local variables
-    int byte_index = 0;  // Index for storing data in the sequence item
-    int word_count = 1;  // Dynamic counter for received words
-
-      // Retrieve the next sequence item
-      seq_item_port.get_next_item(req);
-      if (req.access == READ_TRAN) begin
-
-        axi_seq_item read_item; // Sequence item to store read response data
-
-        // Create a new sequence item for the read response
-        read_item = axi_seq_item::type_id::create("read_response");
-        @(posedge axi_vif.ACLK);
-        axi_vif.RREADY <= 1'b1;
-        
-        // Wait until RLAST signal is low
-        wait(!axi_vif.RLAST);
-
-        // Loop to read data words until the RLAST signal is asserted
-        while (!axi_vif.RLAST) begin
-            wait(axi_vif.RVALID);
-            @(posedge axi_vif.ACLK);
-            read_item.data = new[word_count*4] (read_item.data);  //Reallocate Array preserving previous values
-
-            // Capture the current data and store in the sequence item
-            {read_item.data[byte_index + 3], read_item.data[byte_index + 2], 
-            read_item.data[byte_index + 1], read_item.data[byte_index]} = axi_vif.RDATA;
-            read_item.id = axi_vif.RID;
-
-            byte_index += 4;
-            word_count++;
-        end
-
-        // Handle the last data word
-        wait(axi_vif.RVALID);
-        @(posedge axi_vif.ACLK);
-        read_item.data = new[word_count*4] (read_item.data);  //Reallocate Array preserving previous values
-        {read_item.data[byte_index + 3], read_item.data[byte_index + 2], 
-        read_item.data[byte_index + 1], read_item.data[byte_index]} = axi_vif.RDATA;
-        read_item.id = axi_vif.RID;
-
-        // Reset the byte index for the next transaction
-        byte_index = 0;
-        `uvm_info(get_full_name(), "Read Data transaction completed", UVM_LOW)
-
-      end
-        seq_item_port.item_done();
-  endtask
-
-  task drive_read_rsp_channel();
-    @(posedge axi_vif.ACLK);
-    axi_vif.RREADY <= 1'b1;
-    wait(axi_vif.RVALID);
-    @(posedge axi_vif.ACLK);
-    axi_vif.RREADY <= 1'b0;
+    if (req.access == READ_TRAN) begin
+      `uvm_info(get_full_name(), "Observing Read Data transaction", UVM_LOW)
+      axi_vif.RREADY <= req.rready;
+      wait(axi_vif.RVALID);
+      @(posedge axi_vif.ACLK);
+    end
+    seq_item_port.item_done();
   endtask
 
 endclass

@@ -34,9 +34,11 @@ class rd_addr_agent extends uvm_agent;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    // Create agent components
-    rd_addr_driv = rd_addr_driver::type_id::create("rd_addr_driv", this);
-    rd_addr_sqr  = rd_addr_sequencer::type_id::create("rd_addr_sqr", this);
+    // Create agent components based on agent nature of being active/passive
+    if(get_is_active() == UVM_ACTIVE) begin
+      rd_addr_driv = rd_addr_driver::type_id::create("rd_addr_driv", this);
+      rd_addr_sqr  = rd_addr_sequencer::type_id::create("rd_addr_sqr", this);
+    end
     rd_addr_mon  = rd_addr_monitor::type_id::create("rd_addr_mon", this);
 
     `uvm_info(get_full_name(), "Build phase completed for Read Address Agent", UVM_LOW)
@@ -48,7 +50,12 @@ class rd_addr_agent extends uvm_agent;
   function void connect_phase(uvm_phase phase);
 
     // Connect driver to sequencer
-    rd_addr_driv.seq_item_port.connect(rd_addr_sqr.seq_item_export);
+    if(get_is_active() == UVM_ACTIVE) begin
+      rd_addr_driv.seq_item_port.connect(rd_addr_sqr.seq_item_export);
+    end
+    else begin
+      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+    end
 
     `uvm_info(get_full_name(), "Connect phase completed for Read Address Agent", UVM_LOW)
   endfunction

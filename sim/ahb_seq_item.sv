@@ -36,7 +36,7 @@ class ahb_seq_item extends uvm_sequence_item;
     bit [2:0] HSIZE_o;                                   // Transfer size
     bit [2:0] HBURST_o;                                  // Burst type
     bit [1:0] HTRANS_o;                                  // Transfer type
-    bit HREADY_i;                                        // Ready signal to master
+    rand bit HREADY_i;                                   // Ready signal to master
 
     //-------------------------------------------------------------------------
     // Field Registration Macros

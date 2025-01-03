@@ -71,6 +71,7 @@ class wr_data_monitor extends uvm_monitor;
             temp_data_item.write_strobe[beat] = axi_vif.WSTRB;
             beat++;
             wait(axi_vif.WREADY);
+            
             wr_data_ap.write(temp_data_item);
             temp_data_item.print();
             @(posedge axi_vif.ACLK);
@@ -78,7 +79,6 @@ class wr_data_monitor extends uvm_monitor;
         end
         while (!axi_vif.WLAST);
 
-        // temp_data_item.print();
 
         // `uvm_info("AXI Write Data Transaction", 
         // $sformatf("Writing to address %0h: DATA %0h", temp_data_item.WDATA, 

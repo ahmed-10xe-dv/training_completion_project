@@ -97,7 +97,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
     if (req.access == READ_TRAN) begin
       `uvm_info(get_full_name(), "Driving read address transaction", UVM_LOW)
       req.print();
-      // @(posedge axi_vif.ACLK);
+      
        // Drive AXI read address and control signals
       axi_vif.ARBURST <= req.burst;
       axi_vif.ARADDR  <= req.addr;
@@ -105,10 +105,8 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
       axi_vif.ARSIZE  <= req.awsize_val;
       axi_vif.ARLEN   <= req.burst_length - 1;
 
-      axi_vif.ARVALID <= 1'b1;
+      axi_vif.ARVALID <= req.ar_valid;
       wait(axi_vif.ARREADY);
-      @(posedge axi_vif.ACLK);
-      axi_vif.ARVALID <= 1'b0;
      `uvm_info(get_full_name(), "Read address transaction completed", UVM_LOW)
     end
     seq_item_port.item_done(); 
