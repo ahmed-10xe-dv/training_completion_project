@@ -26,8 +26,6 @@ class axi_sequence extends uvm_sequence #(axi_seq_item);
   // Task: Body
   task body();
       begin
-          // for (int i = 1; i < 5; i++) begin
-              // Wait for sequence item grant
               wait_for_grant();
               // Create and randomize sequence item
               req = axi_seq_item::type_id::create("Write_request");
@@ -46,33 +44,30 @@ class axi_sequence extends uvm_sequence #(axi_seq_item);
               // Send request and wait for completion
               send_request(req);
               wait_for_item_done();
-          // end
+
       end
 
 
-      // begin
-      //   //   for (int i = 1; i < 5; i++) begin
-      //         // Wait for sequence item grant
-      //         wait_for_grant();
-      //         // Create and randomize sequence item
-      //         req = axi_seq_item::type_id::create("Read_request");
-      //         if (!req.randomize() with {
-      //                 access == READ_TRAN;
-      //                 burst == FIXED;
-      //                 size == 4;
-      //                 data.size == 4;
-      //             }) begin
-      //             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
-      //         end
-      //         // Assign transaction details
-      //         req.id = 5;
-      //         req.addr = 32'h4;
+      begin
+              wait_for_grant();
+              // Create and randomize sequence item
+              req = axi_seq_item::type_id::create("Read_request");
+              if (!req.randomize() with {
+                      access == READ_TRAN;
+                      burst == FIXED;
+                      size == 4;
+                      data.size == 4;
+                  }) begin
+                  `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+              end
+              // Assign transaction details
+              req.id = 5;
+              req.addr = 32'h4;
               
-      //         // Send request and wait for completion
-      //         send_request(req);
-      //         wait_for_item_done();
-      //   //   end
-      // end
+              // Send request and wait for completion
+              send_request(req);
+              wait_for_item_done();
+      end
 
   endtask // body
 

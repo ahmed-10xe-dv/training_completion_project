@@ -83,7 +83,6 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
 
       fork
         drive_write_data();
-        // drive_write_rsp_channel();
       join
 
     end
@@ -104,11 +103,11 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
 
     // @(posedge axi_vif.ACLK);
 
-      for (int beat = 0; beat < req.burst_length ; beat++) begin
+      for (int beat = 0; beat < req.burst_length -1 ; beat++) begin
         axi_vif.WID     <= req.id;
         axi_vif.WDATA   <= req.write_data[beat];
         axi_vif.WSTRB   <= req.write_strobe[beat];
-        axi_vif.WLAST   <= (beat == req.burst_length - 1)? 1'b1: 1'b0;
+        axi_vif.WLAST   <= (beat == req.burst_length - 2)? 1'b1: 1'b0;
 
         axi_vif.WVALID <= 1'b1;
         wait(axi_vif.WREADY);
@@ -121,13 +120,7 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
     seq_item_port.item_done();
   endtask
 
-  task drive_write_rsp_channel();
-    @(posedge axi_vif.ACLK);
-    axi_vif.BREADY <= 1'b1;
-    wait(axi_vif.BVALID);
-    @(posedge axi_vif.ACLK);
-    axi_vif.BREADY <= 1'b0;
-  endtask
+
 
 endclass
 

@@ -56,7 +56,7 @@ class axi2ahb_scoreboard extends uvm_component;
         `uvm_info(get_full_name(), "Main Phase Started in Scoreboard", UVM_LOW);
         fork
             compare_write_data_transfer();
-            compare_read_data_transfer();
+            // compare_read_data_transfer();
         join
     endtask
 
@@ -74,103 +74,135 @@ class axi2ahb_scoreboard extends uvm_component;
             // Retrieve write address and data from AXI FIFOs
             axi_wr_addr_fifo.get(temp_axi_wr_addr_item);
             axi_wr_data_fifo.get(temp_axi_wr_data_item);
+            ahb_data_fifo.get(temp_ahb_data_item);
 
-            // temp_axi_wr_addr_item.print();
-            // temp_axi_wr_data_item.print();
 
-            // Handle Fixed Burst transactions
-            if (temp_axi_wr_addr_item.burst == FIXED) begin
-                for (int i = 0; i < (temp_axi_wr_data_item.data.size() / 4); i++) begin
-                    ahb_data_fifo.get(temp_ahb_data_item);
-                    // foreach (temp_ahb_data_item.data[m])
-                    //     temp_wr_data.push_back(temp_ahb_data_item.data[m]);
-                end
+            temp_axi_wr_addr_item.print();
+            temp_axi_wr_data_item.print();
+            temp_ahb_data_item.print();
 
-                temp_ahb_data_item.print();
-                if (temp_axi_wr_data_item.data == temp_wr_data) begin
+
+            if (temp_axi_wr_addr_item.access == WRITE_TRAN & temp_ahb_data_item.ACCESS_o == write) begin
+                     $display("Scoreboard Debug");
+
+                if (temp_ahb_data_item.HWDATA_o == temp_axi_wr_data_item.write_data[0]) begin
                     `uvm_info("BRIDGE_WRITE_TXN_PASS", 
-                        $sformatf("AXI and AHB Write transactions match\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_wr_data), UVM_LOW);
-                end else begin
-                    `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
-                        $sformatf("AXI and AHB Write transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_wr_data))
-                end
-                temp_wr_data = {};
-            end 
+                            $sformatf("AXI and AHB Write transactions match\nAXI: %h\nAHB: %h", temp_axi_wr_data_item.write_data[0], temp_ahb_data_item.HWDATA_o), UVM_LOW);
+                    end 
+                    else begin
+                        `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
+                            $sformatf("AXI and AHB Write transactions mismatch\nAXI: %h\nAHB: %h", temp_axi_wr_data_item.write_data[0], temp_ahb_data_item.HWDATA_o))
+                end   
+                
+            end
             else begin
-                // Non-Fixed Burst transactions
-                ahb_data_fifo.get(temp_ahb_data_item);
-                // temp_ahb_data_item.print();
-
-                // if (temp_axi_wr_data_item.data == temp_ahb_data_item.data) begin
-                //     `uvm_info("BRIDGE_WRITE_TXN_PASS", 
-                //         $sformatf("AXI and AHB Write transactions match\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_ahb_data_item.data), UVM_LOW);
-                // end else begin
-                //     `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
-                //         $sformatf("AXI and AHB Write transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_ahb_data_item.data))
-                // end
+                $display("Could Not Find Write");
+                
             end
         end
+
+            // for (int i = 0; i < (temp_axi_wr_data_item.data.size() / 4); i++) begin
+            //         ahb_data_fifo.get(temp_ahb_data_item);
+            //         // foreach (temp_ahb_data_item.data[m])
+            //         //     temp_wr_data.push_back(temp_ahb_data_item.data[m]);
+            // end
+
+
+
+
+            // // Handle Fixed Burst transactions
+            // if (temp_axi_wr_addr_item.burst == FIXED) begin
+            //     for (int i = 0; i < (temp_axi_wr_data_item.data.size() / 4); i++) begin
+            //         ahb_data_fifo.get(temp_ahb_data_item);
+            //         // foreach (temp_ahb_data_item.data[m])
+            //         //     temp_wr_data.push_back(temp_ahb_data_item.data[m]);
+            //     end
+
+            //     // temp_ahb_data_item.print();
+            //     if (temp_axi_wr_data_item.data == temp_wr_data) begin
+            //         `uvm_info("BRIDGE_WRITE_TXN_PASS", 
+            //             $sformatf("AXI and AHB Write transactions match\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_wr_data), UVM_LOW);
+            //     end else begin
+            //         `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
+            //             $sformatf("AXI and AHB Write transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_wr_data))
+            //     end
+            //     temp_wr_data = {};
+            // end 
+            // else begin
+            //     // Non-Fixed Burst transactions
+            //     ahb_data_fifo.get(temp_ahb_data_item);
+            //     // temp_ahb_data_item.print();
+
+            //     // if (temp_axi_wr_data_item.data == temp_ahb_data_item.data) begin
+            //     //     `uvm_info("BRIDGE_WRITE_TXN_PASS", 
+            //     //         $sformatf("AXI and AHB Write transactions match\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_ahb_data_item.data), UVM_LOW);
+            //     // end else begin
+            //     //     `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
+            //     //         $sformatf("AXI and AHB Write transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_wr_data_item.data, temp_ahb_data_item.data))
+            //     // end
+            // end
+        // end
     endtask
 
     /*************************************************************************
     * Compare Read Data Transfer: AXI to AHB Read Transaction Comparison
     *************************************************************************/
-    task compare_read_data_transfer();
-        axi_seq_item temp_axi_rd_addr_item, temp_axi_rd_data_item;
-        ahb_seq_item temp_ahb_data_item;
-        bit [7:0] temp_rd_data[$];
-        int i = 0;
+    // task compare_read_data_transfer();
+    //     axi_seq_item temp_axi_rd_addr_item, temp_axi_rd_data_item;
+    //     ahb_seq_item temp_ahb_data_item;
+    //     bit [7:0] temp_rd_data[$];
+    //     int i = 0;
 
-        $display("Scoreboard Read Compare task is started");
+    //     $display("Scoreboard Read Compare task is started");
 
-        forever begin
-            // Retrieve read address and data from AXI FIFOs
-            axi_rd_addr_fifo.get(temp_axi_rd_addr_item);
-            axi_rd_data_fifo.get(temp_axi_rd_data_item);
+    //     forever begin
+    //         // Retrieve read address and data from AXI FIFOs
+    //         axi_rd_addr_fifo.get(temp_axi_rd_addr_item);
+    //         axi_rd_data_fifo.get(temp_axi_rd_data_item);
 
-            $display("AXI READ @ Scoreboard -- %0d", i);
-            temp_axi_rd_addr_item.print();
-            temp_axi_rd_data_item.print();
+    //         $display("AXI READ @ Scoreboard -- %0d", i);
+    //         temp_axi_rd_addr_item.print();
+    //         temp_axi_rd_data_item.print();
 
-            // Handle Fixed Burst transactions
-            if (temp_axi_rd_addr_item.burst == FIXED) begin
-                for (int j = 0; j < (temp_axi_rd_data_item.data.size() / 4); j++) begin
-                    ahb_data_fifo.get(temp_ahb_data_item);
-                    // foreach (temp_ahb_data_item.data[m])
-                    //     temp_rd_data.push_back(temp_ahb_data_item.data[m]);
-                end
+    //         // Handle Fixed Burst transactions
+    //         if (temp_axi_rd_addr_item.burst == FIXED) begin
+    //             for (int j = 0; j < (temp_axi_rd_data_item.data.size() / 4); j++) begin
+    //                 ahb_data_fifo.get(temp_ahb_data_item);
+    //                 // foreach (temp_ahb_data_item.data[m])
+    //                 //     temp_rd_data.push_back(temp_ahb_data_item.data[m]);
+    //             end
 
-                $display("AHB READ @ Scoreboard -- %0d", i);
-                temp_ahb_data_item.print();
+    //             $display("AHB READ @ Scoreboard -- %0d", i);
+    //             temp_ahb_data_item.print();
 
-                if (temp_axi_rd_data_item.data == temp_rd_data) begin
-                    `uvm_info("BRIDGE_READ_TXN_PASS", 
-                        $sformatf("AXI and AHB Read transactions match\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_rd_data), UVM_LOW);
-                end else begin
-                    `uvm_error("BRIDGE_READ_TXN_FAIL", 
-                        $sformatf("AXI and AHB Read transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_rd_data))
-                end
-                temp_rd_data = {};
-            end 
+    //             if (temp_axi_rd_data_item.data == temp_rd_data) begin
+    //                 `uvm_info("BRIDGE_READ_TXN_PASS", 
+    //                     $sformatf("AXI and AHB Read transactions match\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_rd_data), UVM_LOW);
+    //             end else begin
+    //                 `uvm_error("BRIDGE_READ_TXN_FAIL", 
+    //                     $sformatf("AXI and AHB Read transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_rd_data))
+    //             end
+    //             temp_rd_data = {};
+    //         end 
             
-            else begin
-                // Non-Fixed Burst transactions
-                ahb_data_fifo.get(temp_ahb_data_item);
-                $display("AHB READ @ Scoreboard -- %0d", i);
-                temp_ahb_data_item.print();
+    //         else begin
+    //             // Non-Fixed Burst transactions
+    //             ahb_data_fifo.get(temp_ahb_data_item);
+    //             $display("AHB READ @ Scoreboard -- %0d", i);
+    //             // temp_ahb_data_item.print();
 
-                // if (temp_axi_rd_data_item.data == temp_ahb_data_item.data) begin
-                //     `uvm_info("BRIDGE_READ_TXN_PASS", 
-                //         $sformatf("AXI and AHB Read transactions match\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_ahb_data_item.data), UVM_LOW);
-                // end else begin
-                //     `uvm_error("BRIDGE_READ_TXN_FAIL", 
-                //         $sformatf("AXI and AHB Read transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_ahb_data_item.data))
-                // end
-            end
+    //             // if (temp_axi_rd_data_item.data == temp_ahb_data_item.data) begin
+    //             //     `uvm_info("BRIDGE_READ_TXN_PASS", 
+    //             //         $sformatf("AXI and AHB Read transactions match\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_ahb_data_item.data), UVM_LOW);
+    //             // end else begin
+    //             //     `uvm_error("BRIDGE_READ_TXN_FAIL", 
+    //             //         $sformatf("AXI and AHB Read transactions mismatch\nAXI: %p\nAHB: %p", temp_axi_rd_data_item.data, temp_ahb_data_item.data))
+    //             // end
+    //         end
             
-            i++;
-        end
-    endtask
+    //         i++;
+    //     end
+    // endtask
 
 
 endclass

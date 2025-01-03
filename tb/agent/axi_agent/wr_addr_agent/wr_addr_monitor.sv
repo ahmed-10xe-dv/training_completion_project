@@ -82,10 +82,17 @@ class wr_addr_monitor extends uvm_monitor;
 
         // Wait for ready signal
         wait(axi_vif.AWREADY);
+        temp_wr_addr_item.print();
         @(posedge axi_vif.ACLK);
 
         // Write the monitored item to analysis port
         wr_addr_ap.write(temp_wr_addr_item);
+
+
+        `uvm_info( "AXI Write Addr Transaction", 
+        $sformatf("Writing to address %0h: ID %0h", temp_wr_addr_item.addr, 
+        temp_wr_addr_item.id), UVM_LOW)
+
     endtask
 
 endclass

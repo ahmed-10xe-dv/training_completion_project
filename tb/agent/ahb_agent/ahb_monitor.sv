@@ -84,22 +84,18 @@ class ahb_monitor extends uvm_monitor;
     //-----------------------------------------------------------------------------
     task monitor();
             wait(ahb_vif.HREADY);
+            `uvm_info(get_full_name(), "Monitoring ahb transactions", UVM_LOW)
             ahb_mon_item.HADDR_o = ahb_vif.HADDR;
-            
-            wait(ahb_vif.HTRANS[1]);
-            if (ahb_vif.HWRITE) begin
-                ahb_mon_item.ACCESS_o = write;
-                ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
-            end
-            else begin
-                ahb_mon_item.ACCESS_o = read;
-                ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
-            end
-            
+            ahb_mon_item.ACCESS_o = (ahb_vif.HWRITE == 1)? write : read;
+            ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
+            ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
             ahb_mon_item.RESP_i = (ahb_vif.HRESP == 1) ? ERROR : okay;
+            
             ahb_mon_item.print();
             ahb_ap.write(ahb_mon_item);
             @(posedge ahb_vif.HCLK);
+           `uvm_info(get_full_name(), " Completed monitoring ahb transactions", UVM_LOW)
+
     endtask
 
 endclass

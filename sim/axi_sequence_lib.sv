@@ -1,3 +1,16 @@
+/*************************************************************************
+   > File Name:   axi_sequence_lib.sv
+   > Description: 
+   > Author:      Ahmed Raza
+   > Modified:    Ahmed Raza
+   > Mail:        ahmed.raza@10xengineers.ai
+   ---------------------------------------------------------------
+   Copyright   (c)2024 10xEngineers
+   ---------------------------------------------------------------
+************************************************************************/
+
+
+
 //------------------------------------------------------------------------------
 // Basic Write Transaction
 // This sequence generates a fixed write transaction on the AXI bus.
@@ -73,11 +86,73 @@ class basic_write_txn extends axi_sequence;
             // Send request and wait for completion
             send_request(req);
             wait_for_item_done();
-  
-    endtask
+    endtask 
   endclass : basic_read_txn
   
+
   //------------------------------------------------------------------------------
+  // Basic read write Transaction
+  // This sequence generates a fixed write transaction on the AXI bus.
+  //------------------------------------------------------------------------------
+  class basic_rd_wr_txn extends axi_sequence;
+    `uvm_object_utils(basic_rd_wr_txn) // Register with the UVM factory
+  
+    axi_seq_item req; // Sequence item for the write transaction
+  
+    // Constructor
+    function new(string name = "basic_rd_wr_txn");
+      super.new(name);
+    endfunction
+  
+    // Main sequence body
+    task body();
+      begin
+        wait_for_grant();
+        // Create and randomize sequence item
+        req = axi_seq_item::type_id::create("Read_request");
+        if (!req.randomize() with {
+                access == READ_TRAN;
+                burst == FIXED;
+                size == 4;
+                data.size == 4;
+            }) begin
+            `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+        end
+        // Assign transaction details
+        req.id = 6;
+        req.addr = 32'h15;
+        
+        // Send request and wait for completion
+        send_request(req);
+        wait_for_item_done();
+      end
+
+      begin
+        wait_for_grant();
+        // Create and randomize sequence item
+        req = axi_seq_item::type_id::create("Write_request");
+        if (!req.randomize() with {
+                access == WRITE_TRAN;
+                burst == FIXED;
+                size == 4;
+                data.size == 4;
+            }) begin
+            `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+        end
+        // Assign transaction details
+        req.id = 4;
+        req.addr = 32'h10;
+        
+        // Send request and wait for completion
+        send_request(req);
+        wait_for_item_done();
+     end
+  
+    endtask
+endclass : basic_rd_wr_txn
+
+
+//------------------------------------------------------------------------------
 // Basic Write Transaction
 // This sequence generates a fixed write transaction on the AXI bus.
 //------------------------------------------------------------------------------
@@ -118,7 +193,7 @@ class basic_inc_write_txn extends axi_sequence;
 endclass : basic_inc_write_txn
 
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Basic Write Transaction
 // This sequence generates a fixed write transaction on the AXI bus.
 //------------------------------------------------------------------------------

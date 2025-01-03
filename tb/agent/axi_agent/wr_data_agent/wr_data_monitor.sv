@@ -58,41 +58,32 @@ class wr_data_monitor extends uvm_monitor;
     //-----------------------------------------------------------------------------
     task monitor_wr_data();
         axi_seq_item temp_data_item;
-        bit [7:0] mon_data[$]; // Dynamic array for monitored data
+        temp_data_item = axi_seq_item::type_id::create("AXI_write_data_monitor");
 
         // Wait for valid write data transaction
-        @(posedge axi_vif.ACLK);
+
         wait(axi_vif.WVALID);
-        temp_data_item = axi_seq_item::type_id::create("write_data_monitor");
-        temp_data_item.id = axi_vif.WID;
-
-        // Capture write data beats
-        mon_data = {};
-        while (!axi_vif.WLAST) begin
-            for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
-                if (axi_vif.WSTRB[byte_lane]) begin
-                    for (int bit_index = 0; bit_index < 8; bit_index++) begin
-                        mon_data.push_back(axi_vif.WDATA[(byte_lane * 8) + bit_index]);
-                    end
-                end
-            end
+        do begin
+            int beat =0;
+            `uvm_info(get_full_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+            temp_data_item.id = axi_vif.WID;
+            temp_data_item.write_data[beat] = axi_vif.WDATA;
+            temp_data_item.write_strobe[beat] = axi_vif.WSTRB;
+            beat++;
             wait(axi_vif.WREADY);
+            wr_data_ap.write(temp_data_item);
+            temp_data_item.print();
             @(posedge axi_vif.ACLK);
+            `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
         end
+        while (!axi_vif.WLAST);
 
-        // Collect last beat
-        wait(axi_vif.WVALID && axi_vif.WLAST);
-        for (int byte_lane = 0; byte_lane < 4; byte_lane++) begin
-            if (axi_vif.WSTRB[byte_lane]) begin
-                for (int bit_index = 0; bit_index < 8; bit_index++) begin
-                    mon_data.push_back(axi_vif.WDATA[(byte_lane * 8) + bit_index]);
-                end
-            end
-        end
-        temp_data_item.data = mon_data;
-        
-        @(posedge axi_vif.ACLK);
-        wr_data_ap.write(temp_data_item);
+        // temp_data_item.print();
+
+        // `uvm_info("AXI Write Data Transaction", 
+        // $sformatf("Writing to address %0h: DATA %0h", temp_data_item.WDATA, 
+        // temp_data_item.WSTRB), UVM_LOW)
+
     endtask
 endclass
 

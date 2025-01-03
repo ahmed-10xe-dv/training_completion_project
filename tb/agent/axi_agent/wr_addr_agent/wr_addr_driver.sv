@@ -104,8 +104,8 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
 
       axi_vif.AWVALID <= 1'b1;
       wait(axi_vif.AWREADY);
-      // @(posedge axi_vif.ACLK);
-      // axi_vif.AWVALID <= 1'b0;
+      @(posedge axi_vif.ACLK);
+      axi_vif.AWVALID <= 1'b0;
       `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)
     end
     @(posedge axi_vif.ACLK);
