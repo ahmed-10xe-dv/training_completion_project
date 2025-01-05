@@ -92,31 +92,32 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   task drive();
 
+    // Retrieve the next sequence item from the sequencer
     seq_item_port.get_next_item(req);
-    
-    req.ACCESS_o   <=  (ahb_vif.HWRITE)? write : read;
-    req.HADDR_o    <=  ahb_vif.HADDR;
-    req.HWDATA_o   <=  ahb_vif.HWDATA;
-    req.HSIZE_o    <=  ahb_vif.HSIZE;
-    req.HBURST_o   <=  ahb_vif.HBURST;
-    req.HTRANS_o   <=  ahb_vif.HTRANS;
-
+    // Assign input signals to the sequence item's fields based on AHB interface
+    req.ACCESS_o   <= (ahb_vif.HWRITE) ? write : read; // Determine access type: Read or Write
+    req.HADDR_o    <= ahb_vif.HADDR;                  // Capture address bus value
+    req.HWDATA_o   <= ahb_vif.HWDATA;                 // Capture write data bus value
+    req.HSIZE_o    <= ahb_vif.HSIZE;                  // Capture transfer size
+    req.HBURST_o   <= ahb_vif.HBURST;                 // Capture burst type
+    req.HTRANS_o   <= ahb_vif.HTRANS;                 // Capture transfer type
     seq_item_port.item_done();
+
 
     seq_item_port.get_next_item(rsp);
-
-    if (ahb_vif.HWRITE) begin
-      ahb_vif.HREADY  <= rsp.HREADY_i;
+    if (!ahb_vif.HWRITE) begin
+      ahb_vif.HRDATA <= rsp.HRDATA_i;              // Assign read data bus for read operation
+      ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
     end
     else begin
-      ahb_vif.HREADY  <= rsp.HREADY_i;
-      ahb_vif.HRDATA  <= rsp.HRDATA_i;
+        ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
     end
-
-    ahb_vif.HRESP   <= (rsp.RESP_i == okay) ? 1'b0 : 1'b1;
+    
+    // Assign response status (HRESP) based on response type (okay or error)
+    ahb_vif.HRESP <= (rsp.RESP_i == okay) ? 1'b0 : 1'b1;
     @(posedge ahb_vif.HCLK);
-
     seq_item_port.item_done();
+
   endtask : drive
 
 endclass : ahb_driver

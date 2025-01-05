@@ -16,7 +16,7 @@
 class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   `uvm_object_utils(ahb_sequence)
 
-  // Sequence item handle
+  // Sequence item handle and Memory Handle
   ahb_seq_item req;
   ahb_seq_item rsp;
   mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
@@ -48,23 +48,19 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
 
   //------------------------------------------------------------------------------
   // Task: body
-  // Generates and sends sequence items in a loop.
+  // Slave Sequence Method Implemented
   //------------------------------------------------------------------------------
   task body();
 
     req = ahb_seq_item::type_id::create("req");
     rsp = ahb_seq_item::type_id::create("rsp");
 
-    // Have to do it in forever block
-    // forever begin
     repeat (1) begin
+      // Send a dummy request
       start_item(req);  
       finish_item(req);
 
-      // req.print();
-
-      // if (req.HTRANS_o[1]) begin
-              // Perform write or read operation based on request
+        // Perform write or read operation based on DUT response
         if (req.ACCESS_o == write) begin
             `uvm_info("AHB Write Transaction", 
             $sformatf("Writing to address %0h: data %0h", req.HADDR_o, 
@@ -78,11 +74,9 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
             `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
             req.HADDR_o, req.HRDATA_i), UVM_LOW)
         end
-        
         req.HREADY_i <= 1'b1;
-      // end 
-      // else `uvm_info("AHB SEQ", $sformatf("Slave is busy or IDLE HTRANS is:%0b ", req.HTRANS_o), UVM_LOW)
-
+        
+      // Start new sequence to drive the values to the DUT
       start_item(rsp);
       rsp.copy(req);
       finish_item(rsp);

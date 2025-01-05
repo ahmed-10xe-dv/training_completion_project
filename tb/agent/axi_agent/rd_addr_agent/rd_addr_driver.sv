@@ -56,10 +56,10 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
       axi_vif.ARLEN     <= 'b0;
       axi_vif.ARSIZE    <= 'b0;
       axi_vif.ARBURST   <= 'b0;
-      axi_vif.ARLOCK    <= 'b0;
+      axi_vif.ARLOCK    <= `RD_ADDR_LOCK;
       axi_vif.ARVALID   <= 1'b0;
-      axi_vif.ARCACHE   <= 'b1111;
-      axi_vif.ARPROT    <= 'b1;
+      axi_vif.ARCACHE   <= `RD_ADDR_CACHE;
+      axi_vif.ARPROT    <= `RD_ADDR_PROT;
 
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);

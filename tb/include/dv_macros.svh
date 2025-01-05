@@ -7,6 +7,15 @@
 `endif
 
 `define WIDTH 4
+`define RD_ADDR_LOCK 0
+`define RD_ADDR_PROT 1
+`define RD_ADDR_CACHE 15
+`define WR_ADDR_LOCK 0
+`define WR_ADDR_PROT 1
+`define WR_ADDR_CACHE 15
+
+
+
 
 // UVM speficic macros
 `ifndef gfn

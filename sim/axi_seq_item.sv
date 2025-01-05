@@ -13,7 +13,7 @@
 `ifndef AXI_SEQ_ITEM
 `define AXI_SEQ_ITEM
 
-
+// Enums for Readibility
 typedef enum bit [1:0] {FIXED, INCR, WRAP} burst_type;
 typedef enum bit [1:0] {OKAY, EXOKAY, SLVERR, DECERR} response_type;
 typedef enum bit {READ_TRAN, WRITE_TRAN} operation_type;
@@ -22,23 +22,23 @@ typedef enum bit {READ_TRAN, WRITE_TRAN} operation_type;
 class axi_seq_item extends uvm_sequence_item;
 
   // Randomized variables
-  bit                            [31:0]                           addr;                     // Address        
-  randc                          bit [3:0]                        id;                       // Transaction ID  
-  rand                           int                              size;                     // Data size
-  rand                           burst_type                       burst;                    // Burst type      
-  rand                           bit [7:0]                        data[];                   // Data array
-  response_type                                                   response;                 // Response type   
-  rand                           operation_type                   access;                   // Operation type   
-  int                                                             burst_length;             // Burst length      
-  bit                            [31:0]                           aligned_addr;             // Aligned address
-  bit                            [2:0]                            awsize_val;               // AWSIZE value
-  bit                            [`WIDTH-1:0]                     write_strobe[1023:0];     // Write strobe array
-  bit                            [`WIDTH*8-1:0]                   write_data[$];            // Write data array
-  rand bit                                                             bready;              // Write Response 
-  rand bit                                                             aw_valid;            // Write Address Valid 
-  rand bit                                                             w_valid;             // Write Data Valid         
-  rand bit                                                             ar_valid;            // Read Address Valid 
-  rand bit                                                             rready;              // Read Response 
+  bit           [31:0]           addr;                     // Address        
+  randc         bit [3:0]        id;                       // Transaction ID  
+  rand          int              size;                     // Data size
+  rand          burst_type       burst;                    // Burst type      
+  rand          bit [7:0]        data[];                   // Data array
+  response_type                  response;                 // Response type   
+  rand          operation_type   access;                   // Operation type   
+  int                            burst_length;             // Burst length      
+  bit           [31:0]           aligned_addr;             // Aligned address
+  bit           [2:0]            awsize_val;               // AWSIZE value
+  bit           [`WIDTH-1:0]     write_strobe[1023:0];     // Write strobe array
+  bit           [`WIDTH*8-1:0]   write_data[$];            // Write data array
+  rand bit                       bready;                   // Write Response 
+  rand bit                       aw_valid;                 // Write Address Valid 
+  rand bit                       w_valid;                  // Write Data Valid         
+  rand bit                       ar_valid;                 // Read Address Valid 
+  rand bit                       rready;                   // Read Response 
 
 
 
@@ -50,9 +50,6 @@ class axi_seq_item extends uvm_sequence_item;
   constraint wr_addr_valid_con { aw_valid == 1; }
   constraint wr_data_valid_con { w_valid == 1; }
   constraint rd_addr_valid_con { ar_valid == 1; }
-
-
-
 
 
   // UVM Macros for field registration
@@ -154,7 +151,7 @@ function void burst_strobe_data_gen();
 
   // Post-randomization function to calculate AWSIZE, Burst Length, Strobe and WDATA
   function void post_randomize();
-    this.awsize_val = awsize();                         // Compute AWSIZE using the size value
+    this.awsize_val = awsize();    // Compute AWSIZE using the size value
     burst_strobe_data_gen();
   endfunction
   

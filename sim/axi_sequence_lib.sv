@@ -1,6 +1,7 @@
 /*************************************************************************
    > File Name:   axi_sequence_lib.sv
-   > Description: 
+   > Description: These are the sequences extended from base axi sequence
+                  to test different cases
    > Author:      Ahmed Raza
    > Modified:    Ahmed Raza
    > Mail:        ahmed.raza@10xengineers.ai
@@ -8,7 +9,6 @@
    Copyright   (c)2024 10xEngineers
    ---------------------------------------------------------------
 ************************************************************************/
-
 
 
 //------------------------------------------------------------------------------
@@ -54,12 +54,12 @@ class basic_write_txn extends axi_sequence;
   
   //------------------------------------------------------------------------------
   // Basic Read Transaction
-  // This sequence generates a fixed write transaction on the AXI bus.
+  // This sequence generates a fixed Read transaction on the AXI bus.
   //------------------------------------------------------------------------------
   class basic_read_txn extends axi_sequence;
     `uvm_object_utils(basic_read_txn) // Register with the UVM factory
   
-    axi_seq_item req; // Sequence item for the write transaction
+    axi_seq_item req; // Sequence item for the Read transaction
   
     // Constructor
     function new(string name = "basic_read_txn");
@@ -92,12 +92,12 @@ class basic_write_txn extends axi_sequence;
 
   //------------------------------------------------------------------------------
   // Basic read write Transaction
-  // This sequence generates a fixed write transaction on the AXI bus.
+  // This sequence generates a fixed read write transaction on the AXI bus.
   //------------------------------------------------------------------------------
   class basic_rd_wr_txn extends axi_sequence;
     `uvm_object_utils(basic_rd_wr_txn) // Register with the UVM factory
   
-    axi_seq_item req; // Sequence item for the write transaction
+    axi_seq_item req; // Sequence item for the transaction
   
     // Constructor
     function new(string name = "basic_rd_wr_txn");
@@ -130,7 +130,7 @@ class basic_write_txn extends axi_sequence;
       begin
         wait_for_grant();
         // Create and randomize sequence item
-        req = axi_seq_item::type_id::create("Write_request");
+        req = axi_seq_item::type_id::create("basic_rd_wr_txn");
         if (!req.randomize() with {
                 access == WRITE_TRAN;
                 burst == FIXED;
@@ -153,8 +153,8 @@ endclass : basic_rd_wr_txn
 
 
 //------------------------------------------------------------------------------
-// Basic Write Transaction
-// This sequence generates a fixed write transaction on the AXI bus.
+// Basic Inc Write Transaction
+// This sequence generates a INc write transaction of size 16 bytes on the AXI bus.
 //------------------------------------------------------------------------------
 class basic_inc_write_txn extends axi_sequence;
   `uvm_object_utils(basic_inc_write_txn) // Register with the UVM factory
@@ -171,7 +171,7 @@ class basic_inc_write_txn extends axi_sequence;
     begin
           wait_for_grant();
           // Create and randomize sequence item
-          req = axi_seq_item::type_id::create("Write_request");
+          req = axi_seq_item::type_id::create("basic_inc_write_txn_request");
           if (!req.randomize() with {
                   access == WRITE_TRAN;
                   burst == INCR;
@@ -194,8 +194,8 @@ endclass : basic_inc_write_txn
 
 
 //------------------------------------------------------------------------------
-// Basic Write Transaction
-// This sequence generates a fixed write transaction on the AXI bus.
+// Basic Inc Read Transaction
+// This sequence generates INCR read transaction on the AXI bus.
 //------------------------------------------------------------------------------
 class basic_inc_read_txn extends axi_sequence;
   `uvm_object_utils(basic_inc_read_txn) // Register with the UVM factory
@@ -212,7 +212,7 @@ class basic_inc_read_txn extends axi_sequence;
     begin
           wait_for_grant();
           // Create and randomize sequence item
-          req = axi_seq_item::type_id::create("Write_request");
+          req = axi_seq_item::type_id::create("basic_inc_read_request");
           if (!req.randomize() with {
                   access == READ_TRAN;
                   burst == INCR;

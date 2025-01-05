@@ -84,18 +84,20 @@ class ahb_monitor extends uvm_monitor;
     //-----------------------------------------------------------------------------
     task monitor();
             `uvm_info(get_full_name(), "Monitoring ahb transactions", UVM_LOW)
-            // Address Phase
+            // Address Phase, monitor control signals
             ahb_mon_item.HADDR_o = ahb_vif.HADDR;
             ahb_mon_item.ACCESS_o = (ahb_vif.HWRITE == 1)? write : read;
             
-            // Data Phase
+            // Data Phase, monitor Data and response
             @(posedge ahb_vif.HCLK); 
-            wait(ahb_vif.HREADY);
+            wait(ahb_vif.HREADY);  // Wait for slave to be ready
             ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
             ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
             ahb_mon_item.RESP_i = (ahb_vif.HRESP == 1) ? ERROR : okay;
             
-            ahb_mon_item.print();
+            ahb_mon_item.print();  // Print the monitored data
+
+            //Write the monitored data to ahb analysis port
             ahb_ap.write(ahb_mon_item);
             @(posedge ahb_vif.HCLK);
     endtask

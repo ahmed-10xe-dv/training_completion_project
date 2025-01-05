@@ -23,7 +23,6 @@ class ahb_agent extends uvm_agent;
   ahb_monitor   ahb_mon;
   configurations  cnfg;
 
-
   // Constructor
   function new(string name = "ahb_agent", uvm_component parent = null);
     super.new(name, parent);

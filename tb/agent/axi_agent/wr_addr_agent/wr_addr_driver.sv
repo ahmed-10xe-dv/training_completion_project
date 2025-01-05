@@ -96,13 +96,14 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
     seq_item_port.get_next_item(req);
     if (req.access == WRITE_TRAN) begin
     `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
-    
+
       axi_vif.AWBURST <= req.burst;
       axi_vif.AWADDR  <= req.addr;
       axi_vif.AWID    <= req.id;
       axi_vif.AWSIZE  <= req.awsize_val;
       axi_vif.AWLEN   <= req.burst_length - 1;
       axi_vif.AWVALID <= req.aw_valid;
+      //Trigger the event here
 
       wait(axi_vif.AWREADY);
       `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)

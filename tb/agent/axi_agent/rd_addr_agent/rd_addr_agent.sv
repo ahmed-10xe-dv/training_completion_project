@@ -49,7 +49,7 @@ class rd_addr_agent extends uvm_agent;
   //-----------------------------------------------------------------------------
   function void connect_phase(uvm_phase phase);
 
-    // Connect driver to sequencer
+    // Connect driver to sequencer if the agent is active
     if(get_is_active() == UVM_ACTIVE) begin
       rd_addr_driv.seq_item_port.connect(rd_addr_sqr.seq_item_export);
     end
