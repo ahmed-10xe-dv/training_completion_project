@@ -74,8 +74,25 @@ interface ahb_interface #(
     input                        HRESP;
   endclocking
 
-endinterface
+    //Task for reset
+  task reset_ahb();
+    @(posedge HCLK);
+    wait(!HRESETn);
 
+    // Reset AXI interface signals to default
+    HRESP  <= 'b0;
+    HRDATA <= 'b0;
+    HREADY <= 1'b1;
+
+  endtask : reset_ahb
+
+  //Task for post_reset
+  task post_reset_ahb();
+    wait(HRESETn);
+    @(posedge HCLK);
+  endtask : post_reset_ahb
+
+endinterface
 
 `endif // AHB_INTERFACE
 

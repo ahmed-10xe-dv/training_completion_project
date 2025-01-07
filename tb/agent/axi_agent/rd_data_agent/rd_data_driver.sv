@@ -47,18 +47,7 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   task reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-      @(posedge axi_vif.ACLK);
-      wait(!axi_vif.ARESETn);
-
-      // Reset AXI interface signals to default
-      axi_vif.RDATA      <= 'b0;
-      axi_vif.RID        <= 'b0;
-      axi_vif.RLAST      <= 'b0;
-      axi_vif.RVALID     <= 1'b0;
-      axi_vif.RREADY     <= 1'b0;
-      axi_vif.RRESP      <= 1'b0;
-
-
+    axi_vif.reset_axi();  // Reset the Axi signals to defualt
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
   endtask : reset_phase
@@ -68,8 +57,7 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   task post_reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-    wait(axi_vif.ARESETn);
-    @(posedge axi_vif.ACLK);
+    axi_vif.post_reset_axi();   // Wait for reset conditions to over
     `uvm_info(get_name(),$sformatf("Reset Condition Over"), UVM_LOW)
     phase.drop_objection(this);
   endtask : post_reset_phase

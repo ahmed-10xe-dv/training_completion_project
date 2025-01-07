@@ -47,20 +47,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   task reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-      @(posedge axi_vif.ACLK);
-      wait(!axi_vif.ARESETn);
-
-      // Reset AXI interface signals to default
-      axi_vif.AWADDR    <= 'b0;
-      axi_vif.AWID      <= 'b0;
-      axi_vif.AWLEN     <= 'b0;
-      axi_vif.AWSIZE    <= 'b0;
-      axi_vif.AWBURST   <= 'b0;
-      axi_vif.AWLOCK    <= 'b0;
-      axi_vif.AWVALID   <= 1'b0;
-      axi_vif.AWCACHE   <= 'b1111;
-      axi_vif.AWPROT    <= 'b1;
-
+    axi_vif.reset_axi();  // Reset the Axi signals to defualt
    `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
   endtask : reset_phase
@@ -70,8 +57,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   task post_reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-    wait(axi_vif.ARESETn);
-    @(posedge axi_vif.ACLK);
+    axi_vif.post_reset_axi();   // Wait for reset conditions to over
     `uvm_info(get_name(),$sformatf("Reset Condition Over"), UVM_LOW)
     phase.drop_objection(this);
   endtask : post_reset_phase

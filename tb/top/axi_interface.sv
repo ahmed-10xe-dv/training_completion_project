@@ -181,11 +181,52 @@ interface axi_interface #(
     input                        RREADY;
   endclocking
 
+  //Task for reset
+  task reset_axi();
+
+    @(posedge ACLK);
+    wait(!ARESETn);
+
+    // Reset AXI interface signals to default
+    ARADDR    <= 'b0;
+    ARID      <= 'b0;
+    ARLEN     <= 'b0;
+    ARSIZE    <= 'b0;
+    ARBURST   <= 'b0;
+    ARLOCK    <= `RD_ADDR_LOCK;
+    ARVALID   <= 1'b0;
+    ARCACHE   <= `RD_ADDR_CACHE;
+    ARPROT    <= `RD_ADDR_PROT;
+    RDATA     <= 'b0;
+    RID       <= 'b0;
+    RLAST     <= 'b0;
+    RVALID    <= 1'b0;
+    RREADY    <= 1'b0;
+    RRESP     <= 1'b0;
+    AWADDR    <= 'b0;
+    AWID      <= 'b0;
+    AWLEN     <= 'b0;
+    AWSIZE    <= 'b0;
+    AWBURST   <= 'b0;
+    AWLOCK    <= `WR_ADDR_LOCK;
+    AWVALID   <= 1'b0;
+    AWCACHE   <= `WR_ADDR_CACHE;
+    AWPROT    <= `WR_ADDR_PROT;
+    WSTRB     <= 'b0;
+    WDATA     <= 'b0;
+    WID       <= 'b0;
+    WLAST     <= 'b0;
+    WVALID    <= 1'b0;
+    BREADY    <= 1'b0;
+
+  endtask : reset_axi
+
+  //Task for post_reset
+  task post_reset_axi();
+    wait(ARESETn);
+    @(posedge ACLK);
+  endtask : post_reset_axi
 
 endinterface
-
-
-
-
 
 `endif // AXI_INTERFACE

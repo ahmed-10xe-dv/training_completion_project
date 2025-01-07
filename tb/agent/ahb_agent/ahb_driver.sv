@@ -52,13 +52,8 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   task reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-    @(posedge ahb_vif.HCLK);
-    wait(!ahb_vif.HRESETn);
-
-    // Reset AXI interface signals to default
-    ahb_vif.HRESP  <= 'b0;
-    ahb_vif.HRDATA <= 'b0;
-    ahb_vif.HREADY <= 1'b1;
+   
+    ahb_vif.reset_ahb();  // Reset AHB by setting the signals to default
 
     `uvm_info(get_name(), "Reset phase: Signals reset to default", UVM_LOW)
     phase.drop_objection(this);
@@ -69,9 +64,9 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   task post_reset_phase(uvm_phase phase);
     phase.raise_objection(this);
-    @(posedge ahb_vif.HCLK);
-    wait(ahb_vif.HRESETn);
-    @(posedge ahb_vif.HCLK);
+
+    ahb_vif.post_reset_ahb(); // Wait for reset conditions to over
+
     `uvm_info(get_name(),$sformatf("Reset Condition Over"), UVM_LOW)
     phase.drop_objection(this);
   endtask : post_reset_phase
