@@ -68,14 +68,14 @@ class axi2ahb_env extends uvm_env;
         vseqr.ahb_sqr      =  ahb_env.ahb_agnt.ahb_sqr;
 
         // Connect AXI Monitors to Scoreboard
-        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_fifo.analysis_export);
-        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(scoreboard.axi_rd_addr_fifo.analysis_export);
-        axi_env.wr_data_agnt.wr_data_mon.wr_data_ap.connect(scoreboard.axi_wr_data_fifo.analysis_export);
-        axi_env.rd_data_agnt.rd_data_mon.rd_data_ap.connect(scoreboard.axi_rd_data_fifo.analysis_export);
-        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(scoreboard.axi_wr_rsp_fifo.analysis_export);
+        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_imp);
+        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(scoreboard.axi_rd_addr_imp);
+        axi_env.wr_data_agnt.wr_data_mon.wr_data_ap.connect(scoreboard.axi_wr_data_imp);
+        axi_env.rd_data_agnt.rd_data_mon.rd_data_ap.connect(scoreboard.axi_rd_data_imp);
+        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(scoreboard.axi_wr_rsp_imp);
 
         // Connect AHB Monitor to Scoreboard
-        ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_fifo.analysis_export);
+        ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_imp);
     endfunction
 
 endclass

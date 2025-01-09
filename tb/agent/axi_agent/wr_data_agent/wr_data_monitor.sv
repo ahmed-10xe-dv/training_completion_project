@@ -61,28 +61,25 @@ class wr_data_monitor extends uvm_monitor;
         temp_data_item = axi_seq_item::type_id::create("AXI_write_data_monitor");
 
         // Wait for valid write data transaction
-
-        wait(axi_vif.WVALID);
-        do begin
-            int beat =0;
+        
+        // do begin
+            // int beat = 0;
             `uvm_info(get_full_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
             temp_data_item.id = axi_vif.WID;
-            temp_data_item.write_data[beat] = axi_vif.WDATA;
-            temp_data_item.write_strobe[beat] = axi_vif.WSTRB;
-            beat++;
-            wait(axi_vif.WREADY);
+            temp_data_item.write_data[0] = axi_vif.WDATA;
+            temp_data_item.write_strobe[0] = axi_vif.WSTRB;
+            temp_data_item.access = WRITE_TRAN;
             
-            wr_data_ap.write(temp_data_item);
-            temp_data_item.print();
+            if(axi_vif.WVALID && axi_vif.WREADY && axi_vif.WSTRB && axi_vif.WDATA) begin
+                wr_data_ap.write(temp_data_item);
+                temp_data_item.print();
+                `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+                // beat++;
+            end
             @(posedge axi_vif.ACLK);
-            `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
-        end
-        while (!axi_vif.WLAST);
 
-
-        // `uvm_info("AXI Write Data Transaction", 
-        // $sformatf("Writing to address %0h: DATA %0h", temp_data_item.WDATA, 
-        // temp_data_item.WSTRB), UVM_LOW)
+        // end
+        // while (!axi_vif.WLAST);
 
     endtask
 endclass

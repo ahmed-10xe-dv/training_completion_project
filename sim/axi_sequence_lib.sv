@@ -73,9 +73,9 @@ class basic_write_txn extends axi_sequence;
             req = axi_seq_item::type_id::create("Read_request");
             if (!req.randomize() with {
                     access == READ_TRAN;
-                    burst == FIXED;
+                    burst == INCR;
                     size == 4;
-                    data.size == 4;
+                    data.size == 16;
                 }) begin
                 `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
             end
@@ -114,7 +114,7 @@ class basic_write_txn extends axi_sequence;
                 access == READ_TRAN;
                 burst == FIXED;
                 size == 4;
-                data.size == 4;
+                data.size == 8;
             }) begin
             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
         end
@@ -176,17 +176,18 @@ class basic_inc_write_txn extends axi_sequence;
                   access == WRITE_TRAN;
                   burst == INCR;
                   size == 4;
-                  data.size == 16;
+                  data.size == 8;
               }) begin
               `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
           end
           // Assign transaction details
-          req.id = 4;
+          req.id = 2;
           req.addr = 32'h10;
           
           // Send request and wait for completion
           send_request(req);
           wait_for_item_done();
+          req.print();
   end
 
   endtask
@@ -232,6 +233,183 @@ class basic_inc_read_txn extends axi_sequence;
 
   endtask
 endclass : basic_inc_read_txn
+
+
+
+//------------------------------------------------------------------------------
+// Basic Inc Read Transaction
+// This sequence generates INCR read transaction on the AXI bus.
+//------------------------------------------------------------------------------
+class basic_fixed_wr_txn extends axi_sequence;
+  `uvm_object_utils(basic_fixed_wr_txn) // Register with the UVM factory
+
+  axi_seq_item req; // Sequence item for the write transaction
+
+  // Constructor
+  function new(string name = "basic_fixed_wr_txn");
+    super.new(name);
+  endfunction
+
+  // Main sequence body
+  task body();
+    begin
+      for (int i = 0 ; i < 10 ; i++ ) begin
+        wait_for_grant();
+        // Create and randomize sequence item
+        req = axi_seq_item::type_id::create("Write_request");
+        if (!req.randomize() with {
+                access == WRITE_TRAN;
+                burst == FIXED;
+                size == 4;
+                data.size == 4;
+            }) begin
+            `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+        end
+        // Assign transaction details
+        req.id = i;
+        req.addr = i*16;
+        
+        // Send request and wait for completion
+        send_request(req);
+        wait_for_item_done();
+        
+    end
+  end
+
+  endtask
+endclass : basic_fixed_wr_txn
+
+
+//------------------------------------------------------------------------------
+// Basic Inc Read Transaction
+// This sequence generates INCR read transaction on the AXI bus.
+//------------------------------------------------------------------------------
+class boundary_cross_txn extends axi_sequence;
+  `uvm_object_utils(boundary_cross_txn) // Register with the UVM factory
+
+  axi_seq_item req; // Sequence item for the write transaction
+
+  // Constructor
+  function new(string name = "boundary_cross_txn");
+    super.new(name);
+  endfunction
+
+  // Main sequence body
+  task body();
+    begin
+      wait_for_grant();
+      // Create and randomize sequence item
+      req = axi_seq_item::type_id::create("Write_request");
+      if (!req.randomize() with {
+              access == WRITE_TRAN;
+              burst == INCR;
+              size == 8;
+              data.size == 32;
+          }) begin
+          `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+      end
+      // Assign transaction details
+      req.id = 4;
+      req.addr = 32'h7f0;
+      
+      // Send request and wait for completion
+      send_request(req);
+      wait_for_item_done();
+
+end
+
+
+  endtask
+endclass : boundary_cross_txn
+
+
+//------------------------------------------------------------------------------
+// Basic Inc Read Transaction
+// This sequence generates INCR read transaction on the AXI bus.
+//------------------------------------------------------------------------------
+class basic_wrap4_wr_txn extends axi_sequence;
+  `uvm_object_utils(basic_wrap4_wr_txn) // Register with the UVM factory
+
+  axi_seq_item req; // Sequence item for the write transaction
+
+  // Constructor
+  function new(string name = "basic_wrap4_wr_txn");
+    super.new(name);
+  endfunction
+
+  // Main sequence body
+  task body();
+    begin
+      wait_for_grant();
+      // Create and randomize sequence item
+      req = axi_seq_item::type_id::create("Write_request");
+      if (!req.randomize() with {
+              access == WRITE_TRAN;
+              burst == WRAP;
+              size == 4;
+              data.size == 16;
+          }) begin
+          `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+      end
+      // Assign transaction details
+      req.id = 4;
+      req.addr = 32'hc;
+      
+      // Send request and wait for completion
+      send_request(req);
+      wait_for_item_done();
+
+end
+
+  endtask
+endclass : basic_wrap4_wr_txn
+
+
+//------------------------------------------------------------------------------
+// Basic Inc Read Transaction
+// This sequence generates INCR read transaction on the AXI bus.
+//------------------------------------------------------------------------------
+class basic_fixed_wr_txn_with_holes extends axi_sequence;
+  `uvm_object_utils(basic_fixed_wr_txn_with_holes) // Register with the UVM factory
+
+  axi_seq_item req; // Sequence item for the write transaction
+
+  // Constructor
+  function new(string name = "basic_fixed_wr_txn_with_holes");
+    super.new(name);
+  endfunction
+
+  // Main sequence body
+  task body();
+    begin
+      for (int i = 0 ; i < 10 ; i++ ) begin
+        wait_for_grant();
+        // Create and randomize sequence item
+        req = axi_seq_item::type_id::create("Write_request");
+        if (!req.randomize() with {
+                access == WRITE_TRAN;
+                burst == FIXED;
+                size == 4;
+                data.size == 10;
+            }) begin
+            `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+        end
+        // Assign transaction details
+        req.id = i;
+        req.addr = i*16;
+        
+        // Send request and wait for completion
+        send_request(req);
+        wait_for_item_done();
+        
+    end
+  end
+
+  endtask
+endclass : basic_fixed_wr_txn_with_holes
+
+
+
 
   // //------------------------------------------------------------------------------
   // // Multiple Read and Write Transactions

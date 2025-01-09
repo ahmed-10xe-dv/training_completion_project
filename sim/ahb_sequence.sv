@@ -19,7 +19,9 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   // Sequence item handle and Memory Handle
   ahb_seq_item req;
   ahb_seq_item rsp;
+  int Transactions_Count;
   mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
+  string scope_name = "";
 
 
   //------------------------------------------------------------------------------
@@ -52,10 +54,22 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   //------------------------------------------------------------------------------
   task body();
 
+    // configurations m_config;
+ 
+    // if( scope_name == "" ) begin
+    //   scope_name = get_full_name(); // this is { sequencer.get_full_name() , get_name() }
+    // end
+ 
+    // if( !uvm_config_db #( int )::get( null , scope_name , "Transactions_Count" , Transactions_Count ) ) begin
+    //   `uvm_error(get_name(), 
+    //   $sformatf("Got no Configuration at this path: %s", scope_name))
+    // end
+
     req = ahb_seq_item::type_id::create("req");
     rsp = ahb_seq_item::type_id::create("rsp");
 
-    repeat (1) begin
+    // repeat (Transactions_Count) begin
+      repeat (1) begin
       // Send a dummy request
       start_item(req);  
       finish_item(req);

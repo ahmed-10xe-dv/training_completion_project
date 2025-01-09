@@ -63,8 +63,6 @@ class wr_addr_monitor extends uvm_monitor;
         axi_seq_item temp_wr_addr_item;
 
         // Wait for valid write address signal
-        @(posedge axi_vif.ACLK);
-        wait(axi_vif.AWVALID);
 
         // Create a new sequence item
         temp_wr_addr_item        = axi_seq_item::type_id::create("write_addr_monitor");
@@ -80,19 +78,13 @@ class wr_addr_monitor extends uvm_monitor;
             2'b10: temp_wr_addr_item.burst = WRAP;
         endcase
 
-        // Wait for ready signal
-        wait(axi_vif.AWREADY);
-        temp_wr_addr_item.print();
-        @(posedge axi_vif.ACLK);
-
         // Write the monitored item to analysis port
-        wr_addr_ap.write(temp_wr_addr_item);
-
-
-        `uvm_info( "AXI Write Addr Transaction", 
-        $sformatf("Writing to address %0h: ID %0h", temp_wr_addr_item.addr, 
-        temp_wr_addr_item.id), UVM_LOW)
-
+        if(axi_vif.AWVALID && axi_vif.AWREADY && axi_vif.AWSIZE) begin
+            wr_addr_ap.write(temp_wr_addr_item);
+            temp_wr_addr_item.print();
+                `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+        end
+        @(posedge axi_vif.ACLK);
     endtask
 
 endclass

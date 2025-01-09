@@ -82,8 +82,10 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
     if (req.access == READ_TRAN) begin
       `uvm_info(get_full_name(), "Observing Read Data transaction", UVM_LOW)
       axi_vif.RREADY <= req.rready;
-      wait(axi_vif.RVALID);
       @(posedge axi_vif.ACLK);
+      wait(axi_vif.RVALID);
+
+
     end
     seq_item_port.item_done();
   endtask

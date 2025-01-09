@@ -54,16 +54,19 @@ class multi_seq extends uvm_sequence;
     //-------------------------------------------------------------------------
     virtual task body();
         fork
-            wr_addr_seq.start(p_sequencer.wr_addr_sqr);
-            rd_addr_seq.start(p_sequencer.rd_addr_sqr);
-            wr_data_seq.start(p_sequencer.wr_data_sqr);
-            rd_data_seq.start(p_sequencer.rd_data_sqr);
-            wr_rsp_seq.start(p_sequencer.wr_rsp_sqr);
+            fork
+                wr_addr_seq.start(p_sequencer.wr_addr_sqr);
+                rd_addr_seq.start(p_sequencer.rd_addr_sqr);
+                wr_data_seq.start(p_sequencer.wr_data_sqr);
+                rd_data_seq.start(p_sequencer.rd_data_sqr);
+                wr_rsp_seq.start(p_sequencer.wr_rsp_sqr);
+            join
             begin
                 #140; // Added Delay to make sure that AHB sequence starts once the valid axi transactions have started 
                 ahb_seq.start(p_sequencer.ahb_sqr);
             end
         join
+        // #500;
     endtask
 
 endclass

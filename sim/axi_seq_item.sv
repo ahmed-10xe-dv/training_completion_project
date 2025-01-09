@@ -39,6 +39,8 @@ class axi_seq_item extends uvm_sequence_item;
   rand bit                       w_valid;                  // Write Data Valid         
   rand bit                       ar_valid;                 // Read Address Valid 
   rand bit                       rready;                   // Read Response 
+  bit                            LAST;                     // Indicates last item 
+
 
 
 
@@ -109,44 +111,49 @@ function void burst_strobe_data_gen();
 
     aligned_add =this.addr & ~(this.size - 1);
 
-    for (int j = this.addr % `WIDTH; j < (aligned_add + `WIDTH); j++) begin
-        this.write_strobe[i][j] = 1;
-    end
-  
-    for (int k = 1; k < this.burst_length; k++) begin
-        aligned_add = aligned_add + this.size;
-        i = i + 1;
-        if (k == (this.burst_length - 1)) begin
-            for (int l = aligned_add % `WIDTH; l < ((aligned_add % `WIDTH) + ((remaining_data_size % this.size == 0) ? this.size : (remaining_data_size % this.size))); l++) begin
-                this.write_strobe[i][l] = 1;
-            end
-        end 
-        else begin
-            for (int l = aligned_add % `WIDTH; l < (aligned_add % `WIDTH) + this.size; l++) begin
-                this.write_strobe[i][l] = 1;
-            end
-        end
-    end
 
-
-    /*------------------------------------------------------------------------------
-    Generate write data:
-      This code generates the write_data for each burst beat by iterating 
-      through all valid byte positions marked by write_strobe. It maps the corresponding bits 
-      from the data array into the appropriate positions in write_data, incrementing the data_index 
-      for each byte processed.
-    ------------------------------------------------------------------------------*/
-
-      for (int beat_index = 0; beat_index < this.burst_length; beat_index++) begin
-          for (int byte_index = 0; byte_index < `WIDTH; byte_index++) begin
-              if (this.write_strobe[beat_index][byte_index] == 1'b1) begin
-                  for (int bit_index = 0; bit_index < 8; bit_index++) begin
-                      this.write_data[beat_index][(byte_index * 8) + bit_index] = this.data[data_index][bit_index];
-                  end
-                  data_index++;
+    // If transaction is WRITE, then generate strobe and data
+    if (this.access == WRITE_TRAN) begin
+        for (int j = this.addr % `WIDTH; j < (aligned_add + `WIDTH); j++) begin
+          this.write_strobe[i][j] = 1;
+      end
+    
+      for (int k = 1; k < this.burst_length; k++) begin
+          aligned_add = aligned_add + this.size;
+          i = i + 1;
+          if (k == (this.burst_length - 1)) begin
+              for (int l = aligned_add % `WIDTH; l < ((aligned_add % `WIDTH) + ((remaining_data_size % this.size == 0) ? this.size : (remaining_data_size % this.size))); l++) begin
+                  this.write_strobe[i][l] = 1;
+              end
+          end 
+          else begin
+              for (int l = aligned_add % `WIDTH; l < (aligned_add % `WIDTH) + this.size; l++) begin
+                  this.write_strobe[i][l] = 1;
               end
           end
       end
+
+
+      /*------------------------------------------------------------------------------
+      Generate write data:
+        This code generates the write_data for each burst beat by iterating 
+        through all valid byte positions marked by write_strobe. It maps the corresponding bits 
+        from the data array into the appropriate positions in write_data, incrementing the data_index 
+        for each byte processed.
+      ------------------------------------------------------------------------------*/
+
+        for (int beat_index = 0; beat_index < this.burst_length; beat_index++) begin
+            for (int byte_index = 0; byte_index < `WIDTH; byte_index++) begin
+                if (this.write_strobe[beat_index][byte_index] == 1'b1) begin
+                    for (int bit_index = 0; bit_index < 8; bit_index++) begin
+                        this.write_data[beat_index][(byte_index * 8) + bit_index] = this.data[data_index][bit_index];
+                    end
+                    data_index++;
+                end
+            end
+        end
+      
+    end
     endfunction
 
   // Post-randomization function to calculate AWSIZE, Burst Length, Strobe and WDATA

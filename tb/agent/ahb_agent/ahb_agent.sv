@@ -33,8 +33,8 @@ class ahb_agent extends uvm_agent;
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if (!uvm_config_db #(configurations)::get(this,"*","configurations", cnfg))
-      `uvm_fatal("FATAL MSG", "Configuration object is not set properly");
+    // if (!uvm_config_db #(configurations)::get(this,"*","configurations", cnfg))
+    //   `uvm_fatal("FATAL MSG", "Configuration object is not set properly");
 
     if(get_is_active() == UVM_ACTIVE) begin
       ahb_drv = ahb_driver::type_id::create("ahb_drv", this);

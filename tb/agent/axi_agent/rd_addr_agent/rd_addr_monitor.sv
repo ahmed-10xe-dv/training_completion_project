@@ -49,8 +49,7 @@ class rd_addr_monitor extends uvm_monitor;
 
     task monitor_rd_addr();
         axi_seq_item temp_rd_addr_item;
-        @(posedge axi_vif.ACLK);
-        wait(axi_vif.ARVALID);
+
         temp_rd_addr_item         = axi_seq_item::type_id::create("read_addr_monitor");
         temp_rd_addr_item.addr    = axi_vif.ARADDR;
         temp_rd_addr_item.id      = axi_vif.ARID;
@@ -63,9 +62,14 @@ class rd_addr_monitor extends uvm_monitor;
             2'b10: temp_rd_addr_item.burst = WRAP;
         endcase
 
-        wait(axi_vif.ARREADY);
+        // Write the monitored item to analysis port
+        if(axi_vif.ARVALID && axi_vif.ARREADY && axi_vif.ARSIZE) begin
+            rd_addr_ap.write(temp_rd_addr_item);
+            temp_rd_addr_item.print();
+            `uvm_info(get_full_name(), "Completed Monitoring AXI_READ_ADDR_monitor transactions", UVM_LOW)
+        end
         @(posedge axi_vif.ACLK);
-        rd_addr_ap.write(temp_rd_addr_item);
+
     endtask
 endclass
 

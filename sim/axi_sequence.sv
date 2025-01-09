@@ -26,25 +26,25 @@ class axi_sequence extends uvm_sequence #(axi_seq_item);
   // Task: Body
   task body();
       begin
-              wait_for_grant();
-              // Create and randomize sequence item
-              req = axi_seq_item::type_id::create("Write_request");
-              if (!req.randomize() with {
-                      access == WRITE_TRAN;
-                      burst == FIXED;
-                      size == 4;
-                      data.size == 4;
-                  }) begin
-                  `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
-              end
-              // Assign transaction details
-              req.id = 4;
-              req.addr = 32'hc;
+              // wait_for_grant();
+              // // Create and randomize sequence item
+              // req = axi_seq_item::type_id::create("Write_request");
+              // if (!req.randomize() with {
+              //         access == WRITE_TRAN;
+              //         burst == FIXED;
+              //         size == 4;
+              //         data.size == 4;
+              //     }) begin
+              //     `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+              // end
+              // // Assign transaction details
+              // req.id = 4;
+              // req.addr = 32'hc;
               
-              // Send request and wait for completion
-              send_request(req);
-              wait_for_item_done();
-
+              // // Send request and wait for completion
+              // send_request(req);
+              // wait_for_item_done();
+              // req.print();
       end
 
 

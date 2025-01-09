@@ -23,5 +23,6 @@ class configurations extends uvm_object;
 
    // Data Members
    uvm_active_passive_enum active = UVM_PASSIVE;
+   integer Iterations;
 
 endclass: configurations

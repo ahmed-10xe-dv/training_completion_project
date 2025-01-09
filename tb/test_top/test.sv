@@ -35,11 +35,11 @@ class axi2ahb_test extends uvm_test;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         `uvm_info(get_full_name(), "BUILD PHASE STARTED", UVM_LOW);
-        
+        // cnfg.Iterations = 2;
         // Create environment
         env = axi2ahb_env::type_id::create("env", this);
         mul_seq = multi_seq::type_id::create("mul_seq");
-        uvm_config_db #(configurations)::set(this,"*", "configurations", cnfg);
+        // uvm_config_db #(configurations)::set(this,"*", "configurations", cnfg);
         // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.wr_rsp_agnt", "is_active", UVM_PASSIVE);
         // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.rd_addr_agnt", "is_active", UVM_PASSIVE);
         // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.rd_data_agnt", "is_active", UVM_PASSIVE);
