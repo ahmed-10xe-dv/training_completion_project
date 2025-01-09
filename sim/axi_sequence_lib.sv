@@ -80,7 +80,7 @@ class basic_write_txn extends axi_sequence;
                 `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
             end
             // Assign transaction details
-            req.id = 4;
+            req.id = 6;
             req.addr = 32'h10;
             
             // Send request and wait for completion

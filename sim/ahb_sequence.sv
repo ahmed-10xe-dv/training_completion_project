@@ -19,7 +19,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   // Sequence item handle and Memory Handle
   ahb_seq_item req;
   ahb_seq_item rsp;
-  int Transactions_Count;
+  int Transactions_Count = 5;
   mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
   string scope_name = "";
 
@@ -66,10 +66,10 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
     // end
 
     req = ahb_seq_item::type_id::create("req");
-    rsp = ahb_seq_item::type_id::create("rsp");
+    rsp = ahb_seq_item::type_id::create("rsp_sent_to_AHB_DRV");
 
-    // repeat (Transactions_Count) begin
-      repeat (1) begin
+    repeat (Transactions_Count) begin
+      // repeat (4) begin
       // Send a dummy request
       start_item(req);  
       finish_item(req);
@@ -93,6 +93,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
       // Start new sequence to drive the values to the DUT
       start_item(rsp);
       rsp.copy(req);
+      rsp.print();
       finish_item(rsp);
     end
      

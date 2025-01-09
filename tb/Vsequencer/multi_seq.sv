@@ -33,6 +33,12 @@ class multi_seq extends uvm_sequence;
     //-------------------------------------------------------------------------
     function new(string name = "multi_seq");
         super.new(name);
+        wr_addr_seq = axi_sequence::type_id::create("wr_addr_seq");
+        rd_addr_seq = axi_sequence::type_id::create("rd_addr_seq");
+        wr_data_seq = axi_sequence::type_id::create("wr_data_seq");
+        rd_data_seq = axi_sequence::type_id::create("rd_data_seq");
+        wr_rsp_seq = axi_sequence::type_id::create("wr_rsp_seq");
+        ahb_seq = ahb_sequence::type_id::create("ahb_seq");
     endfunction
 
     //-------------------------------------------------------------------------
@@ -40,12 +46,7 @@ class multi_seq extends uvm_sequence;
     // Creates test sequences for AXI and AHB
     //-------------------------------------------------------------------------
     task pre_body();
-        wr_addr_seq = axi_sequence::type_id::create("wr_addr_seq");
-        rd_addr_seq = axi_sequence::type_id::create("rd_addr_seq");
-        wr_data_seq = axi_sequence::type_id::create("wr_data_seq");
-        rd_data_seq = axi_sequence::type_id::create("rd_data_seq");
-        wr_rsp_seq = axi_sequence::type_id::create("wr_rsp_seq");
-        ahb_seq = ahb_sequence::type_id::create("ahb_seq");
+
     endtask
 
     //-------------------------------------------------------------------------
@@ -62,7 +63,7 @@ class multi_seq extends uvm_sequence;
                 wr_rsp_seq.start(p_sequencer.wr_rsp_sqr);
             join
             begin
-                #140; // Added Delay to make sure that AHB sequence starts once the valid axi transactions have started 
+                // #140; // Added Delay to make sure that AHB sequence starts once the valid axi transactions have started 
                 ahb_seq.start(p_sequencer.ahb_sqr);
             end
         join

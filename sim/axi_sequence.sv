@@ -54,9 +54,9 @@ class axi_sequence extends uvm_sequence #(axi_seq_item);
               req = axi_seq_item::type_id::create("Read_request");
               if (!req.randomize() with {
                       access == READ_TRAN;
-                      burst == FIXED;
+                      burst == INCR;
                       size == 4;
-                      data.size == 4;
+                      data.size == 16;
                   }) begin
                   `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
               end

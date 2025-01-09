@@ -62,7 +62,7 @@ class rd_data_monitor extends uvm_monitor;
             temp_rd_data_item.write_data[0] = axi_vif.RDATA;
             temp_rd_data_item.access = READ_TRAN;
 
-            if(axi_vif.RVALID && axi_vif.RREADY && axi_vif.RDATA) begin
+            if(axi_vif.RVALID && axi_vif.RREADY) begin
                 rd_data_ap.write(temp_rd_data_item);
                 temp_rd_data_item.print();
                 `uvm_info(get_full_name(), "Completed AXI_Read_data_monitor transactions", UVM_LOW)

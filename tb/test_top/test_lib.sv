@@ -33,9 +33,9 @@ class basic_read_test extends axi2ahb_test;
      function void build_phase(uvm_phase phase);
       super.build_phase(phase);
       // int Transactions_Count;
-       set_type_override_by_type(axi_sequence::get_type(), basic_read_txn::get_type());
-      //  super.mul_seq.ahb_seq.Transactions_Count = 2;
-      // uvm_config_db #(int) :: set(this, "env.ahb_env.ahb_agnt", "Transactions_Count", 2);
+      //  set_type_override_by_type(axi_sequence::get_type(), basic_read_txn::get_type());
+       mul_seq.ahb_seq.Transactions_Count = 4;
+      uvm_config_db #(int) :: set(this, "env.ahb_env.ahb_agnt", "Transactions_Count", 5);
      endfunction
 endclass
 

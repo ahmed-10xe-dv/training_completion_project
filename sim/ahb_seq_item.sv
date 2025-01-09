@@ -44,7 +44,7 @@ class ahb_seq_item extends uvm_sequence_item;
     `uvm_object_utils_begin(ahb_seq_item)
         `uvm_field_enum(resp_type, RESP_i, UVM_DEFAULT)      // Response field
         `uvm_field_enum(access_type, ACCESS_o, UVM_DEFAULT) // Access type field
-        `uvm_field_int(HADDR_o, UVM_DEFAULT | UVM_DEC)      // Address field
+        `uvm_field_int(HADDR_o, UVM_DEFAULT)                // Address field
         `uvm_field_int(HWDATA_o, UVM_DEFAULT)               // Write data field
         `uvm_field_int(HRDATA_i, UVM_DEFAULT)               // Read data field
         `uvm_field_int(HSIZE_o, UVM_DEFAULT)                // Transfer size field

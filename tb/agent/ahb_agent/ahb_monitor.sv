@@ -94,7 +94,7 @@ class ahb_monitor extends uvm_monitor;
             ahb_mon_item.HBURST_o = ahb_vif.HBURST;
             ahb_mon_item.HTRANS_o = ahb_vif.HTRANS;
 
-            if (ahb_vif.HSIZE && ahb_vif.HREADY && (ahb_vif.HWDATA || ahb_vif.HRDATA)) begin
+            if (ahb_vif.HSIZE && ahb_vif.HREADY && ahb_vif.HTRANS[1] /*(ahb_vif.HWDATA || ahb_vif.HRDATA)*/) begin
                 //Write the monitored data to ahb analysis port
                 ahb_ap.write(ahb_mon_item);
                 ahb_mon_item.print();  // Print the monitored data
