@@ -37,7 +37,7 @@ class mem_model #(int AddrWidth = bus_params_pkg::BUS_AW,
   endfunction
 
   function void write_byte(mem_addr_t addr, bit [7:0] data);
-    // `uvm_info(`gfn, $sformatf("Write Mem : Addr[0x%0h], Data[0x%0h]", addr, data), UVM_LOW)
+    `uvm_info(`gfn, $sformatf("Write Mem : Addr[0x%0h], Data[0x%0h]", addr, data), UVM_LOW)
     system_memory[addr] = data;
   endfunction
 

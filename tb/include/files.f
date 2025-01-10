@@ -20,11 +20,21 @@ import mem_model_pkg::*;
 `include "ahb_interface.sv"
 
 // Sequences and Sequence Items
-`include "../sim/axi_seq_item.sv"
-`include "../sim/axi_sequence.sv"
-`include "../sim/axi_sequence_lib.sv"
-`include "../sim/ahb_seq_item.sv"
-`include "../sim/ahb_sequence.sv"
+`include "../sim/seq_item/axi_seq_item.sv"
+// `include "../sim/axi_sequence.sv"
+// `include "../sim/axi_sequence_lib.sv"
+`include "../sim/seq_item/ahb_seq_item.sv"
+`include "../sim/base_sequence/ahb_sequence.sv"
+`include "../sim/base_sequence/axi_wr_addr_sequence.sv"
+`include "../sim/base_sequence/axi_rd_addr_sequence.sv"
+`include "../sim/base_sequence/axi_wr_data_sequence.sv"
+`include "../sim/base_sequence/axi_rd_data_sequence.sv"
+`include "../sim/base_sequence/axi_wr_rsp_sequence.sv"
+`include "../sim/sequence_lib/axi_wr_addr_sequence_lib.sv"
+`include "../sim/sequence_lib/axi_wr_data_sequence_lib.sv"
+`include "../sim/sequence_lib/axi_rd_addr_sequence_lib.sv"
+`include "../sim/sequence_lib/axi_sequence_lib.sv"
+
 
 // Write Address Agent
 `include "../agent/axi_agent/wr_addr_agent/wr_addr_sequencer.sv"

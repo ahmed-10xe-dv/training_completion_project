@@ -25,7 +25,7 @@ class axi2ahb_env extends uvm_env;
     //-------------------------------------------------------------------------
     axi_environmet axi_env;
     ahb_environment ahb_env;
-    virtual_sequencer  vseqr;             // Virtual Sequencer
+    // virtual_sequencer  vseqr;             // Virtual Sequencer
     axi2ahb_scoreboard scoreboard;        // Scoreboard
 
     //-------------------------------------------------------------------------
@@ -47,7 +47,7 @@ class axi2ahb_env extends uvm_env;
         axi_env = axi_environmet::type_id::create("axi_env", this);
         ahb_env      = ahb_environment::type_id::create("ahb_env", this);
         // Create Virtual Sequencer
-        vseqr        = virtual_sequencer::type_id::create("vseqr", this);
+        // vseqr        = virtual_sequencer::type_id::create("vseqr", this);
         // Create Scoreboard
         scoreboard   = axi2ahb_scoreboard::type_id::create("scoreboard", this);
     endfunction
@@ -60,12 +60,12 @@ class axi2ahb_env extends uvm_env;
         super.connect_phase(phase);
         `uvm_info(get_full_name(), "CONNECT Phase of Env", UVM_LOW);
 
-        vseqr.wr_addr_sqr  =  axi_env.wr_addr_agnt.wr_addr_sqr;
-        vseqr.rd_addr_sqr  =  axi_env.rd_addr_agnt.rd_addr_sqr;
-        vseqr.wr_data_sqr  =  axi_env.wr_data_agnt.wr_data_sqr;
-        vseqr.rd_data_sqr  =  axi_env.rd_data_agnt.rd_data_sqr;
-        vseqr.wr_rsp_sqr   =  axi_env.wr_rsp_agnt.wr_rsp_sqr;
-        vseqr.ahb_sqr      =  ahb_env.ahb_agnt.ahb_sqr;
+        // vseqr.wr_addr_sqr  =  axi_env.wr_addr_agnt.wr_addr_sqr;
+        // vseqr.rd_addr_sqr  =  axi_env.rd_addr_agnt.rd_addr_sqr;
+        // vseqr.wr_data_sqr  =  axi_env.wr_data_agnt.wr_data_sqr;
+        // vseqr.rd_data_sqr  =  axi_env.rd_data_agnt.rd_data_sqr;
+        // vseqr.wr_rsp_sqr   =  axi_env.wr_rsp_agnt.wr_rsp_sqr;
+        // vseqr.ahb_sqr      =  ahb_env.ahb_agnt.ahb_sqr;
 
         // Connect AXI Monitors to Scoreboard
         axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_imp);

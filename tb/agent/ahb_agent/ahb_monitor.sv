@@ -88,14 +88,19 @@ class ahb_monitor extends uvm_monitor;
             ahb_mon_item.HADDR_o = ahb_vif.HADDR;
             ahb_mon_item.ACCESS_o = (ahb_vif.HWRITE == 1)? write : read;
             
-            ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
-            ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
-            ahb_mon_item.RESP_i = (ahb_vif.HRESP == 1) ? ERROR : okay;
+
+            ahb_mon_item.RESP_i   = (ahb_vif.HRESP == 1) ? ERROR : okay;
             ahb_mon_item.HBURST_o = ahb_vif.HBURST;
             ahb_mon_item.HTRANS_o = ahb_vif.HTRANS;
+            ahb_mon_item.HSIZE_o = ahb_vif.HSIZE;
 
-            if (ahb_vif.HSIZE && ahb_vif.HREADY && ahb_vif.HTRANS[1] /*(ahb_vif.HWDATA || ahb_vif.HRDATA)*/) begin
-                //Write the monitored data to ahb analysis port
+            @(posedge ahb_vif.HCLK);
+            ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
+            ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
+
+
+            if (ahb_vif.HSIZE && ahb_vif.HREADY /*(ahb_vif.HWDATA || ahb_vif.HRDATA)*/) begin
+               // Write the monitored data to ahb analysis port
                 ahb_ap.write(ahb_mon_item);
                 ahb_mon_item.print();  // Print the monitored data
             end

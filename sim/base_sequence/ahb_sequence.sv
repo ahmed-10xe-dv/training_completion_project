@@ -19,9 +19,9 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   // Sequence item handle and Memory Handle
   ahb_seq_item req;
   ahb_seq_item rsp;
-  int Transactions_Count = 5;
-  mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
-  string scope_name = "";
+  // int Transactions_Count;
+  // mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW) mem;
+  // string scope_name = "";
 
 
   //------------------------------------------------------------------------------
@@ -32,20 +32,6 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
     super.new(name);
     mem = mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW)::type_id::create("mem");
   endfunction
-
-
-  //------------------------------------------------------------------------------
-  // Task: pre-body
-  // Initializes memory
-  //------------------------------------------------------------------------------
-  task pre_body();
-    // Populate memory with randomized data
-    for (int i = 0; i < 4096; i++) begin  // Corrected loop condition
-       bit [7:0] data = $urandom;        // Generate random 8-bit data
-       mem.write_byte(i, data);          // Write random data to memory at address 'i'
-    end
-   `uvm_info(get_name(), "Memory Initialized", UVM_LOW)
-  endtask
 
 
   //------------------------------------------------------------------------------
@@ -66,11 +52,14 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
     // end
 
     req = ahb_seq_item::type_id::create("req");
-    rsp = ahb_seq_item::type_id::create("rsp_sent_to_AHB_DRV");
+    rsp = ahb_seq_item::type_id::create("rsp");
 
-    repeat (Transactions_Count) begin
-      // repeat (4) begin
+    // repeat (Transactions_Count + 1) begin
+      forever begin
       // Send a dummy request
+      // req = ahb_seq_item::type_id::create("req");
+      // rsp = ahb_seq_item::type_id::create("rsp");
+
       start_item(req);  
       finish_item(req);
 
@@ -84,7 +73,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
         else begin
             `uvm_info("AHB Read Transaction",
             $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
-            req.HRDATA_i = mem.read(req.HADDR_o);
+            req.HRDATA_i = $urandom();
             `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
             req.HADDR_o, req.HRDATA_i), UVM_LOW)
         end

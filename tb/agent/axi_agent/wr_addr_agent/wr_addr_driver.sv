@@ -91,7 +91,6 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
       axi_vif.AWID    <= req.id;
       axi_vif.AWSIZE  <= req.awsize_val;
       axi_vif.AWLEN   <= req.burst_length - 1;
-      //Trigger the event here
       req.print();
 
       `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)

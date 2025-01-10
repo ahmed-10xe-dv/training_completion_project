@@ -87,31 +87,39 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   task drive();
 
+    @(ahb_vif.HADDR);
     // Retrieve the next sequence item from the sequencer
     seq_item_port.get_next_item(req);
+    // @(posedge ahb_vif.HCLK);
     // Assign input signals to the sequence item's fields based on AHB interface
-    req.ACCESS_o   <= (ahb_vif.HWRITE) ? write : read; // Determine access type: Read or Write
-    req.HADDR_o    <= ahb_vif.HADDR;                  // Capture address bus value
-    req.HWDATA_o   <= ahb_vif.HWDATA;                 // Capture write data bus value
-    req.HSIZE_o    <= ahb_vif.HSIZE;                  // Capture transfer size
-    req.HBURST_o   <= ahb_vif.HBURST;                 // Capture burst type
-    req.HTRANS_o   <= ahb_vif.HTRANS;                 // Capture transfer type
+    req.ACCESS_o   = (`DRIV_IF.HWRITE) ? write : read; // Determine access type: Read or Write
+    req.HADDR_o    = `DRIV_IF.HADDR;                  // Capture address bus value
+    req.HWDATA_o   = `DRIV_IF.HWDATA;                 // Capture write data bus value
+    req.HSIZE_o    = `DRIV_IF.HSIZE;                  // Capture transfer size
+    req.HBURST_o   = `DRIV_IF.HBURST;                 // Capture burst type
+    req.HTRANS_o   = `DRIV_IF.HTRANS;                 // Capture transfer type
     seq_item_port.item_done();
+    `uvm_info(get_name(), "AHB Driver Debug before printing req", UVM_LOW)
+    req.print();
 
+    @(posedge ahb_vif.HCLK);
 
     seq_item_port.get_next_item(rsp);
     if (!ahb_vif.HWRITE) begin
       ahb_vif.HRDATA <= rsp.HRDATA_i;              // Assign read data bus for read operation
-      ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
+      // ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
     end
-    else begin
-        ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
-    end
-    
+    // else begin
+    //     ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
+    // end
+
+    ahb_vif.HREADY <= rsp.HREADY_i;              // Assign ready signal for read operation
     // Assign response status (HRESP) based on response type (okay or error)
     ahb_vif.HRESP <= (rsp.RESP_i == okay) ? 1'b0 : 1'b1;
-    @(posedge ahb_vif.HCLK);
+    // @(posedge ahb_vif.HCLK);
     seq_item_port.item_done();
+    `uvm_info(get_name(), "AHB Driver Debug before printing rsp", UVM_LOW)
+    rsp.print();
 
   endtask : drive
 
