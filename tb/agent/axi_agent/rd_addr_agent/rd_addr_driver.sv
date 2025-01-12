@@ -88,7 +88,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
        axi_vif.ARID    <= req.id;
        axi_vif.ARSIZE  <= req.awsize_val;
        axi_vif.ARVALID <= req.ar_valid;
-       axi_vif.ARLEN   <= req.burst_length - 1;
+       axi_vif.ARLEN   <= req.burst_length - 2;
        wait(axi_vif.ARREADY);
 
      `uvm_info(get_full_name(), "Read address transaction completed", UVM_LOW)

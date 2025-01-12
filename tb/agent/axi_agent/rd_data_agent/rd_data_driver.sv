@@ -83,7 +83,6 @@ class rd_data_driver extends uvm_driver #(axi_seq_item);
       `uvm_info(get_full_name(), "Observing Read Data transaction", UVM_LOW)
       axi_vif.RREADY <= req.rready;
       wait(axi_vif.RVALID);
-      // @(posedge axi_vif.ACLK);
     end
     @(posedge axi_vif.ACLK);
     seq_item_port.item_done();

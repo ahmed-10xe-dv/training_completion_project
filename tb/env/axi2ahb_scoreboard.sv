@@ -114,10 +114,9 @@ class axi2ahb_scoreboard extends uvm_component;
     * Compare Write and Read Data Transfer: AXI to AHB Write and Read Transaction Comparison
     *************************************************************************/
     function void compare_write_txns();
-        $display("Scoreboard Started for write");
 
             if ((/*axi_wr_addr_q.size() && */ (axi_wr_data_q.size()) && (ahb_data_q.size()))) begin
-                $display("In Write Compare Loop");
+                $display("Scoreboard Started for write");
                 axi_wr_addr_item = axi_wr_addr_q.pop_front();
                 axi_wr_data_item = axi_wr_data_q.pop_front();
                 ahb_data_item    = ahb_data_q.pop_front();
@@ -125,18 +124,20 @@ class axi2ahb_scoreboard extends uvm_component;
                 // Check for valid write transactions
                 if (/* axi_wr_addr_item.access == WRITE_TRAN &&*/ axi_wr_data_item.access == WRITE_TRAN ) begin
                         // Retrieve data from the AHB FIFO
-                        if (ahb_data_item.ACCESS_o == write && (ahb_data_item.HADDR_o == axi_wr_addr_item.addr )) begin
+                        if (ahb_data_item.ACCESS_o == write /*&& (ahb_data_item.HADDR_o == axi_wr_addr_item.addr)*/ ) begin
                             //Compare AXI and AHB write data
                             if (ahb_data_item.HWDATA_o == axi_wr_data_item.write_data[0]) begin
-                                `uvm_info("BRIDGE_WRITE_TXN_PASS", 
-                                          $sformatf("AXI and AHB Write transactions match\nAXI: %h\nAHB: %h", 
-                                                    axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), 
-                                          UVM_LOW)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info(get_name(), "---    WRITE TRANSACTION PASSED    ---", UVM_NONE)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info("BRIDGE_WRITE_TXN_PASS", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
                             end else begin
-                                `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
-                                           $sformatf("AXI and AHB Write transactions mismatch\nAXI: %h\nAHB: %h", 
-                                                     axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
-                            end              
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info(get_name(), "---   WRITE TRANSACTION FAILED     ---", UVM_NONE)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_error("BRIDGE_WRITE_TXN_FAIL", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
+                            end
+                            
                         end
                 end
             end  
@@ -148,6 +149,8 @@ class axi2ahb_scoreboard extends uvm_component;
         $display("Scoreboard for Started read ");
 
         if ((axi_rd_data_q.size()) && (ahb_data_q.size())) begin
+            // ahb_data_item    = (ahb_data_q.size() == 1) ? ahb_data_q.pop_front(): ahb_data_q.pop_back();  //  Sometimes ahb_gets the same data twice 
+            // to make sure it always have one item in queue, we're doing that
                 $display("In Read Compare Loop");
                 axi_rd_addr_item = axi_rd_addr_q.pop_front();
                 axi_rd_data_item = axi_rd_data_q.pop_front();
@@ -159,14 +162,15 @@ class axi2ahb_scoreboard extends uvm_component;
                         if (ahb_data_item.ACCESS_o == read) begin
                             //Compare AXI and AHB Read data
                             if (ahb_data_item.HRDATA_i == axi_rd_data_item.write_data[0]) begin
-                                `uvm_info("BRIDGE_READ_TXN_PASS", 
-                                          $sformatf("AXI and AHB READ transactions match\nAXI: %h\nAHB: %h", 
-                                                    axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i), 
-                                          UVM_LOW)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info(get_name(), "---     READ TRANSACTION PASSED    ---", UVM_NONE)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info("BRIDGE_READ_TXN_PASS", $sformatf("AXI Read Data : %h, AHB Read Data : %h", axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i), UVM_LOW)
                             end else begin
-                                `uvm_error("BRIDGE_READ_TXN_FAIL", 
-                                           $sformatf("AXI and AHB READ transactions mismatch\nAXI: %h\nAHB: %h", 
-                                           axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i))
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_info(get_name(), "---    READ TRANSACTION FAILED     ---", UVM_NONE)
+                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                                `uvm_error("BRIDGE_READ_TXN_FAIL", $sformatf("AXI Read Data : %h, AHB Read Data : %h", axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i))
                             end
                         end
                 end

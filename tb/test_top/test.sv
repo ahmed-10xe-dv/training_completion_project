@@ -32,6 +32,39 @@ class axi2ahb_test extends uvm_test;
     ahb_sequence ahb_seq;              // AHB Sequence
 
 
+    // Read Sequences
+    basic_rd_addr_txn             basic_rd_seq;               // Basic Read Address Sequence
+    incr_rd_addr_txn_len1         inc_rd_len1_seq;
+    incr_rd_addr_txn_len2         inc_rd_len2_seq;                // Incremental Read Address Sequence
+    wrap_rd_large_data_txn        wrap_rd_large_seq;          // Wrap Read with Large Data
+    incr_rd_single_beat_txn       incr_rd_single_beat_seq;    // Incremental Single Beat Read
+    fixed_rd_large_txn            fixed_rd_large_seq;         // Fixed Burst Read with Large Size
+    wrap_rd_small_width_txn       wrap_rd_small_width_seq;    // Wrap Read with Small Data Width
+    incr_rd_mixed_size_txn        incr_rd_mixed_size_seq;     // Incremental Read with Mixed Data Sizes
+    fixed_rd_single_small_txn     fixed_rd_single_small_seq;  // Fixed Burst Single Beat Small Read
+    incr_rd_large_offset_txn      incr_rd_large_offset_seq;   // Incremental Read with Large Offset
+    fixed_rd_alt_beat_txn         fixed_rd_alt_beat_seq;      // Fixed Read with Alternating Beats
+    wrap_rd_non_aligned_txn       wrap_rd_non_aligned_seq;    // Wrap Read with Non-Aligned Address
+    incr_rd_rand_addr_inc_txn     incr_rd_rand_addr_seq;      // Incremental Read with Randomized Address Increments
+    wrap_rd_full_data_bus_txn     wrap_rd_full_data_seq;      // Wrap Read Filling Full Data Bus
+    fixed_rd_seq_data_inc_txn     fixed_rd_seq_data_inc_seq;  // Fixed Read with Sequential Data Increment
+    incr_rd_var_beat_txn          incr_rd_var_beat_seq;       // Incremental Read with Variable Beats
+    wrap_rd_misaligned_txn        wrap_rd_misaligned_seq;     // Wrap Read with Misaligned Address
+    fixed_rd_alt_id_txn           fixed_rd_alt_id_seq;        // Fixed Read with Alternating IDs
+    rd_single_beat_multiple_txn   rd_single_beat_multi_seq;   // Single Beat Read Multiple Transactions
+
+    // Write Addr Sequences
+    fixed_wr_seq_data_inc_txn fixd_wr_seq_multiple_beats;
+
+
+
+    // Write Data Sequences
+    fixed_wr_seq_data_inc_txn fixd_wr_data_seq_multiple_beats;
+
+
+
+
+
     configurations  cnfg;                    // Configurations
 
     //-----------------------------------------------------------------------------  
@@ -45,6 +78,37 @@ class axi2ahb_test extends uvm_test;
         rd_data_seq = axi_rd_data_sequence::type_id::create("rd_data_seq");
         wr_rsp_seq =  axi_wr_rsp_sequence::type_id::create("wr_rsp_seq");
         ahb_seq = ahb_sequence::type_id::create("ahb_seq");
+
+
+        // Instantiate read sequences
+        basic_rd_seq               = basic_rd_addr_txn::type_id::create("basic_rd_seq");
+        inc_rd_len1_seq            = incr_rd_addr_txn_len1::type_id::create("inc_rd_len1_seq");
+        inc_rd_len2_seq            = incr_rd_addr_txn_len2::type_id::create("inc_rd_len2_seq");
+        wrap_rd_large_seq          = wrap_rd_large_data_txn::type_id::create("wrap_rd_large_seq");
+        incr_rd_single_beat_seq    = incr_rd_single_beat_txn::type_id::create("incr_rd_single_beat_seq");
+        fixed_rd_large_seq         = fixed_rd_large_txn::type_id::create("fixed_rd_large_seq");
+        wrap_rd_small_width_seq    = wrap_rd_small_width_txn::type_id::create("wrap_rd_small_width_seq");
+        incr_rd_mixed_size_seq     = incr_rd_mixed_size_txn::type_id::create("incr_rd_mixed_size_seq");
+        fixed_rd_single_small_seq  = fixed_rd_single_small_txn::type_id::create("fixed_rd_single_small_seq");
+        incr_rd_large_offset_seq   = incr_rd_large_offset_txn::type_id::create("incr_rd_large_offset_seq");
+        fixed_rd_alt_beat_seq      = fixed_rd_alt_beat_txn::type_id::create("fixed_rd_alt_beat_seq");
+        wrap_rd_non_aligned_seq    = wrap_rd_non_aligned_txn::type_id::create("wrap_rd_non_aligned_seq");
+        incr_rd_rand_addr_seq      = incr_rd_rand_addr_inc_txn::type_id::create("incr_rd_rand_addr_seq");
+        wrap_rd_full_data_seq      = wrap_rd_full_data_bus_txn::type_id::create("wrap_rd_full_data_seq");
+        fixed_rd_seq_data_inc_seq  = fixed_rd_seq_data_inc_txn::type_id::create("fixed_rd_seq_data_inc_seq");
+        incr_rd_var_beat_seq       = incr_rd_var_beat_txn::type_id::create("incr_rd_var_beat_seq");
+        wrap_rd_misaligned_seq     = wrap_rd_misaligned_txn::type_id::create("wrap_rd_misaligned_seq");
+        fixed_rd_alt_id_seq        = fixed_rd_alt_id_txn::type_id::create("fixed_rd_alt_id_seq");
+        rd_single_beat_multi_seq   = rd_single_beat_multiple_txn::type_id::create("rd_single_beat_multi_seq");
+
+
+        // Write Sequences
+        fixd_wr_seq_multiple_beats = fixed_wr_seq_data_inc_txn::type_id::create("fixd_wr_seq_multiple_beats");
+
+        // Write Data Sequences
+        fixd_wr_data_seq_multiple_beats = fixed_wr_seq_data_inc_txn::type_id::create("fixd_wr_data_seq_multiple_beats");
+
+
     endfunction : new
 
     //-----------------------------------------------------------------------------  

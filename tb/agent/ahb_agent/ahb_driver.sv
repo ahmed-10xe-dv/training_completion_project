@@ -24,6 +24,8 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   ahb_seq_item rsp;
 
   virtual ahb_interface ahb_vif;        // Virtual interface for AHB protocol
+  virtual axi_interface axi_vif;        // Virtual interface for AXI protocol
+
 
   // Constructor
   function new(string name = "ahb_driver", uvm_component parent = null);
@@ -45,6 +47,8 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
     super.connect_phase(phase);
     if (!uvm_config_db#(virtual ahb_interface)::get(this, "*", "ahb_vif", ahb_vif))
       `uvm_error("Config Error", "Configuration Failed @ Connect Phase in AHB Driver")
+    if (!uvm_config_db#(virtual axi_interface)::get(this, "*", "axi_vif", axi_vif))
+      `uvm_error("Config Error", "Configuration Failed @ Connect Phase in axi Driver")
   endfunction : connect_phase
 
   //-----------------------------------------------------------------------------
@@ -87,7 +91,7 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
   //-----------------------------------------------------------------------------
   task drive();
 
-    @(ahb_vif.HADDR);
+    @(ahb_vif.HADDR || ahb_vif.HTRANS);
     // Retrieve the next sequence item from the sequencer
     seq_item_port.get_next_item(req);
     // @(posedge ahb_vif.HCLK);
@@ -102,7 +106,7 @@ class ahb_driver extends uvm_driver #(ahb_seq_item);
     `uvm_info(get_name(), "AHB Driver Debug before printing req", UVM_LOW)
     req.print();
 
-    @(posedge ahb_vif.HCLK);
+    @(posedge ahb_vif.HCLK);     // If i uncomment that, then i get transactions mismatch
 
     seq_item_port.get_next_item(rsp);
     if (!ahb_vif.HWRITE) begin

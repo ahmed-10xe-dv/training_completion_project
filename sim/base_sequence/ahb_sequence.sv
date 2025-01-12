@@ -30,7 +30,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
   //------------------------------------------------------------------------------
   function new(string name = "ahb_sequence");
     super.new(name);
-    mem = mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW)::type_id::create("mem");
+    // mem = mem_model_pkg::mem_model#(bus_params_pkg::BUS_AW, bus_params_pkg::BUS_DW, bus_params_pkg::BUS_DBW)::type_id::create("mem");
   endfunction
 
 
@@ -73,6 +73,14 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
         else begin
             `uvm_info("AHB Read Transaction",
             $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
+
+            // case (req.HSIZE_o)
+            //   0: req.HRDATA_i = $urandom() & 8'hFF;           // (1 byte)
+            //   1: req.HRDATA_i = $urandom() & 16'hFFFF;       // (2 bytes)
+            //   2: req.HRDATA_i = $urandom() & 32'hFFFFFFFF;  // (4 bytes)
+            //   default:req.HRDATA_i = $urandom();           //random value
+            // endcase
+            
             req.HRDATA_i = $urandom();
             `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
             req.HADDR_o, req.HRDATA_i), UVM_LOW)
