@@ -41,7 +41,7 @@ class rd_addr_agent extends uvm_agent;
     end
     rd_addr_mon  = rd_addr_monitor::type_id::create("rd_addr_mon", this);
 
-    `uvm_info(get_full_name(), "Build phase completed for Read Address Agent", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed for Read Address Agent", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -54,10 +54,10 @@ class rd_addr_agent extends uvm_agent;
       rd_addr_driv.seq_item_port.connect(rd_addr_sqr.seq_item_export);
     end
     else begin
-      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+      `uvm_info(get_name(), "Agent is Passive", UVM_LOW)
     end
 
-    `uvm_info(get_full_name(), "Connect phase completed for Read Address Agent", UVM_LOW)
+    `uvm_info(get_name(), "Connect phase completed for Read Address Agent", UVM_LOW)
   endfunction
 
 endclass

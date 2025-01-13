@@ -49,7 +49,7 @@ class basic_wr_data_txn extends axi_wr_data_sequence;
                     size == 4;
                     data.size == 4;
                 }) begin
-                `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+                `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
             end
             // Assign transaction details
             req.id = 4;
@@ -90,7 +90,7 @@ class basic_inc_write_data_txn extends axi_wr_data_sequence;
                   size == 4;
                   data.size == 8;
               }) begin
-              `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+              `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
           end
           // Assign transaction details
           req.id = 2;

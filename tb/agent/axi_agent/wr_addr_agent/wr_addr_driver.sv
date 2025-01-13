@@ -30,7 +30,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info(get_full_name(), "Build phase completed", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     if (!uvm_config_db#(virtual axi_interface)::get(null, "*", "axi_vif", axi_vif))
-    `uvm_error(get_full_name(), "Failed to connect axi_vif interface")
+    `uvm_error(get_name(), "Failed to connect axi_vif interface")
   endfunction
  
   //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
   // Main Phase
   //-----------------------------------------------------------------------------
   task main_phase(uvm_phase phase);
-    `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
+    `uvm_info(get_name(), "Main Phase Started", UVM_LOW)
     forever begin
       drive_write_addr();
     end
@@ -81,7 +81,7 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
     if (req.access == WRITE_TRAN) begin
-    `uvm_info(get_full_name(), "Driving write address transaction", UVM_LOW)
+    `uvm_info(get_name(), "Driving write address transaction", UVM_LOW)
     
     axi_vif.AWVALID <= req.aw_valid;
     wait(axi_vif.AWREADY);
@@ -90,10 +90,10 @@ class wr_addr_driver extends uvm_driver #(axi_seq_item);
       axi_vif.AWADDR  <= req.addr;
       axi_vif.AWID    <= req.id;
       axi_vif.AWSIZE  <= req.awsize_val;
-      axi_vif.AWLEN   <= req.burst_length - 1;
+      axi_vif.AWLEN   <= req.burst_length - 2;
       req.print();
 
-      `uvm_info(get_full_name(), "Write address transaction completed", UVM_LOW)
+      `uvm_info(get_name(), "Write address transaction completed", UVM_LOW)
     end
     seq_item_port.item_done();
   endtask

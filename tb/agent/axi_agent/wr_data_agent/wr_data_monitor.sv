@@ -64,7 +64,7 @@ class wr_data_monitor extends uvm_monitor;
         
         // do begin
             // int beat = 0;
-            `uvm_info(get_full_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+            `uvm_info(get_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
             temp_data_item.id = axi_vif.WID;
             temp_data_item.write_data[0] = axi_vif.WDATA;
             temp_data_item.write_strobe[0] = axi_vif.WSTRB;
@@ -73,7 +73,7 @@ class wr_data_monitor extends uvm_monitor;
             if(axi_vif.WVALID && axi_vif.WREADY && axi_vif.WSTRB && axi_vif.WDATA) begin
                 wr_data_ap.write(temp_data_item);
                 temp_data_item.print();
-                `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+                `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
                 // beat++;
             end
             @(posedge axi_vif.ACLK);

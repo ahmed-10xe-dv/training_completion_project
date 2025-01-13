@@ -82,7 +82,7 @@ class wr_addr_monitor extends uvm_monitor;
         if(axi_vif.AWVALID && axi_vif.AWREADY && axi_vif.AWSIZE) begin
             wr_addr_ap.write(temp_wr_addr_item);
             temp_wr_addr_item.print();
-                `uvm_info(get_full_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+                `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
         end
         @(posedge axi_vif.ACLK);
     endtask

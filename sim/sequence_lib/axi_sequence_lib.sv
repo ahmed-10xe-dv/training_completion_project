@@ -37,7 +37,7 @@
 //                     size == 4;
 //                     data.size == 4;
 //                 }) begin
-//                 `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//                 `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //             end
 //             // Assign transaction details
 //             req.id = 4;
@@ -77,7 +77,7 @@
 //                     size == 4;
 //                     data.size == 16;
 //                 }) begin
-//                 `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//                 `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //             end
 //             // Assign transaction details
 //             req.id = 6;
@@ -116,7 +116,7 @@
 //                 size == 4;
 //                 data.size == 8;
 //             }) begin
-//             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//             `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //         end
 //         // Assign transaction details
 //         req.id = 6;
@@ -137,7 +137,7 @@
 //                 size == 4;
 //                 data.size == 4;
 //             }) begin
-//             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//             `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //         end
 //         // Assign transaction details
 //         req.id = 4;
@@ -178,7 +178,7 @@
 //                   size == 4;
 //                   data.size == 8;
 //               }) begin
-//               `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//               `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //           end
 //           // Assign transaction details
 //           req.id = 2;
@@ -220,7 +220,7 @@
 //                   size == 4;
 //                   data.size == 16;
 //               }) begin
-//               `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//               `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //           end
 //           // Assign transaction details
 //           req.id = 4;
@@ -263,7 +263,7 @@
 //                 size == 4;
 //                 data.size == 4;
 //             }) begin
-//             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//             `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //         end
 //         // Assign transaction details
 //         req.id = i;
@@ -306,7 +306,7 @@
 //               size == 8;
 //               data.size == 32;
 //           }) begin
-//           `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//           `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //       end
 //       // Assign transaction details
 //       req.id = 4;
@@ -349,7 +349,7 @@
 //               size == 4;
 //               data.size == 16;
 //           }) begin
-//           `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//           `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //       end
 //       // Assign transaction details
 //       req.id = 4;
@@ -392,7 +392,7 @@
 //                 size == 4;
 //                 data.size == 10;
 //             }) begin
-//             `uvm_error(get_full_name(), "REQ Randomization Failed @axi_sequence")
+//             `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
 //         end
 //         // Assign transaction details
 //         req.id = i;
@@ -435,7 +435,7 @@
 //   //       // Create and randomize the write request
 //   //       req = axi_seq_item::type_id::create("write_request", this);
 //   //       if (!req.randomize() with {access == WRITE_TRAN; burst == FIXED; size == 4; data.size == 4;})
-//   //         `uvm_error(get_full_name(), "REQ Randomization Failed @multiple_read_write (WRITE)")
+//   //         `uvm_error(get_name(), "REQ Randomization Failed @multiple_read_write (WRITE)")
   
 //   //       // Set transaction properties
 //   //       req.id = i;
@@ -454,7 +454,7 @@
 //   //       // Create and randomize the read request
 //   //       req = axi_seq_item::type_id::create("read_request", this);
 //   //       if (!req.randomize() with {access == READ_TRAN; burst == FIXED; size == 4; data.size == 4;})
-//   //         `uvm_error(get_full_name(), "REQ Randomization Failed @multiple_read_write (READ)")
+//   //         `uvm_error(get_name(), "REQ Randomization Failed @multiple_read_write (READ)")
   
 //   //       // Set transaction properties
 //   //       req.id = i;

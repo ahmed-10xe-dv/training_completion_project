@@ -57,7 +57,7 @@ class rd_data_monitor extends uvm_monitor;
 
         // do begin
             // int beat =0;
-            `uvm_info(get_full_name(), "Monitoring AXI_Read_data_monitor transactions", UVM_LOW)
+            `uvm_info(get_name(), "Monitoring AXI_Read_data_monitor transactions", UVM_LOW)
             temp_rd_data_item.id = axi_vif.RID;
             temp_rd_data_item.write_data[0] = axi_vif.RDATA;
             temp_rd_data_item.access = READ_TRAN;
@@ -65,7 +65,7 @@ class rd_data_monitor extends uvm_monitor;
             if(axi_vif.RVALID && axi_vif.RREADY) begin
                 rd_data_ap.write(temp_rd_data_item);
                 temp_rd_data_item.print();
-                `uvm_info(get_full_name(), "Completed AXI_Read_data_monitor transactions", UVM_LOW)
+                `uvm_info(get_name(), "Completed AXI_Read_data_monitor transactions", UVM_LOW)
             end
             @(posedge axi_vif.ACLK);
     endtask

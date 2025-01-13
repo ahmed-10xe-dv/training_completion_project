@@ -41,7 +41,7 @@ class wr_addr_agent extends uvm_agent;
     end
     wr_addr_mon  = wr_addr_monitor::type_id::create("wr_addr_mon", this);
 
-    `uvm_info(get_full_name(), "Build phase completed for Write Address Agent", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed for Write Address Agent", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -54,10 +54,10 @@ class wr_addr_agent extends uvm_agent;
       wr_addr_driv.seq_item_port.connect(wr_addr_sqr.seq_item_export);
     end
     else begin
-      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+      `uvm_info(get_name(), "Agent is Passive", UVM_LOW)
     end
 
-    `uvm_info(get_full_name(), "Connect phase completed for Write Address Agent", UVM_LOW)
+    `uvm_info(get_name(), "Connect phase completed for Write Address Agent", UVM_LOW)
   endfunction
 
 endclass

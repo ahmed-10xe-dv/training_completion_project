@@ -30,7 +30,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info(get_full_name(), "Build phase completed", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     if (!uvm_config_db#(virtual axi_interface)::get(null, "*", "axi_vif", axi_vif))
-      `uvm_error(get_full_name(), "Failed to connect axi_vif interface")
+      `uvm_error(get_name(), "Failed to connect axi_vif interface")
   endfunction
  
   //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
   // Main Phase
   //-----------------------------------------------------------------------------
   task main_phase(uvm_phase phase);
-    `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
+    `uvm_info(get_name(), "Main Phase Started", UVM_LOW)
     forever begin
       drive_read_addr();
     end
@@ -81,7 +81,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
     if (req.access == READ_TRAN) begin
-      `uvm_info(get_full_name(), "Driving read address transaction", UVM_LOW)
+      `uvm_info(get_name(), "Driving read address transaction", UVM_LOW)
        // Drive AXI read address and control signals
        axi_vif.ARBURST <= req.burst;
        axi_vif.ARADDR  <= req.addr;
@@ -91,7 +91,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
        axi_vif.ARLEN   <= req.burst_length - 2;
        wait(axi_vif.ARREADY);
 
-     `uvm_info(get_full_name(), "Read address transaction completed", UVM_LOW)
+     `uvm_info(get_name(), "Read address transaction completed", UVM_LOW)
     end
     seq_item_port.item_done(); 
     @(posedge axi_vif.ACLK);

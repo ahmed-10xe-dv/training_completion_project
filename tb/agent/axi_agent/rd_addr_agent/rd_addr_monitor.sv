@@ -66,7 +66,7 @@ class rd_addr_monitor extends uvm_monitor;
         if(axi_vif.ARVALID && axi_vif.ARREADY) begin
             rd_addr_ap.write(temp_rd_addr_item);
             temp_rd_addr_item.print();
-            `uvm_info(get_full_name(), "Completed Monitoring AXI_READ_ADDR_monitor transactions", UVM_LOW)
+            `uvm_info(get_name(), "Completed Monitoring AXI_READ_ADDR_monitor transactions", UVM_LOW)
         end
         @(posedge axi_vif.ACLK);
 

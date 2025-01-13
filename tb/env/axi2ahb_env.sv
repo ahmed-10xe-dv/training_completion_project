@@ -41,7 +41,7 @@ class axi2ahb_env extends uvm_env;
     //-------------------------------------------------------------------------
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        `uvm_info(get_full_name(), "BUILD Phase of Env", UVM_LOW);
+        `uvm_info(get_name(), "BUILD Phase of Env", UVM_LOW);
 
         // Create Env
         axi_env = axi_environmet::type_id::create("axi_env", this);
@@ -58,7 +58,7 @@ class axi2ahb_env extends uvm_env;
     //-------------------------------------------------------------------------
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        `uvm_info(get_full_name(), "CONNECT Phase of Env", UVM_LOW);
+        `uvm_info(get_name(), "CONNECT Phase of Env", UVM_LOW);
 
         // vseqr.wr_addr_sqr  =  axi_env.wr_addr_agnt.wr_addr_sqr;
         // vseqr.rd_addr_sqr  =  axi_env.rd_addr_agnt.rd_addr_sqr;

@@ -67,7 +67,7 @@ class ahb_monitor extends uvm_monitor;
     // Function: end_of_elaboration_phase
     //-----------------------------------------------------------------------------
     function void end_of_elaboration_phase(uvm_phase phase);
-        `uvm_info(get_full_name(), "End of elaboration phase completed.", UVM_LOW)
+        `uvm_info(get_name(), "End of elaboration phase completed.", UVM_LOW)
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class ahb_monitor extends uvm_monitor;
     // Task: monitor
     //-----------------------------------------------------------------------------
     task monitor();
-            `uvm_info(get_full_name(), "Monitoring ahb transactions", UVM_LOW)
+            `uvm_info(get_name(), "Monitoring ahb transactions", UVM_LOW)
             // Address Phase, monitor control signals
             ahb_mon_item.HADDR_o = ahb_vif.HADDR;
             ahb_mon_item.ACCESS_o = (ahb_vif.HWRITE == 1)? write : read;

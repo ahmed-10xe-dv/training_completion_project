@@ -35,7 +35,7 @@ class axi_wr_addr_sequence extends uvm_sequence #(axi_seq_item);
                       size == 4;
                       data.size == 4;
                   }) begin
-                  `uvm_error(get_full_name(), "REQ Randomization Failed")
+                  `uvm_error(get_name(), "REQ Randomization Failed")
               end
               // Assign transaction details
               req.id = 5;

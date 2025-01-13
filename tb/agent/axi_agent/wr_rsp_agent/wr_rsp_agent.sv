@@ -40,7 +40,7 @@ class wr_rsp_agent extends uvm_agent;
       wr_rsp_sqr  = wr_rsp_sequencer::type_id::create("wr_rsp_sqr", this);
     end
     wr_rsp_mon  = wr_rsp_monitor::type_id::create("wr_rsp_mon", this);
-    `uvm_info(get_full_name(), "Build phase completed for Write Response Agent", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed for Write Response Agent", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -53,10 +53,10 @@ class wr_rsp_agent extends uvm_agent;
       wr_rsp_driv.seq_item_port.connect(wr_rsp_sqr.seq_item_export);
     end
     else begin
-      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+      `uvm_info(get_name(), "Agent is Passive", UVM_LOW)
     end
 
-    `uvm_info(get_full_name(), "Connect phase completed for Write Address Agent", UVM_LOW)
+    `uvm_info(get_name(), "Connect phase completed for Write Address Agent", UVM_LOW)
   endfunction
 
 endclass

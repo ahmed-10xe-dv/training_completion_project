@@ -38,7 +38,7 @@ class ahb_environment extends uvm_env;
     //-------------------------------------------------------------------------
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        `uvm_info(get_full_name(), "BUILD Phase of Env", UVM_LOW);
+        `uvm_info(get_name(), "BUILD Phase of Env", UVM_LOW);
 
         // Create Agent
         ahb_agnt     = ahb_agent::type_id::create("ahb_agnt", this);
@@ -50,7 +50,7 @@ class ahb_environment extends uvm_env;
     //-------------------------------------------------------------------------
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        `uvm_info(get_full_name(), "CONNECT Phase of AHB Env", UVM_LOW);
+        `uvm_info(get_name(), "CONNECT Phase of AHB Env", UVM_LOW);
     endfunction
 
 endclass

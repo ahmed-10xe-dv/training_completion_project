@@ -40,7 +40,7 @@ class wr_data_agent extends uvm_agent;
       wr_data_sqr  = wr_data_sequencer::type_id::create("wr_data_sqr", this);
     end
     wr_data_mon  = wr_data_monitor::type_id::create(  "wr_data_mon", this);
-    `uvm_info(get_full_name(), "Build phase completed for Write Data Agent", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed for Write Data Agent", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -53,10 +53,10 @@ class wr_data_agent extends uvm_agent;
       wr_data_driv.seq_item_port.connect(wr_data_sqr.seq_item_export);
     end
     else begin
-      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+      `uvm_info(get_name(), "Agent is Passive", UVM_LOW)
     end
     
-    `uvm_info(get_full_name(), "Connect phase completed for Write Data Agent", UVM_LOW)
+    `uvm_info(get_name(), "Connect phase completed for Write Data Agent", UVM_LOW)
   endfunction
 
 endclass

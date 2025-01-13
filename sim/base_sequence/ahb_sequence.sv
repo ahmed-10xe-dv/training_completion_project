@@ -43,7 +43,7 @@ class ahb_sequence extends uvm_sequence #(ahb_seq_item);
     // configurations m_config;
  
     // if( scope_name == "" ) begin
-    //   scope_name = get_full_name(); // this is { sequencer.get_full_name() , get_name() }
+    //   scope_name = get_name(); // this is { sequencer.get_name() , get_name() }
     // end
  
     // if( !uvm_config_db #( int )::get( null , scope_name , "Transactions_Count" , Transactions_Count ) ) begin

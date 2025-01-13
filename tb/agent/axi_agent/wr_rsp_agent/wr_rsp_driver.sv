@@ -30,7 +30,7 @@ class wr_rsp_driver extends uvm_driver #(axi_seq_item);
   //-----------------------------------------------------------------------------
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info(get_full_name(), "Build phase completed", UVM_LOW)
+    `uvm_info(get_name(), "Build phase completed", UVM_LOW)
   endfunction
 
   //-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class wr_rsp_driver extends uvm_driver #(axi_seq_item);
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     if (!uvm_config_db#(virtual axi_interface)::get(null, "*", "axi_vif", axi_vif))
-    `uvm_error(get_full_name(), "Failed to connect axi_vif interface")
+    `uvm_error(get_name(), "Failed to connect axi_vif interface")
   endfunction
  
   //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class wr_rsp_driver extends uvm_driver #(axi_seq_item);
   // Main Phase
   //-----------------------------------------------------------------------------
   task main_phase(uvm_phase phase);
-    `uvm_info(get_full_name(), "Main Phase Started", UVM_LOW)
+    `uvm_info(get_name(), "Main Phase Started", UVM_LOW)
     forever begin
       drive_write_rsp();
     end

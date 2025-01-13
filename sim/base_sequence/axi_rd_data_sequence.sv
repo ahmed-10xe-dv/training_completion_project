@@ -33,7 +33,7 @@ class axi_rd_data_sequence extends uvm_sequence #(axi_seq_item);
                       access == READ_TRAN;
                       rready == 1;
                   }) begin
-                  `uvm_error(get_full_name(), "REQ Randomization Failed @axi_rd_data_sequence")
+                  `uvm_error(get_name(), "REQ Randomization Failed @axi_rd_data_sequence")
               end
               // Send request and wait for completion
               send_request(req);

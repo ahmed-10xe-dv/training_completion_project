@@ -42,7 +42,7 @@ class axi_environmet extends uvm_env;
     //-------------------------------------------------------------------------
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        `uvm_info(get_full_name(), "BUILD Phase of Env", UVM_LOW);
+        `uvm_info(get_name(), "BUILD Phase of Env", UVM_LOW);
 
         // Create Agents
         wr_addr_agnt = wr_addr_agent::type_id::create("wr_addr_agnt", this);
@@ -59,7 +59,7 @@ class axi_environmet extends uvm_env;
     //-------------------------------------------------------------------------
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        `uvm_info(get_full_name(), "CONNECT Phase of Env", UVM_LOW);
+        `uvm_info(get_name(), "CONNECT Phase of Env", UVM_LOW);
     endfunction
 
 endclass

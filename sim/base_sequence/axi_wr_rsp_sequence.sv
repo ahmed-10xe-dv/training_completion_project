@@ -33,7 +33,7 @@ class axi_wr_rsp_sequence extends uvm_sequence #(axi_seq_item);
                       access == WRITE_TRAN;
                       bready == 1;
                   }) begin
-                  `uvm_error(get_full_name(), "REQ Randomization Failed @axi_wr_rsp_sequence")
+                  `uvm_error(get_name(), "REQ Randomization Failed @axi_wr_rsp_sequence")
               end
               // Send request and wait for completion
               send_request(req);

@@ -42,7 +42,7 @@ class ahb_agent extends uvm_agent;
     end
 
     ahb_mon = ahb_monitor::type_id::create("ahb_mon", this);
-    `uvm_info(get_full_name(), "Build Phase completed for AHB Agent", UVM_LOW)
+    `uvm_info(get_name(), "Build Phase completed for AHB Agent", UVM_LOW)
   endfunction : build_phase
 
   //-----------------------------------------------------------------------------
@@ -54,10 +54,10 @@ class ahb_agent extends uvm_agent;
       ahb_drv.seq_item_port.connect(ahb_sqr.seq_item_export);
     end
     else begin
-      `uvm_info(get_full_name(), "Agent is Passive", UVM_LOW)
+      `uvm_info(get_name(), "Agent is Passive", UVM_LOW)
     end
 
-    `uvm_info(get_full_name(), "Connect Phase completed for AHB Agent", UVM_LOW)
+    `uvm_info(get_name(), "Connect Phase completed for AHB Agent", UVM_LOW)
   endfunction : connect_phase
 
 endclass : ahb_agent
