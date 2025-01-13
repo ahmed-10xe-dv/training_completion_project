@@ -82,7 +82,6 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
     seq_item_port.get_next_item(req);
     if (req.access == WRITE_TRAN) begin
       `uvm_info(get_name(), "Driving write Data transaction", UVM_LOW)
-      `uvm_info(get_name(), $sformatf("Value of burst = %h", req.burst_length ), UVM_LOW)
       axi_vif.WVALID <= req.w_valid;
      
       for (int beat = 0; beat < req.burst_length ; beat++) begin

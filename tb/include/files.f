@@ -8,10 +8,7 @@ import uvm_pkg::*;
 
 // Bus Parameters and Memory Model
 `include "bus_params_pkg.sv"
-`include "mem_model_pkg.sv"
-import mem_model_pkg::*;
 `include "dv_macros.svh"
-`include "mem_model.sv"
 `include "configurations.sv"
 
 
@@ -21,8 +18,6 @@ import mem_model_pkg::*;
 
 // Sequences and Sequence Items
 `include "../sim/seq_item/axi_seq_item.sv"
-// `include "../sim/axi_sequence.sv"
-// `include "../sim/axi_sequence_lib.sv"
 `include "../sim/seq_item/ahb_seq_item.sv"
 `include "../sim/base_sequence/ahb_sequence.sv"
 `include "../sim/base_sequence/axi_wr_addr_sequence.sv"
@@ -31,9 +26,7 @@ import mem_model_pkg::*;
 `include "../sim/base_sequence/axi_rd_data_sequence.sv"
 `include "../sim/base_sequence/axi_wr_rsp_sequence.sv"
 `include "../sim/sequence_lib/axi_wr_addr_sequence_lib.sv"
-`include "../sim/sequence_lib/axi_wr_data_sequence_lib.sv"
 `include "../sim/sequence_lib/axi_rd_addr_sequence_lib.sv"
-`include "../sim/sequence_lib/axi_sequence_lib.sv"
 
 
 // Write Address Agent
@@ -71,10 +64,6 @@ import mem_model_pkg::*;
 `include "../agent/ahb_agent/ahb_driver.sv"
 `include "../agent/ahb_agent/ahb_monitor.sv"
 `include "../agent/ahb_agent/ahb_agent.sv"
-
-// Multi-Sequence
-`include "../Vsequencer/multi_sequencer.sv"
-`include "../Vsequencer/multi_seq.sv"
 
 // AXI to AHB Environment and Test
 `include "../env/axi2ahb_scoreboard.sv"

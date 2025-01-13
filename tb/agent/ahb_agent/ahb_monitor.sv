@@ -99,7 +99,7 @@ class ahb_monitor extends uvm_monitor;
             ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
 
 
-            if (ahb_vif.HSIZE && ahb_vif.HREADY ) begin   // First I had this, but 
+            if (ahb_vif.HREADY) begin   // First I had this "ahb_vif.HSIZE && "", but 
 
                // Write the monitored data to ahb analysis port
                 ahb_ap.write(ahb_mon_item);

@@ -140,7 +140,7 @@ class fix_wr_addr_txn_beat16 extends axi_wr_addr_sequence;
               `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
           end
           req.id = i;
-          req.addr = 32'hf + (i * 4);
+          req.addr = 32'h4 + (i * 4);
           send_request(req);
           wait_for_item_done();
       end
@@ -724,7 +724,7 @@ endclass : incr_wr_addr_txn_len5
 // This sequence generates an INCR burst Write Address transaction of len 256 on the AXI Write Address Channel.
 // It contains:
 //             Burst:            INCR
-//             Data Lane Width:  1 bytes
+//             Data Lane Width:  4 bytes
 //             Transaction Type: Write
 //             Data Size:        256 bytes
 //             Number of Beats:  256
@@ -863,7 +863,7 @@ class incr_wr_addr_nrw2_txn_len8 extends axi_wr_addr_sequence;
       if (!req.randomize() with {
               access == WRITE_TRAN;
               burst == INCR;
-              size == 4;
+              size == 2;
               data.size == 15;
           }) begin
           `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
@@ -885,7 +885,7 @@ endclass : incr_wr_addr_nrw2_txn_len8
 //             Data Lane Width:  1 to 4 bytes
 //             Transaction Type: Write
 //             Data Size:        Mixed
-//             Number of Beats:  6
+//             Number of Beats:  
 //------------------------------------------------------------------------------
 
 class incr_wr_mixed_size_txn extends axi_wr_addr_sequence;
