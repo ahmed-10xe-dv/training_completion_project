@@ -80,7 +80,6 @@ class axi2ahb_scoreboard extends uvm_component;
     virtual function void write_axi_wr_addr(axi_seq_item axi_wr_addr_item);
         `uvm_info(get_type_name(),$sformatf("Received trans On write_axi_wr_addr Analysis Imp Port"),UVM_LOW)
         axi_wr_addr_q.push_back(axi_wr_addr_item);
-        axi_wr_addr_item.print();
     endfunction
 
     virtual function void write_axi_rd_addr(axi_seq_item axi_rd_addr_item);
@@ -116,7 +115,6 @@ class axi2ahb_scoreboard extends uvm_component;
     function void compare_write_txns();
 
             if ((/*axi_wr_addr_q.size() && */ (axi_wr_data_q.size()) && (ahb_data_q.size()))) begin
-                $display("Scoreboard Started for write");
                 axi_wr_addr_item = axi_wr_addr_q.pop_front();
                 axi_wr_data_item = axi_wr_data_q.pop_front();
                 ahb_data_item    = ahb_data_q.pop_front();

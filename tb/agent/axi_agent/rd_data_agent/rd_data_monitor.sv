@@ -17,6 +17,8 @@ class rd_data_monitor extends uvm_monitor;
 
     virtual axi_interface axi_vif;
     uvm_analysis_port #(axi_seq_item) rd_data_ap;
+    uvm_analysis_port #(axi_seq_item) rd_data_ap_cov;
+
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -25,6 +27,7 @@ class rd_data_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         rd_data_ap = new("rd_data_ap", this);
+        rd_data_ap_cov = new("rd_data_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -55,19 +58,21 @@ class rd_data_monitor extends uvm_monitor;
         axi_seq_item temp_rd_data_item;
         temp_rd_data_item         = axi_seq_item::type_id::create("read_data_monitor");
 
-        // do begin
-            // int beat =0;
-            `uvm_info(get_name(), "Monitoring AXI_Read_data_monitor transactions", UVM_LOW)
-            temp_rd_data_item.id = axi_vif.RID;
-            temp_rd_data_item.write_data[0] = axi_vif.RDATA;
-            temp_rd_data_item.access = READ_TRAN;
+        `uvm_info(get_name(), "Monitoring AXI_Read_data_monitor transactions", UVM_LOW)
+        temp_rd_data_item.id = axi_vif.RID;
+        temp_rd_data_item.write_data[0] = axi_vif.RDATA;
+        temp_rd_data_item.access = READ_TRAN;
 
-            if(axi_vif.RVALID && axi_vif.RREADY) begin
-                rd_data_ap.write(temp_rd_data_item);
-                temp_rd_data_item.print();
-                `uvm_info(get_name(), "Completed AXI_Read_data_monitor transactions", UVM_LOW)
-            end
-            @(posedge axi_vif.ACLK);
+        // Write the monitored item to functional cov analysis port
+        rd_data_ap_cov.write(temp_rd_data_item);
+
+        if(axi_vif.RVALID && axi_vif.RREADY) begin
+        // Write the monitored item to functional cov analysis port
+            rd_data_ap.write(temp_rd_data_item);
+            temp_rd_data_item.print();
+            `uvm_info(get_name(), "Completed AXI_Read_data_monitor transactions", UVM_LOW)
+        end
+        @(posedge axi_vif.ACLK);
     endtask
 endclass
 

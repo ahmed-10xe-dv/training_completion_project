@@ -21,6 +21,8 @@ class wr_addr_monitor extends uvm_monitor;
 
     // Analysis Port Declaration
     uvm_analysis_port #(axi_seq_item) wr_addr_ap;
+    uvm_analysis_port #(axi_seq_item) wr_addr_ap_cov;
+
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -32,6 +34,7 @@ class wr_addr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_addr_ap = new("wr_addr_ap", this);
+        wr_addr_ap_cov = new("wr_addr_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -78,11 +81,14 @@ class wr_addr_monitor extends uvm_monitor;
             2'b10: temp_wr_addr_item.burst = WRAP;
         endcase
 
+        // Write the monitored item to functional cov analysis port
+        wr_addr_ap_cov.write(temp_wr_addr_item);
+
         // Write the monitored item to analysis port
         if(axi_vif.AWVALID && axi_vif.AWREADY && axi_vif.AWSIZE) begin
             wr_addr_ap.write(temp_wr_addr_item);
             temp_wr_addr_item.print();
-                `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+            `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
         end
         @(posedge axi_vif.ACLK);
     endtask

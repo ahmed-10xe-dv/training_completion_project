@@ -21,6 +21,7 @@ class wr_rsp_monitor extends uvm_monitor;
 
     // Analysis Port Declaration
     uvm_analysis_port #(axi_seq_item) wr_rsp_ap;
+    uvm_analysis_port #(axi_seq_item) wr_rsp_ap_cov;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -32,6 +33,7 @@ class wr_rsp_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_rsp_ap = new("wr_rsp_ap", this);
+        wr_rsp_ap_cov = new("wr_rsp_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -57,24 +59,31 @@ class wr_rsp_monitor extends uvm_monitor;
 
     //-------------------------------------------------------------------------
     // Task: monitor_wr_rsp
-    // Purpose: Monitors write rspess channel signals
+    // Purpose: Monitors write response channel signals
     //-------------------------------------------------------------------------
     task monitor_wr_rsp();
         axi_seq_item temp_wr_rsp_item;
         temp_wr_rsp_item       = axi_seq_item::type_id::create("write_rsp_monitor");
-        wait(axi_vif.BVALID);
+
+        `uvm_info(get_name(), "Monitoring AXI_write_rsp_monitor transactions", UVM_LOW)
 
         temp_wr_rsp_item.id = axi_vif.BID;
-  
         case (axi_vif.BRESP)
             2'b00 : temp_wr_rsp_item.response = OKAY;
             2'b01 : temp_wr_rsp_item.response = EXOKAY;
             2'b10 : temp_wr_rsp_item.response = SLVERR;
             2'b11 : temp_wr_rsp_item.response = DECERR;
         endcase
-  
+
+        // Write the monitored item to functional cov analysis port
+        wr_rsp_ap_cov.write(temp_wr_rsp_item);
+        if (axi_vif.BVALID) begin
+            // Write the monitored item to functional cov analysis port
+            wr_rsp_ap.write(temp_wr_rsp_item);
+            temp_wr_rsp_item.print();
+            `uvm_info(get_name(), "Completed Monitoring AXI_write_rsp_monitor transactions", UVM_LOW)
+        end
         @(posedge axi_vif.ACLK);
-        wr_rsp_ap.write(temp_wr_rsp_item);
     endtask
 
 endclass

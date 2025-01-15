@@ -67,9 +67,9 @@ import uvm_pkg::*;
 
 // AXI to AHB Environment and Test
 `include "../env/axi2ahb_scoreboard.sv"
+`include "../env/func_coverage_mon.sv"
 `include "../env/axi_environment.sv"
 `include "../env/ahb_environment.sv"
 `include "../env/axi2ahb_env.sv"
 `include "../test_top/test.sv"
 `include "../test_top/test_lib.sv"
-

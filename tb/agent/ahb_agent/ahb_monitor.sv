@@ -35,6 +35,8 @@ class ahb_monitor extends uvm_monitor;
 
     // Analysis port
     uvm_analysis_port #(ahb_seq_item) ahb_ap;
+    uvm_analysis_port #(ahb_seq_item) ahb_ap_cov;
+
 
     //-----------------------------------------------------------------------------
     // Function: new
@@ -49,6 +51,7 @@ class ahb_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         ahb_ap = new("ahb_ap", this);
+        ahb_ap_cov = new("ahb_ap_cov", this);
         ahb_mon_item = ahb_seq_item::type_id::create("ahb_mon_item", this);
 
     endfunction
@@ -98,7 +101,7 @@ class ahb_monitor extends uvm_monitor;
             ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
             ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
 
-
+            ahb_ap_cov.write(ahb_mon_item);  // Publish this to functional coverage ap
             if (ahb_vif.HREADY) begin   // First I had this "ahb_vif.HSIZE && "", but 
 
                // Write the monitored data to ahb analysis port

@@ -20,6 +20,7 @@ class wr_data_monitor extends uvm_monitor;
 
     // Analysis port to send captured transactions
     uvm_analysis_port #(axi_seq_item) wr_data_ap;
+    uvm_analysis_port #(axi_seq_item) wr_data_ap_cov;
 
     // Constructor
     function new(string name, uvm_component parent);
@@ -30,6 +31,7 @@ class wr_data_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_data_ap = new("wr_data_ap", this);
+        wr_data_ap_cov = new("wr_data_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -60,27 +62,22 @@ class wr_data_monitor extends uvm_monitor;
         axi_seq_item temp_data_item;
         temp_data_item = axi_seq_item::type_id::create("AXI_write_data_monitor");
 
-        // Wait for valid write data transaction
+        `uvm_info(get_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+        temp_data_item.id = axi_vif.WID;
+        temp_data_item.write_data[0] = axi_vif.WDATA;
+        temp_data_item.write_strobe[0] = axi_vif.WSTRB;
+        temp_data_item.access = WRITE_TRAN;
         
-        // do begin
-            // int beat = 0;
-            `uvm_info(get_name(), "Monitoring AXI_write_data_monitor transactions", UVM_LOW)
-            temp_data_item.id = axi_vif.WID;
-            temp_data_item.write_data[0] = axi_vif.WDATA;
-            temp_data_item.write_strobe[0] = axi_vif.WSTRB;
-            temp_data_item.access = WRITE_TRAN;
-            
-            if(axi_vif.WVALID && axi_vif.WREADY && axi_vif.WSTRB && axi_vif.WDATA) begin
-                wr_data_ap.write(temp_data_item);
-                temp_data_item.print();
-                `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
-                // beat++;
-            end
-            @(posedge axi_vif.ACLK);
+        // Write the monitored item to functional cov analysis port
+        wr_data_ap_cov.write(temp_data_item);
 
-        // end
-        // while (!axi_vif.WLAST);
-
+        if(axi_vif.WVALID && axi_vif.WREADY && axi_vif.WSTRB && axi_vif.WDATA) begin
+        // Write the monitored item to scb analysis port
+            wr_data_ap.write(temp_data_item);
+            temp_data_item.print();
+            `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
+        end
+        @(posedge axi_vif.ACLK);
     endtask
 endclass
 

@@ -227,6 +227,28 @@ interface axi_interface #(
     @(posedge ACLK);
   endtask : post_reset_axi
 
+
+  // property RESERVED_BURST;
+  //   @(posedge ACLK) (AWVALID && ARESETn |->(AWBURST != 2'b11));
+  // endproperty
+
+  // property AXI_ADDRESS_BOUNDARY;
+  //   @(posedge ACLK) (AWVALID && ARESETn |->(AWADDR < 4095));
+  // endproperty
+
+  // axi_burst_reserved_bit assert property (RESERVED_BURST);
+  // axi_address_check : assert property (AXI_ADDRESS_BOUNDARY);
+
+
+//   property tvalid_tready_handshake;
+//     @(posedge ACLK) disable iff (!ARESETn)
+//       TVALID && !TREADY |-> ##1 TVALID;
+//  endproperty // tvalid_tready_handshake
+
+
+//  assert_SRC_TVALID_until_TREADY: assert property (tvalid_tready_handshake)
+//                                   else $error ("Protocol Violation: Once TVALID is asserted \ 
+//   @(posedge clk) $rose(WVALID) |-> ##[1:16] WREADY; 
 endinterface
 
 `endif // AXI_INTERFACE

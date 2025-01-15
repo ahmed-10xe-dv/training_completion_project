@@ -803,9 +803,9 @@ endclass : incr_wr_addr_txn_nrw1
 // This sequence generates an INCR burst Write Address transaction of len 256 on the AXI Write Address Channel.
 // It contains:
 //             Burst:            INCR
-//             Data Lane Width:  4 bytes
+//             Data Lane Width:  1 bytes
 //             Transaction Type: Write
-//             Data Size:        1024 bytes
+//             Data Size:        256 bytes
 //             Number of Beats:  256
 //------------------------------------------------------------------------------
 class incr_wr_addr_nrw1_txn_len256 extends axi_wr_addr_sequence;

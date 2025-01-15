@@ -25,8 +25,9 @@ class axi2ahb_env extends uvm_env;
     //-------------------------------------------------------------------------
     axi_environmet axi_env;
     ahb_environment ahb_env;
-    // virtual_sequencer  vseqr;             // Virtual Sequencer
     axi2ahb_scoreboard scoreboard;        // Scoreboard
+    func_coverage_mon func_coverage;      // Coverage Monitor
+
 
     //-------------------------------------------------------------------------
     // Constructor
@@ -48,8 +49,10 @@ class axi2ahb_env extends uvm_env;
         ahb_env      = ahb_environment::type_id::create("ahb_env", this);
         // Create Virtual Sequencer
         // vseqr        = virtual_sequencer::type_id::create("vseqr", this);
-        // Create Scoreboard
+        // Create Scoreboard and Cov mon
         scoreboard   = axi2ahb_scoreboard::type_id::create("scoreboard", this);
+        func_coverage   = func_coverage_mon::type_id::create("func_coverage", this);
+
     endfunction
 
     //-------------------------------------------------------------------------
@@ -73,9 +76,18 @@ class axi2ahb_env extends uvm_env;
         axi_env.wr_data_agnt.wr_data_mon.wr_data_ap.connect(scoreboard.axi_wr_data_imp);
         axi_env.rd_data_agnt.rd_data_mon.rd_data_ap.connect(scoreboard.axi_rd_data_imp);
         axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(scoreboard.axi_wr_rsp_imp);
-
         // Connect AHB Monitor to Scoreboard
         ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_imp);
+
+        // Connect AXI Monitors to Functional Coverage
+        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap_cov.connect(func_coverage.axi_wr_addr_imp_cov);
+        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap_cov.connect(func_coverage.axi_rd_addr_imp_cov);
+        axi_env.wr_data_agnt.wr_data_mon.wr_data_ap_cov.connect(func_coverage.axi_wr_data_imp_cov);
+        axi_env.rd_data_agnt.rd_data_mon.rd_data_ap_cov.connect(func_coverage.axi_rd_data_imp_cov);
+        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap_cov.connect(func_coverage.axi_wr_rsp_imp_cov);
+        // Connect AHB Monitor to Functional coverage
+        ahb_env.ahb_agnt.ahb_mon.ahb_ap_cov.connect(func_coverage.ahb_data_imp_cov);
+
     endfunction
 
 endclass
