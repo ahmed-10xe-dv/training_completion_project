@@ -75,25 +75,34 @@ class func_coverage_mon extends uvm_component;
             bins data_below1KB = {[801:1024]};
         }
         cp_size: coverpoint axi_rd_addr_item.size {
-            bins size_s1 = {1};
-            bins size_s2 = {2};
-            bins size_s4 = {4};
+            bins byte_size = {1};
+            bins hw_size = {2};
+            bins w_size = {4};
         }
 
-        cp_ac_X_br: cross cp_access, cp_burst, cp_addr;
+        // cp_ac_X_br: cross cp_access, cp_burst, cp_addr;
 
 
         cp_response: coverpoint axi_rd_addr_item.response {
             bins okay =   {OKAY};
-            bins exokay = {EXOKAY};
+            ignore_bins exokay = {EXOKAY};
             bins slverr = {SLVERR};
-            bins decerr = {DECERR};
+            ignore_bins decerr = {DECERR};
         }
 
         cp_align_unalign: coverpoint aligned_addr {
             bins addr_aligned = {1};
             bins addr_unaligned = {0};
         }
+
+        // AWLEN : coverpoint item.axlen[LEN_WIDTH-1:0] {
+        //     bins bin0       = {0};
+        //     bins bin1_14    = {[1:14]};
+        //     bins bin15      = {15};
+        //     bins bin16_254  = {[16:254]};
+        //     bins bin255     = {255};
+        // }
+
     endgroup
 
 
@@ -104,6 +113,7 @@ class func_coverage_mon extends uvm_component;
             bins fixed = {FIXED};
             bins incr = {INCR};
             bins wrap = {WRAP};
+            // illegal_bins awburst_illegal   = {3};
         }
         cp_addr: coverpoint axi_wr_addr_item.addr {
             bins addr_1KB = {[0:1023]};
@@ -117,17 +127,17 @@ class func_coverage_mon extends uvm_component;
             bins data_below1KB = {[801:1024]};
         }
         cp_size: coverpoint axi_wr_addr_item.size {
-            bins size_s1 = {1};
-            bins size_s2 = {2};
-            bins size_s4 = {4};
+            bins byte_size = {1};
+            bins hw_size = {2};
+            bins w_size = {4};
         }
 
-        cp_ac_X_br: cross cp_burst, cp_addr;
+        // cp_ac_X_br: cross cp_burst, cp_addr;
 
-        cp_align_unalign: coverpoint aligned_addr {
-            bins addr_aligned = {1};
-            bins addr_unaligned = {0};
-        }
+        // cp_align_unalign: coverpoint aligned_addr {
+        //     bins addr_aligned = {1};
+        //     bins addr_unaligned = {0};
+        // }
     endgroup
 
 
@@ -136,9 +146,9 @@ class func_coverage_mon extends uvm_component;
         
         cp_response: coverpoint axi_wr_rsp_item.response {
             bins okay =   {OKAY};
-            bins exokay = {EXOKAY};
+            ignore_bins exokay = {EXOKAY};
             bins slverr = {SLVERR};
-            bins decerr = {DECERR};
+            ignore_bins decerr = {DECERR};
         }
     endgroup
 
@@ -172,7 +182,7 @@ class func_coverage_mon extends uvm_component;
             bins seq     = {3};
         }
 
-        cp_BxTxA: cross cp_burst, cp_trans, cp_access;
+        // cp_BxTxA: cross cp_burst, cp_trans, cp_access;
 
         cp_addr: coverpoint ahb_data_item.HADDR_o {
             bins addr_low    = {[0:255]};

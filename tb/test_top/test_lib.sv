@@ -1641,6 +1641,7 @@ task main_phase(uvm_phase phase);
       disable fork;
     end
   join_any
+  #1000;
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
 endtask : main_phase
@@ -2508,6 +2509,15 @@ endclass
 
 
 
+
+// -----------------------------------------------------------------------------  
+//R E A D   W R I T E   T E S T S 
+// -----------------------------------------------------------------------------  
+
+// -----------------------------------------------------------------------------  
+// Test: basic_rd_wr_test
+// Description: 
+// -----------------------------------------------------------------------------  
 class basic_rd_wr_test extends axi2ahb_test;
   `uvm_component_utils(basic_rd_wr_test)
 
@@ -2519,37 +2529,164 @@ class basic_rd_wr_test extends axi2ahb_test;
     `uvm_info(get_name(), "MAIN PHASE STARTED", UVM_LOW);
     phase.raise_objection(this, "MAIN - raise_objection");
     fork
-      fork
-        fix_wr_beat1_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
-        fix_wr_data_beat1_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
-        wr_rsp_seq.start( env.axi_env.wr_rsp_agnt.wr_rsp_sqr);
-        fix_rd_beat1_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
-        rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
-        ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+      fork: main
+        fork: axi_fork
+          fix_wr_beat1_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
+          fix_wr_data_beat1_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
+          wr_rsp_seq.start( env.axi_env.wr_rsp_agnt.wr_rsp_sqr);
+        join
+  
+        fork: ahb_fork
+          fix_rd_beat1_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
+          rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
+        join
+          
+        begin
+          int count =0;
+          while (count<1) begin
+            @(posedge axi_vif.ACLK);
+            if (axi_vif.RVALID) begin
+              count++; 
+            end
+          end
+          disable ahb_fork;
+        end
       join
 
-      // fork: ahb_fork
-        // fix_rd_beat1_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
-        // rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
-        // ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
-      // join
-        
+      ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
 
-      begin
-        int count =0;
-        while (count<3) begin
-          @(posedge axi_vif.ACLK);
-          if (axi_vif.RVALID) begin
-            count++; 
-          end
-        end
-        disable fork;
-      end
     join_any
-    #500;
+    // #500;
     phase.drop_objection(this, "MAIN - drop_objection");
     `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
   endtask : main_phase
 endclass
+
+
+// -----------------------------------------------------------------------------  
+// Test: incr_rd_wr_len8_test
+// Description: 
+// -----------------------------------------------------------------------------  
+class incr_rd_wr_len8_test extends axi2ahb_test;
+  `uvm_component_utils(incr_rd_wr_len8_test)
+
+  function new(string name = "incr_rd_wr_len8_test", uvm_component parent = null);
+     super.new(name, parent);
+   endfunction
+
+  task main_phase(uvm_phase phase); 
+    `uvm_info(get_name(), "MAIN PHASE STARTED", UVM_LOW);
+    phase.raise_objection(this, "MAIN - raise_objection");
+    fork
+      fork: main
+        fork: axi_fork
+          incr_wr_len8_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
+          incr_wr_data_len8_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
+          wr_rsp_seq.start( env.axi_env.wr_rsp_agnt.wr_rsp_sqr);
+        join
+  
+        fork: ahb_fork
+          incr_rd_len8_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
+          rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
+        join
+          
+        begin
+          int count =0;
+          while (count<8) begin
+            @(posedge axi_vif.ACLK);
+            if (axi_vif.RVALID) begin
+              count++; 
+            end
+          end
+          disable ahb_fork;
+        end
+      join
+
+      ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+
+    join_any
+    phase.drop_objection(this, "MAIN - drop_objection");
+    `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
+  endtask : main_phase
+endclass
+
+
+
+// -----------------------------------------------------------------------------  
+// Test: rd_timeout_test
+// Description: 
+// -----------------------------------------------------------------------------  
+class rd_timeout_test extends axi2ahb_test;
+  `uvm_component_utils(rd_timeout_test)
+
+  function new(string name = "rd_timeout_test", uvm_component parent = null);
+     super.new(name, parent);
+   endfunction
+
+  task main_phase(uvm_phase phase); 
+    `uvm_info(get_name(), "MAIN PHASE STARTED", UVM_LOW);
+    phase.raise_objection(this, "MAIN - raise_objection");
+    fork
+        fork: ahb_fork
+          incr_rd_len2_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
+          rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
+          begin
+            // #500;
+            ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+              
+          end
+        join
+          
+        begin
+          int count =0;
+          while (count<2) begin
+            @(posedge axi_vif.ACLK);
+            if (axi_vif.RVALID) begin
+              count++; 
+            end
+          end
+          disable ahb_fork;
+        end
+    join_any
+    #1000;
+    phase.drop_objection(this, "MAIN - drop_objection");
+    `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
+  endtask : main_phase
+endclass
+
+
+// -----------------------------------------------------------------------------  
+// Test: wr_timeout_test
+// Description: 
+// -----------------------------------------------------------------------------  
+class wr_timeout_test extends axi2ahb_test;
+  `uvm_component_utils(wr_timeout_test)
+
+  function new(string name = "wr_timeout_test", uvm_component parent = null);
+     super.new(name, parent);
+   endfunction
+
+  task main_phase(uvm_phase phase); 
+    `uvm_info(get_name(), "MAIN PHASE STARTED", UVM_LOW);
+    phase.raise_objection(this, "MAIN - raise_objection");
+    fork
+      fork
+        incr_wr_len2_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
+        incr_wr_data_len2_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
+        wr_rsp_seq.start(env.axi_env.wr_rsp_agnt.wr_rsp_sqr); 
+      join
+
+      begin
+        ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+      end
+    join_any
+    #100;
+    phase.drop_objection(this, "MAIN - drop_objection");
+    `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
+  endtask : main_phase
+endclass
+
+
+
 
 `endif
