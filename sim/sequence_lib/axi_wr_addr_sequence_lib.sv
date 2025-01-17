@@ -750,7 +750,7 @@ class incr_wr_addr_txn_len256 extends axi_wr_addr_sequence;
           `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
       end
       req.id = 2;
-      req.addr = 32'h14;
+      req.addr = 32'h0ff0;
       send_request(req);
       wait_for_item_done();
   endtask

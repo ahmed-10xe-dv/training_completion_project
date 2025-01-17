@@ -46,7 +46,7 @@ class axi_seq_item extends uvm_sequence_item;
 
   // Constraints
   constraint data_con { data.size inside {[1:1024]}; }
-  constraint size_con { size inside {1, 2, 4 ,8,16,32,64,128}; }
+  constraint size_con { size inside {1, 2, 4}; }
   constraint wr_res_con { bready == 1; }
   constraint rd_res_con { rready == 1; }
   constraint wr_addr_valid_con { aw_valid == 1; }

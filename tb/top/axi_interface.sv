@@ -227,28 +227,106 @@ interface axi_interface #(
     @(posedge ACLK);
   endtask : post_reset_axi
 
+  //------------------------------------------------------------------------------
+  //  axi_protocol_assertions
+  // Description: AXI protocol property definitions and assertions.
+  //------------------------------------------------------------------------------
 
-  // property RESERVED_BURST;
-  //   @(posedge ACLK) (AWVALID && ARESETn |->(AWBURST != 2'b11));
-  // endproperty
+  /*
+  * RESERVED_BURST: Ensures AWBURST does not have a reserved value (2'b11)
+  * when AWVALID is asserted and the reset is active.
+  */
+  property RESERVED_BURST;
+    @(posedge ACLK) (AWVALID && ARESETn |-> (AWBURST != 2'b11));
+  endproperty : RESERVED_BURST
+  axi_burst_reserved_bit: assert property (RESERVED_BURST)
+    else `uvm_error("RESERVED_BURST", "AWBURST has a reserved value (2'b11)!")
 
-  // property AXI_ADDRESS_BOUNDARY;
-  //   @(posedge ACLK) (AWVALID && ARESETn |->(AWADDR < 4095));
-  // endproperty
+  /*
+  * AXI_ADDRESS_BOUNDARY: Ensures AWADDR remains within the valid address range (< 4095)
+  * when AWVALID is asserted and the reset is active.
+  */
+  property AXI_ADDRESS_BOUNDARY;
+    @(posedge ACLK) (AWVALID && ARESETn |-> (AWADDR < 4095));
+  endproperty : AXI_ADDRESS_BOUNDARY
+  axi_address_check: assert property (AXI_ADDRESS_BOUNDARY)
+    else `uvm_error("AXI_ADDRESS_BOUNDARY", "AWADDR exceeds the valid boundary (< 4095)!")
 
-  // axi_burst_reserved_bit assert property (RESERVED_BURST);
-  // axi_address_check : assert property (AXI_ADDRESS_BOUNDARY);
+  /*
+  * arvalid_arready_handshake: Checks ARVALID and ARREADY handshake protocol.
+  * Ensures ARVALID remains asserted for one clock cycle if ARREADY is not active.
+  */
+  property arvalid_arready_handshake;
+    @(posedge ACLK) disable iff (!ARESETn)
+      ARVALID && !ARREADY |-> ##1 ARVALID;
+  endproperty : arvalid_arready_handshake
+  assert property (arvalid_arready_handshake)
+    else `uvm_error("ARVALID_HANDSHAKE", "ARVALID handshake protocol violated!")
 
+  /*
+  * rvalid_rready_handshake: Checks RVALID and RREADY handshake protocol.
+  * Ensures RVALID remains asserted for one clock cycle if RREADY is not active.
+  */
+  property rvalid_rready_handshake;
+    @(posedge ACLK) disable iff (!ARESETn)
+      RVALID && !RREADY |-> ##1 RVALID;
+  endproperty : rvalid_rready_handshake
+  assert property (rvalid_rready_handshake)
+    else `uvm_error("RVALID_HANDSHAKE", "RVALID handshake protocol violated!")
 
-//   property tvalid_tready_handshake;
-//     @(posedge ACLK) disable iff (!ARESETn)
-//       TVALID && !TREADY |-> ##1 TVALID;
-//  endproperty // tvalid_tready_handshake
+  /*
+  * awvalid_awready_handshake: Checks AWVALID and AWREADY handshake protocol.
+  * Ensures AWVALID remains asserted for one clock cycle if AWREADY is not active.
+  */
+  property awvalid_awready_handshake;
+    @(posedge ACLK) disable iff (!ARESETn)
+      AWVALID && !AWREADY |-> ##1 AWVALID;
+  endproperty : awvalid_awready_handshake
+  assert property (awvalid_awready_handshake)
+    else `uvm_error("AWVALID_HANDSHAKE", "AWVALID handshake protocol violated!")
 
+  /*
+  * wvalid_wready_handshake: Checks WVALID and WREADY handshake protocol.
+  * Ensures WVALID remains asserted for one clock cycle if WREADY is not active.
+  */
+  property wvalid_wready_handshake;
+    @(posedge ACLK) disable iff (!ARESETn)
+      WVALID && !WREADY |-> ##1 WVALID;
+  endproperty : wvalid_wready_handshake
+  assert property (wvalid_wready_handshake)
+    else `uvm_error("WVALID_HANDSHAKE", "WVALID handshake protocol violated!")
 
-//  assert_SRC_TVALID_until_TREADY: assert property (tvalid_tready_handshake)
-//                                   else $error ("Protocol Violation: Once TVALID is asserted \ 
-//   @(posedge clk) $rose(WVALID) |-> ##[1:16] WREADY; 
+  /*
+  * bvalid_bready_handshake: Checks BVALID and BREADY handshake protocol.
+  * Ensures BVALID remains asserted for one clock cycle if BREADY is not active.
+  */
+  property bvalid_bready_handshake;
+    @(posedge ACLK) disable iff (!ARESETn)
+      BVALID && !BREADY |-> ##1 BVALID;
+  endproperty : bvalid_bready_handshake
+  assert property (bvalid_bready_handshake)
+    else `uvm_error("BVALID_HANDSHAKE", "BVALID handshake protocol violated!")
+
+  /*
+  * wvalid_to_wready_latency: Ensures WREADY responds within 1 to 16 cycles
+  * after WVALID is asserted.
+  */
+  property wvalid_to_wready_latency;
+    @(posedge ACLK) $rose(WVALID) |-> ##[1:16] WREADY;
+  endproperty : wvalid_to_wready_latency
+  assert property (wvalid_to_wready_latency)
+    else `uvm_error("WVALID_LATENCY", "WREADY latency exceeds allowed range (1-16 cycles)!")
+
+  /*
+  * awvalid_to_awready_latency: Ensures AWREADY responds within 1 to 16 cycles
+  * after AWVALID is asserted.
+  */
+  property awvalid_to_awready_latency;
+    @(posedge ACLK) $rose(WVALID) |-> ##[1:16] AWREADY;
+  endproperty : awvalid_to_awready_latency
+  assert property (awvalid_to_awready_latency)
+    else `uvm_error("AWVALID_LATENCY", "AWREADY latency exceeds allowed range (1-16 cycles)!")
+
 endinterface
 
 `endif // AXI_INTERFACE

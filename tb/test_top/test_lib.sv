@@ -1945,7 +1945,7 @@ task main_phase(uvm_phase phase);
     join
     begin
       int count =0;
-      while (count<16) begin
+      while (count<8) begin
         @(posedge axi_vif.ACLK);
         if (axi_vif.RVALID) begin
           count++; 
@@ -1984,7 +1984,7 @@ task main_phase(uvm_phase phase);
     join
     begin
       int count =0;
-      while (count<4) begin
+      while (count<1) begin
         @(posedge axi_vif.ACLK);
         if (axi_vif.RVALID) begin
           count++; 
@@ -1993,7 +1993,7 @@ task main_phase(uvm_phase phase);
       disable fork;
     end
   join_any
-  #50;
+  #1000;
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
 endtask : main_phase
@@ -2556,7 +2556,6 @@ class basic_rd_wr_test extends axi2ahb_test;
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
 
     join_any
-    // #500;
     phase.drop_objection(this, "MAIN - drop_objection");
     `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
   endtask : main_phase
@@ -2611,7 +2610,6 @@ class incr_rd_wr_len8_test extends axi2ahb_test;
 endclass
 
 
-
 // -----------------------------------------------------------------------------  
 // Test: rd_timeout_test
 // Description: 
@@ -2631,9 +2629,7 @@ class rd_timeout_test extends axi2ahb_test;
           incr_rd_len2_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
           rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
           begin
-            // #500;
-            ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
-              
+            // ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
           end
         join
           

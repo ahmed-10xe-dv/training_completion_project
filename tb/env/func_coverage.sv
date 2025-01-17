@@ -1,18 +1,18 @@
-/*************************************************************************
-   > File Name:   func_coverage_mon.sv
-   > Description: This file implements the AHB driver class, which extends 
-                  the UVM driver to handle AHB transactions based on sequence items.
-   > Author:      Ahmed Raza
-   > Modified:    Ahmed Raza
-   > Mail:        ahmed.raza@10xengineers.ai
-   ---------------------------------------------------------------
-   Copyright   (c)2024 10xEngineers
-   ---------------------------------------------------------------
-************************************************************************/
+// /*************************************************************************
+//    > File Name:   func_coverage.sv
+//    > Description: This file implements the AHB driver class, which extends 
+//                   the UVM driver to handle AHB transactions based on sequence items.
+//    > Author:      Ahmed Raza
+//    > Modified:    Ahmed Raza
+//    > Mail:        ahmed.raza@10xengineers.ai
+//    ---------------------------------------------------------------
+//    Copyright   (c)2024 10xEngineers
+//    ---------------------------------------------------------------
+// ************************************************************************/
 
 
-`ifndef FUNC_COVERAGE_MON
-`define FUNC_COVERAGE_MON
+// `ifndef FUNC_COVERAGE
+// `define FUNC_COVERAGE
 
 `uvm_analysis_imp_decl(_axi_wr_addr_cov)
 `uvm_analysis_imp_decl(_axi_rd_addr_cov)
@@ -21,16 +21,16 @@
 `uvm_analysis_imp_decl(_axi_wr_rsp_cov)
 `uvm_analysis_imp_decl(_ahb_data_cov)
 
-class func_coverage_mon extends uvm_component;
+class func_coverage extends uvm_component;
 
-    `uvm_component_utils(func_coverage_mon)
+    `uvm_component_utils(func_coverage)
 
-    uvm_analysis_imp_axi_wr_addr_cov #(axi_seq_item, func_coverage_mon) axi_wr_addr_imp_cov;
-    uvm_analysis_imp_axi_rd_addr_cov #(axi_seq_item, func_coverage_mon) axi_rd_addr_imp_cov;
-    uvm_analysis_imp_axi_wr_data_cov #(axi_seq_item, func_coverage_mon) axi_wr_data_imp_cov;
-    uvm_analysis_imp_axi_rd_data_cov #(axi_seq_item, func_coverage_mon) axi_rd_data_imp_cov;
-    uvm_analysis_imp_axi_wr_rsp_cov #(axi_seq_item, func_coverage_mon) axi_wr_rsp_imp_cov;
-    uvm_analysis_imp_ahb_data_cov #(ahb_seq_item, func_coverage_mon) ahb_data_imp_cov;
+    uvm_analysis_imp_axi_wr_addr_cov #(axi_seq_item, func_coverage) axi_wr_addr_imp_cov;
+    uvm_analysis_imp_axi_rd_addr_cov #(axi_seq_item, func_coverage) axi_rd_addr_imp_cov;
+    uvm_analysis_imp_axi_wr_data_cov #(axi_seq_item, func_coverage) axi_wr_data_imp_cov;
+    uvm_analysis_imp_axi_rd_data_cov #(axi_seq_item, func_coverage) axi_rd_data_imp_cov;
+    uvm_analysis_imp_axi_wr_rsp_cov #(axi_seq_item, func_coverage) axi_wr_rsp_imp_cov;
+    uvm_analysis_imp_ahb_data_cov #(ahb_seq_item, func_coverage) ahb_data_imp_cov;
 
     axi_seq_item axi_wr_addr_q[$];
     axi_seq_item axi_wr_data_q[$];
@@ -54,10 +54,7 @@ class func_coverage_mon extends uvm_component;
 
     // AXI Read Addr Covergroup
     covergroup cg_axi_rd_addr;
-        cp_access: coverpoint axi_rd_addr_item.access {
-            bins read = {READ_TRAN};
-            bins write = {WRITE_TRAN};
-        }
+
         cp_burst: coverpoint axi_rd_addr_item.burst {
             bins fixed = {FIXED};
             bins incr = {INCR};
@@ -69,11 +66,15 @@ class func_coverage_mon extends uvm_component;
             bins addr_3KB = {[2048:3071]};
             bins addr_4KB = {[3072:4095]};
         }
-        cp_data_size: coverpoint axi_rd_addr_item.data.size {
-            bins data_below400 = {[0:400]};
-            bins data_below800 = {[401:800]};
-            bins data_below1KB = {[801:1024]};
+
+        cp_len : coverpoint axi_rd_addr_item.burst_length {
+            bins bin1       = {1};
+            bins bin2_15    = {[2:15]};
+            bins bin16      = {16};
+            bins bin17_255  = {[17:255]};
+            bins bin256     = {256};
         }
+
         cp_size: coverpoint axi_rd_addr_item.size {
             bins byte_size = {1};
             bins hw_size = {2};
@@ -95,14 +96,6 @@ class func_coverage_mon extends uvm_component;
             bins addr_unaligned = {0};
         }
 
-        // AWLEN : coverpoint item.axlen[LEN_WIDTH-1:0] {
-        //     bins bin0       = {0};
-        //     bins bin1_14    = {[1:14]};
-        //     bins bin15      = {15};
-        //     bins bin16_254  = {[16:254]};
-        //     bins bin255     = {255};
-        // }
-
     endgroup
 
 
@@ -121,11 +114,15 @@ class func_coverage_mon extends uvm_component;
             bins addr_3KB = {[2048:3071]};
             bins addr_4KB = {[3072:4095]};
         }
-        cp_data_size: coverpoint axi_wr_addr_item.data.size {
-            bins data_below400 = {[0:400]};
-            bins data_below800 = {[401:800]};
-            bins data_below1KB = {[801:1024]};
+
+        cp_len : coverpoint axi_wr_addr_item.burst_length {
+            bins bin1       = {1};
+            bins bin2_15    = {[2:15]};
+            bins bin16      = {16};
+            bins bin17_255  = {[17:255]};
+            bins bin256     = {256};
         }
+
         cp_size: coverpoint axi_wr_addr_item.size {
             bins byte_size = {1};
             bins hw_size = {2};
@@ -134,10 +131,10 @@ class func_coverage_mon extends uvm_component;
 
         // cp_ac_X_br: cross cp_burst, cp_addr;
 
-        // cp_align_unalign: coverpoint aligned_addr {
-        //     bins addr_aligned = {1};
-        //     bins addr_unaligned = {0};
-        // }
+        cp_align_unalign: coverpoint aligned_addr {
+            bins addr_aligned = {1};
+            bins addr_unaligned = {0};
+        }
     endgroup
 
 
@@ -192,7 +189,7 @@ class func_coverage_mon extends uvm_component;
     endgroup
 
     // Constructor
-    function new(string name = "func_coverage_mon", uvm_component parent = null);
+    function new(string name = "func_coverage", uvm_component parent = null);
         super.new(name, parent);
         cg_axi_rd_addr = new();
         cg_axi_wr_addr = new();
@@ -222,12 +219,14 @@ class func_coverage_mon extends uvm_component;
     virtual function void write_axi_wr_addr_cov(axi_seq_item axi_wr_addr_item);
         `uvm_info(get_type_name(),$sformatf("Received trans On write_axi_wr_addr Analysis Imp Port"),UVM_LOW)
         axi_wr_addr_q.push_back(axi_wr_addr_item);
+        aligned_addr = (axi_wr_addr_item.addr%4==0)? 1:0;
         wr_addr_cov_sample();
     endfunction
 
     virtual function void write_axi_rd_addr_cov(axi_seq_item axi_rd_addr_item);
         `uvm_info(get_type_name(),$sformatf("Received trans On write_axi_rd_addr Analysis Imp Port"),UVM_LOW)
         axi_rd_addr_q.push_back(axi_rd_addr_item);
+        aligned_addr = (axi_rd_addr_item.addr%4==0)? 1:0;
         rd_addr_cov_sample();
     endfunction
 
@@ -285,4 +284,110 @@ class func_coverage_mon extends uvm_component;
 
 endclass
 
-`endif
+// `endif
+
+
+
+// class ahb_coverage extends uvm_subscriber #(ahb_seq_item);
+//     `uvm_component_utils(ahb_coverage)
+
+//     ahb_seq_item item;
+
+//     covergroup cg_ahb;
+//                 cp_access: coverpoint item.ACCESS_o {
+//                     bins write = {1};
+//                     bins read = {0};
+//                 }
+//                 cp_burst: coverpoint item.HBURST_o {
+//                     bins single     = {0};
+//                     bins undef_incr = {1};
+//                     bins wrap_4     = {2};
+//                     bins incr_4     = {3};
+//                     bins wrap_8     = {4};
+//                     bins incr_8     = {5};
+//                     bins wrap_16    = {6};
+//                     bins incr_16    = {7};
+//                 }
+//                 cp_size: coverpoint item.HSIZE_o {
+//                     bins s_byte      = {0};
+//                     bins s_half_word = {1};
+//                     bins s_word      = {2};
+//                 }
+//                 cp_trans: coverpoint item.HTRANS_o {
+//                     bins idle    = {0};
+//                     bins busy    = {1};
+//                     bins non_seq = {2};
+//                     bins seq     = {3};
+//                 }
+        
+//                 // cp_BxTxA: cross cp_burst, cp_trans, cp_access;
+        
+//                 cp_addr: coverpoint item.HADDR_o {
+//                     bins addr_low    = {[0:255]};
+//                     bins addr_medium = {[256:511]};
+//                     bins addr_big    = {[512:1023]};
+//                 }
+//     endgroup
+
+//     function new (string name = "ahb_coverage", uvm_component parent);
+//         super.new (name, parent);
+//         cg_ahb = new;
+//     endfunction
+
+// 	virtual function void write (ahb_seq_item t);
+//         item = t;
+// 		cg_ahb.sample ();
+// 	endfunction
+// endclass
+
+
+
+// class axi_rd_coverage extends uvm_subscriber #(ahb_seq_item);
+//     `uvm_component_utils(axi_rd_coverage)
+
+//     ahb_seq_item item;
+
+//     covergroup cg_axi_wr_addr;
+
+//         cp_burst: coverpoint axi_wr_addr_item.burst {
+//             bins fixed = {FIXED};
+//             bins incr = {INCR};
+//             bins wrap = {WRAP};
+//             // illegal_bins awburst_illegal   = {3};
+//         }
+//         cp_addr: coverpoint axi_wr_addr_item.addr {
+//             bins addr_1KB = {[0:1023]};
+//             bins addr_2KB = {[1024:2047]};
+//             bins addr_3KB = {[2048:3071]};
+//             bins addr_4KB = {[3072:4095]};
+//         }
+//         cp_data_size: coverpoint axi_wr_addr_item.data.size {
+//             bins data_below400 = {[0:400]};
+//             bins data_below800 = {[401:800]};
+//             bins data_below1KB = {[801:1024]};
+//         }
+//         cp_size: coverpoint axi_wr_addr_item.size {
+//             bins byte_size = {1};
+//             bins hw_size = {2};
+//             bins w_size = {4};
+//         }
+
+//         // cp_ac_X_br: cross cp_burst, cp_addr;
+
+//         // cp_align_unalign: coverpoint aligned_addr {
+//         //     bins addr_aligned = {1};
+//         //     bins addr_unaligned = {0};
+//         // }
+//     endgroup
+
+//     function new (string name = "axi_rd_coverage", uvm_component parent);
+//         super.new (name, parent);
+//         cg_ahb = new;
+//     endfunction
+
+// 	virtual function void write (ahb_seq_item t);
+//         item = t;
+// 		cg_ahb.sample ();
+// 	endfunction
+// endclass
+

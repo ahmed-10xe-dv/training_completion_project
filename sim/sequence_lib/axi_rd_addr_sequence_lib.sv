@@ -54,7 +54,7 @@ class fix_rd_addr_txn_beat1 extends axi_rd_addr_sequence;
             end
             // Assign transaction details
             req.id = 7;
-            req.addr = 32'h1c;
+            req.addr = 32'h805;
             
             // Send request and wait for completion
             send_request(req);
@@ -869,7 +869,7 @@ endclass : incr_rd_addr_txn_len2
             `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
         end
         req.id = 10;
-        req.addr = 32'h10000049;
+        req.addr = 32'h7ff0;
         send_request(req);
         wait_for_item_done();
 
@@ -1002,7 +1002,7 @@ endclass : incr_rd_addr_txn_len2
         if (!req.randomize() with {
                 access == READ_TRAN;
                 burst == INCR;
-                size == 4;
+                size == 2;
                 ar_valid == 1;
                 data.size == 15;
             }) begin
