@@ -17,8 +17,6 @@ class rd_data_monitor extends uvm_monitor;
 
     virtual axi_interface axi_vif;
     uvm_analysis_port #(axi_seq_item) rd_data_ap;
-    uvm_analysis_port #(axi_seq_item) rd_data_ap_cov;
-
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -27,7 +25,6 @@ class rd_data_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         rd_data_ap = new("rd_data_ap", this);
-        rd_data_ap_cov = new("rd_data_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -36,7 +33,7 @@ class rd_data_monitor extends uvm_monitor;
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         if (!uvm_config_db#(virtual axi_interface)::get(this, "*", "axi_vif", axi_vif)) begin
-            `uvm_error("Connect Phase", "Configuration failed for axi_monitor")
+            `uvm_fatal(get_name(), "Configuration failed for axi_rd_data_monitor")
         end
     endfunction
 
@@ -62,9 +59,6 @@ class rd_data_monitor extends uvm_monitor;
         temp_rd_data_item.id = axi_vif.RID;
         temp_rd_data_item.write_data[0] = axi_vif.RDATA;
         temp_rd_data_item.access = READ_TRAN;
-
-        // Write the monitored item to functional cov analysis port
-        rd_data_ap_cov.write(temp_rd_data_item);
 
         if(axi_vif.RVALID && axi_vif.RREADY) begin
         // Write the monitored item to functional cov analysis port

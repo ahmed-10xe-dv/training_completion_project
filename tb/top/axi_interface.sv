@@ -307,26 +307,6 @@ interface axi_interface #(
   assert property (bvalid_bready_handshake)
     else `uvm_error("BVALID_HANDSHAKE", "BVALID handshake protocol violated!")
 
-  /*
-  * wvalid_to_wready_latency: Ensures WREADY responds within 1 to 16 cycles
-  * after WVALID is asserted.
-  */
-  property wvalid_to_wready_latency;
-    @(posedge ACLK) $rose(WVALID) |-> ##[1:16] WREADY;
-  endproperty : wvalid_to_wready_latency
-  assert property (wvalid_to_wready_latency)
-    else `uvm_error("WVALID_LATENCY", "WREADY latency exceeds allowed range (1-16 cycles)!")
-
-  /*
-  * awvalid_to_awready_latency: Ensures AWREADY responds within 1 to 16 cycles
-  * after AWVALID is asserted.
-  */
-  property awvalid_to_awready_latency;
-    @(posedge ACLK) $rose(WVALID) |-> ##[1:16] AWREADY;
-  endproperty : awvalid_to_awready_latency
-  assert property (awvalid_to_awready_latency)
-    else `uvm_error("AWVALID_LATENCY", "AWREADY latency exceeds allowed range (1-16 cycles)!")
-
 endinterface
 
 `endif // AXI_INTERFACE

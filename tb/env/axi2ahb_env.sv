@@ -26,8 +26,7 @@ class axi2ahb_env extends uvm_env;
     axi_environmet axi_env;
     ahb_environment ahb_env;
     axi2ahb_scoreboard scoreboard;        // Scoreboard
-    func_coverage func_cov;      // Coverage Monitor
-    // ahb_coverage ahb_cov;
+    func_coverage func_cov;               // Coverage Monitor
 
 
     //-------------------------------------------------------------------------
@@ -45,15 +44,11 @@ class axi2ahb_env extends uvm_env;
         super.build_phase(phase);
         `uvm_info(get_name(), "BUILD Phase of Env", UVM_LOW);
 
-        // Create Env
-        axi_env = axi_environmet::type_id::create("axi_env", this);
-        ahb_env      = ahb_environment::type_id::create("ahb_env", this);
-        // Create Virtual Sequencer
-        // vseqr        = virtual_sequencer::type_id::create("vseqr", this);
-        // Create Scoreboard and Cov mon
-        scoreboard   = axi2ahb_scoreboard::type_id::create("scoreboard", this);
-        func_cov   = func_coverage::type_id::create("func_cov", this);
-
+        // Create Env and  Scoreboard and Cov mon
+        axi_env      =  axi_environmet::type_id::create("axi_env", this);
+        ahb_env      =  ahb_environment::type_id::create("ahb_env", this);
+        scoreboard   =  axi2ahb_scoreboard::type_id::create("scoreboard", this);
+        func_cov     =  func_coverage::type_id::create("func_cov", this);
     endfunction
 
     //-------------------------------------------------------------------------
@@ -64,13 +59,6 @@ class axi2ahb_env extends uvm_env;
         super.connect_phase(phase);
         `uvm_info(get_name(), "CONNECT Phase of Env", UVM_LOW);
 
-        // vseqr.wr_addr_sqr  =  axi_env.wr_addr_agnt.wr_addr_sqr;
-        // vseqr.rd_addr_sqr  =  axi_env.rd_addr_agnt.rd_addr_sqr;
-        // vseqr.wr_data_sqr  =  axi_env.wr_data_agnt.wr_data_sqr;
-        // vseqr.rd_data_sqr  =  axi_env.rd_data_agnt.rd_data_sqr;
-        // vseqr.wr_rsp_sqr   =  axi_env.wr_rsp_agnt.wr_rsp_sqr;
-        // vseqr.ahb_sqr      =  ahb_env.ahb_agnt.ahb_sqr;
-
         // Connect AXI Monitors to Scoreboard
         axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(scoreboard.axi_wr_addr_imp);
         axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(scoreboard.axi_rd_addr_imp);
@@ -80,18 +68,10 @@ class axi2ahb_env extends uvm_env;
         // Connect AHB Monitor to Scoreboard
         ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_imp);
 
-        // // Connect AXI Monitors to Functional Coverage
-        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap_cov.connect(func_cov.axi_wr_addr_imp_cov);
-        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap_cov.connect(func_cov.axi_rd_addr_imp_cov);
-        axi_env.wr_data_agnt.wr_data_mon.wr_data_ap_cov.connect(func_cov.axi_wr_data_imp_cov);
-        axi_env.rd_data_agnt.rd_data_mon.rd_data_ap_cov.connect(func_cov.axi_rd_data_imp_cov);
-        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap_cov.connect(func_cov.axi_wr_rsp_imp_cov);
-        // Connect AHB Monitor to Functional coverage
-        ahb_env.ahb_agnt.ahb_mon.ahb_ap_cov.connect(func_cov.ahb_data_imp_cov);
-
-        // ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(ahb_cov.analysis_export);
-
-
+        // Connect AXI Monitors to Functional Coverage
+        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(func_cov.axi_wr_addr_imp_cov);
+        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(func_cov.axi_rd_addr_imp_cov);
+        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(func_cov.axi_wr_rsp_imp_cov);
     endfunction
 
 endclass

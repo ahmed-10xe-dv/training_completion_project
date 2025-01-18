@@ -2629,7 +2629,7 @@ class rd_timeout_test extends axi2ahb_test;
           incr_rd_len2_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
           rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
           begin
-            // ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+            ahb_slverr_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
           end
         join
           
@@ -2670,10 +2670,43 @@ class wr_timeout_test extends axi2ahb_test;
         incr_wr_len2_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
         incr_wr_data_len2_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
         wr_rsp_seq.start(env.axi_env.wr_rsp_agnt.wr_rsp_sqr); 
+      join_any
+
+      begin
+        #1000;
+        ahb_slverr_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+      end
+    join_any
+    #3000;
+    phase.drop_objection(this, "MAIN - drop_objection");
+    `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
+  endtask : main_phase
+endclass
+
+
+// -----------------------------------------------------------------------------  
+// Test: wr_slverr_test
+// Description: 
+// -----------------------------------------------------------------------------  
+class wr_slverr_test extends axi2ahb_test;
+  `uvm_component_utils(wr_slverr_test)
+
+  function new(string name = "wr_slverr_test", uvm_component parent = null);
+     super.new(name, parent);
+   endfunction
+
+  task main_phase(uvm_phase phase); 
+    `uvm_info(get_name(), "MAIN PHASE STARTED", UVM_LOW);
+    phase.raise_objection(this, "MAIN - raise_objection");
+    fork
+      fork
+        incr_wr_len2_h.start(env.axi_env.wr_addr_agnt.wr_addr_sqr);
+        incr_wr_data_len2_h.start(env.axi_env.wr_data_agnt.wr_data_sqr);
+        wr_rsp_seq.start(env.axi_env.wr_rsp_agnt.wr_rsp_sqr); 
       join
 
       begin
-        ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
+        ahb_err_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
       end
     join_any
     #100;
@@ -2681,8 +2714,5 @@ class wr_timeout_test extends axi2ahb_test;
     `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
   endtask : main_phase
 endclass
-
-
-
 
 `endif

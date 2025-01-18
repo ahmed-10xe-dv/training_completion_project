@@ -21,8 +21,6 @@ class wr_addr_monitor extends uvm_monitor;
 
     // Analysis Port Declaration
     uvm_analysis_port #(axi_seq_item) wr_addr_ap;
-    uvm_analysis_port #(axi_seq_item) wr_addr_ap_cov;
-
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -34,7 +32,6 @@ class wr_addr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_addr_ap = new("wr_addr_ap", this);
-        wr_addr_ap_cov = new("wr_addr_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -65,14 +62,13 @@ class wr_addr_monitor extends uvm_monitor;
     task monitor_wr_addr();
         axi_seq_item temp_wr_addr_item;
 
-        // Wait for valid write address signal
-
         // Create a new sequence item
         temp_wr_addr_item        = axi_seq_item::type_id::create("write_addr_monitor");
         temp_wr_addr_item.addr   = axi_vif.AWADDR;
         temp_wr_addr_item.id     = axi_vif.AWID;
         temp_wr_addr_item.size   = axi_vif.AWSIZE;
         temp_wr_addr_item.access = WRITE_TRAN;
+        temp_wr_addr_item.burst_length  = axi_vif.AWLEN+1;
 
         // Decode burst type
         case (axi_vif.AWBURST)
@@ -80,9 +76,6 @@ class wr_addr_monitor extends uvm_monitor;
             2'b01: temp_wr_addr_item.burst = INCR;
             2'b10: temp_wr_addr_item.burst = WRAP;
         endcase
-
-        // Write the monitored item to functional cov analysis port
-        wr_addr_ap_cov.write(temp_wr_addr_item);
 
         // Write the monitored item to analysis port
         if(axi_vif.AWVALID && axi_vif.AWREADY && axi_vif.AWSIZE) begin
@@ -92,7 +85,6 @@ class wr_addr_monitor extends uvm_monitor;
         end
         @(posedge axi_vif.ACLK);
     endtask
-
 endclass
 
 `endif

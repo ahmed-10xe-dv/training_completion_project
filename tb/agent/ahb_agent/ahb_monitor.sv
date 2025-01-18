@@ -23,20 +23,8 @@ class ahb_monitor extends uvm_monitor;
     virtual ahb_interface ahb_vif;
     ahb_seq_item ahb_mon_item;
 
-    // Parameters for burst types
-    parameter single = 3'b000;
-    parameter incr   = 3'b001;
-    parameter wrap4  = 3'b010;
-    parameter incr4  = 3'b011;
-    parameter wrap8  = 3'b100;
-    parameter incr8  = 3'b101;
-    parameter wrap16 = 3'b110;
-    parameter incr16 = 3'b111;
-
     // Analysis port
     uvm_analysis_port #(ahb_seq_item) ahb_ap;
-    uvm_analysis_port #(ahb_seq_item) ahb_ap_cov;
-
 
     //-----------------------------------------------------------------------------
     // Function: new
@@ -51,9 +39,7 @@ class ahb_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         ahb_ap = new("ahb_ap", this);
-        ahb_ap_cov = new("ahb_ap_cov", this);
         ahb_mon_item = ahb_seq_item::type_id::create("ahb_mon_item", this);
-
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -62,15 +48,8 @@ class ahb_monitor extends uvm_monitor;
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         if (!uvm_config_db#(virtual ahb_interface)::get(this, "*", "ahb_vif", ahb_vif)) begin
-            `uvm_error("Connect Phase", "Configuration failed for ahb_monitor")
+            `uvm_fatal(get_name(), "Configuration failed for ahb_monitor")
         end
-    endfunction
-
-    //-----------------------------------------------------------------------------
-    // Function: end_of_elaboration_phase
-    //-----------------------------------------------------------------------------
-    function void end_of_elaboration_phase(uvm_phase phase);
-        `uvm_info(get_name(), "End of elaboration phase completed.", UVM_LOW)
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -88,23 +67,20 @@ class ahb_monitor extends uvm_monitor;
     task monitor();
             `uvm_info(get_name(), "Monitoring ahb transactions", UVM_LOW)
             // Address Phase, monitor control signals
-            ahb_mon_item.HADDR_o = ahb_vif.HADDR;
+            ahb_mon_item.HADDR_o  = ahb_vif.HADDR;
             ahb_mon_item.ACCESS_o = (ahb_vif.HWRITE == 1)? write : read;
-            
-
             ahb_mon_item.RESP_i   = (ahb_vif.HRESP == 1) ? ERROR : okay;
             ahb_mon_item.HBURST_o = ahb_vif.HBURST;
             ahb_mon_item.HTRANS_o = ahb_vif.HTRANS;
             ahb_mon_item.HSIZE_o = ahb_vif.HSIZE;
 
+            // Data Phase
             @(posedge ahb_vif.HCLK);
             ahb_mon_item.HWDATA_o = ahb_vif.HWDATA;
             ahb_mon_item.HRDATA_i = ahb_vif.HRDATA;
 
-            ahb_ap_cov.write(ahb_mon_item);  // Publish this to functional coverage ap
-            if (ahb_vif.HREADY) begin   // First I had this "ahb_vif.HSIZE && "", but 
-
-               // Write the monitored data to ahb analysis port
+            if (ahb_vif.HREADY) begin
+                // Write the monitored data to ahb analysis port
                 ahb_ap.write(ahb_mon_item);
                 ahb_mon_item.print();  // Print the monitored data
             end

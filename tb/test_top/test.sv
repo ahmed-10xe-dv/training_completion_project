@@ -24,13 +24,14 @@ class axi2ahb_test extends uvm_test;
     configurations  cnfg;                    // Configurations
 
 
-    axi_wr_addr_sequence wr_addr_seq;  // AXI Write Address Sequence
-    axi_rd_addr_sequence rd_addr_seq;  // AXI Read Address Sequence
-    axi_wr_data_sequence wr_data_seq;  // AXI Write Data Sequence
-    axi_rd_data_sequence rd_data_seq;  // AXI Read Data Sequence
-    axi_wr_rsp_sequence  wr_rsp_seq;   // AXI Write Response Sequence
-    ahb_sequence ahb_seq;              // AHB Sequence
-
+    axi_wr_addr_sequence  wr_addr_seq;  // AXI Write Address Sequence
+    axi_rd_addr_sequence  rd_addr_seq;  // AXI Read Address Sequence
+    axi_wr_data_sequence  wr_data_seq;  // AXI Write Data Sequence
+    axi_rd_data_sequence  rd_data_seq;  // AXI Read Data Sequence
+    axi_wr_rsp_sequence   wr_rsp_seq;   // AXI Write Response Sequence
+    ahb_sequence          ahb_seq;              // AHB Sequence
+    ahb_error_seq         ahb_err_seq;
+    ahb_slv_not_ready_seq ahb_slverr_seq;
 
 
     // Read Sequences
@@ -156,8 +157,8 @@ class axi2ahb_test extends uvm_test;
         rd_data_seq = axi_rd_data_sequence::type_id::create("rd_data_seq");
         wr_rsp_seq =  axi_wr_rsp_sequence::type_id::create("wr_rsp_seq");
         ahb_seq = ahb_sequence::type_id::create("ahb_seq");
-
-
+        ahb_err_seq = ahb_error_seq::type_id::create("ahb_err_seq");
+        ahb_slverr_seq = ahb_slv_not_ready_seq::type_id::create("ahb_slverr_seq");
 
         // Instantiate read sequences
         fix_rd_beat1_h           = fix_rd_addr_txn_beat1::type_id::create("fix_rd_beat1_h");
@@ -283,13 +284,9 @@ class axi2ahb_test extends uvm_test;
             `uvm_error(get_name(), "Failed to connect axi_vif interface")
         if (!uvm_config_db#(virtual ahb_interface)::get(null, "*", "ahb_vif", ahb_vif))
             `uvm_error(get_name(), "Failed to connect ahb_vif interface")
+        
         // Create environment
         env = axi2ahb_env::type_id::create("env", this);              
-        // uvm_config_db #(configurations)::set(this,"*", "configurations", cnfg);
-        // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.wr_rsp_agnt", "is_active", UVM_PASSIVE);
-        // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.rd_addr_agnt", "is_active", UVM_PASSIVE);
-        // uvm_config_db #(uvm_active_passive_enum)::set(this, "env.rd_data_agnt", "is_active", UVM_PASSIVE);
-
     endfunction : build_phase
 
     //-----------------------------------------------------------------------------  

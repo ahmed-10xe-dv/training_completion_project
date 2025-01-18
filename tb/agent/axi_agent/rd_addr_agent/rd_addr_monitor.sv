@@ -17,8 +17,6 @@ class rd_addr_monitor extends uvm_monitor;
 
     virtual axi_interface axi_vif;
     uvm_analysis_port #(axi_seq_item) rd_addr_ap;
-    uvm_analysis_port #(axi_seq_item) rd_addr_ap_cov;
-
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -27,8 +25,6 @@ class rd_addr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         rd_addr_ap = new("rd_addr_ap", this);
-        rd_addr_ap_cov = new("rd_addr_ap_cov", this);
-
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -37,10 +33,9 @@ class rd_addr_monitor extends uvm_monitor;
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         if (!uvm_config_db#(virtual axi_interface)::get(this, "*", "axi_vif", axi_vif)) begin
-            `uvm_error("Connect Phase", "Configuration failed for axi_monitor")
+            `uvm_fatal(get_name(), "Configuration failed for axi_rd_addr_monitor")
         end
     endfunction
-
 
     //----------------------------------------------------------------------------- 
     // Task: main_phase 
@@ -59,6 +54,7 @@ class rd_addr_monitor extends uvm_monitor;
         temp_rd_addr_item.id      = axi_vif.ARID;
         temp_rd_addr_item.size    = axi_vif.ARSIZE;
         temp_rd_addr_item.access  = READ_TRAN;
+        temp_rd_addr_item.burst_length  = axi_vif.ARLEN+1;
 
         case (axi_vif.ARBURST)
             2'b00: temp_rd_addr_item.burst = FIXED;
@@ -66,8 +62,6 @@ class rd_addr_monitor extends uvm_monitor;
             2'b10: temp_rd_addr_item.burst = WRAP;
         endcase
 
-        // Write the monitored item to functional cov analysis port
-        rd_addr_ap_cov.write(temp_rd_addr_item);  
         // Write the monitored item to analysis port
         if(axi_vif.ARVALID && axi_vif.ARREADY) begin
             rd_addr_ap.write(temp_rd_addr_item);
@@ -75,7 +69,6 @@ class rd_addr_monitor extends uvm_monitor;
             `uvm_info(get_name(), "Completed Monitoring AXI_READ_ADDR_monitor transactions", UVM_LOW)
         end
         @(posedge axi_vif.ACLK);
-
     endtask
 endclass
 
