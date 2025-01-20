@@ -22,24 +22,23 @@ typedef enum bit {READ_TRAN, WRITE_TRAN} operation_type;
 class axi_seq_item extends uvm_sequence_item;
 
   // Randomized variables
-  bit           [bus_params_pkg::BUS_AW-1:0]           addr;                     // Address        
-  randc         bit [3:0]                               id;                       // Transaction ID  
-  rand          int                                     size;                     // Data size
-  rand          burst_type                              burst;                    // Burst type      
-  rand          bit [7:0]                               data[];                   // Data array
-  response_type                                         response;                 // Response type   
-  rand          operation_type   access;                   // Operation type   
-  int                            burst_length;             // Burst length      
-  bit           [bus_params_pkg::BUS_AW-1:0]           aligned_addr;             // Aligned address
-  bit           [2:0]            awsize_val;               // AWSIZE value
-  bit           [(bus_params_pkg::BUS_DW/8)-1:0]     write_strobe[1023:0];     // Write strobe array
-  bit           [bus_params_pkg::BUS_DW-1:0]   write_data[$];            // Write data array
-  rand bit                       bready;                   // Write Response 
-  rand bit                       aw_valid;                 // Write Address Valid 
-  rand bit                       w_valid;                  // Write Data Valid         
-  rand bit                       ar_valid;                 // Read Address Valid 
-  rand bit                       rready;                   // Read Response 
-  bit                            LAST;                     // Indicates last item 
+  bit    [bus_params_pkg::BUS_AW-1:0]      addr;                     // Address        
+  randc  bit [bus_params_pkg::BUS_IDW-1:0] id;                       // Transaction ID                     // Transaction ID  
+  rand   int                               size;                     // Data size
+  rand   burst_type                        burst;                    // Burst type      
+  rand   bit [7:0]                         data[];                   // Data array
+  response_type                            response;                 // Response type   
+  rand  operation_type                     access;                   // Operation type     
+  int                                      burst_length;             // Burst length      
+  bit   [bus_params_pkg::BUS_AW-1:0]       aligned_addr;             // Aligned address
+  bit   [bus_params_pkg::BUS_DS-1:0]       awsize_val;               // AWSIZE value
+  bit   [bus_params_pkg::BUS_DBW-1:0]      write_strobe[1023:0];     // Write strobe array
+  bit   [bus_params_pkg::BUS_DW-1:0]       write_data[$];            // Write data array
+  rand bit                                 bready;                   // Write Response 
+  rand bit                                 aw_valid;                 // Write Address Valid 
+  rand bit                                 w_valid;                  // Write Data Valid         
+  rand bit                                 ar_valid;                 // Read Address Valid 
+  rand bit                                 rready;                   // Read Response 
 
 
 

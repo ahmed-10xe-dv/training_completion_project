@@ -80,31 +80,23 @@ class wr_data_driver extends uvm_driver #(axi_seq_item);
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
-    if (req.access == WRITE_TRAN) begin
-      `uvm_info(get_name(), "Driving write Data transaction", UVM_LOW)
-      axi_vif.WVALID <= req.w_valid;
+    `uvm_info(get_name(), "Driving write Data transaction", UVM_LOW)
+    axi_vif.WVALID <= req.w_valid;
      
-      for (int beat = 0; beat < req.burst_length ; beat++) begin
-
-        wait(axi_vif.WREADY);
-        @(posedge axi_vif.ACLK);
-        axi_vif.WID     <= req.id;
-        axi_vif.WDATA   <= req.write_data[beat];
-        axi_vif.WSTRB   <= req.write_strobe[beat];
-        axi_vif.WLAST   <= (beat == req.burst_length - 2)? 1'b1: 1'b0;
-      @(posedge axi_vif.ACLK);
+    for (int beat = 0; beat < req.burst_length ; beat++) begin
       wait(axi_vif.WREADY);
-
-      req.print();
-      end
-    `uvm_info(get_name(), "Write Data transaction completed", UVM_LOW)
+      @(posedge axi_vif.ACLK);
+      axi_vif.WID     <= req.id;
+      axi_vif.WDATA   <= req.write_data[beat];
+      axi_vif.WSTRB   <= req.write_strobe[beat];
+      axi_vif.WLAST   <= (beat == req.burst_length - 2)? 1'b1: 1'b0;
+    @(posedge axi_vif.ACLK);
+    wait(axi_vif.WREADY);
+    req.print();
     end
-
+    `uvm_info(get_name(), "Write Data transaction completed", UVM_LOW)
     seq_item_port.item_done();
   endtask
-
-
-
 endclass
 
 `endif

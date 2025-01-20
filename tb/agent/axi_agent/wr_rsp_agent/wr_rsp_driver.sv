@@ -80,11 +80,8 @@ class wr_rsp_driver extends uvm_driver #(axi_seq_item);
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
-    if (req.access == WRITE_TRAN) begin
-      axi_vif.BREADY <= req.bready;
-      wait(axi_vif.BVALID);
-    end
-
+    axi_vif.BREADY <= req.bready;
+    wait(axi_vif.BVALID);
     @(posedge axi_vif.ACLK);
     seq_item_port.item_done();
   endtask

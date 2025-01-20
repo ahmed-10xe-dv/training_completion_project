@@ -80,7 +80,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
 
     // Retrieve the next sequence item
     seq_item_port.get_next_item(req);
-    if (req.access == READ_TRAN) begin
+    // if (req.access == READ_TRAN) begin
       `uvm_info(get_name(), "Driving read address transaction", UVM_LOW)
        // Drive AXI read address and control signals
        axi_vif.ARBURST <= req.burst;
@@ -92,7 +92,7 @@ class rd_addr_driver extends uvm_driver #(axi_seq_item);
        wait(axi_vif.ARREADY);
 
      `uvm_info(get_name(), "Read address transaction completed", UVM_LOW)
-    end
+    // end
     seq_item_port.item_done(); 
     @(posedge axi_vif.ACLK);
     req.print();
