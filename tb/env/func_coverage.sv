@@ -80,6 +80,7 @@ class func_coverage extends uvm_component;
             bins addr_aligned = {1};
             bins addr_unaligned = {0};
         }
+        cp_burst_size: cross cp_size, cp_burst;
     endgroup
 
     // AXI Write Address Coverage Group
@@ -111,6 +112,7 @@ class func_coverage extends uvm_component;
             bins addr_aligned = {1};
             bins addr_unaligned = {0};
         }
+        cp_burst_size: cross cp_size, cp_burst;
     endgroup
 
     // AXI Write Response Coverage Group
