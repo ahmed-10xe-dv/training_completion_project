@@ -326,7 +326,9 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 |75 |basic\_rd\_wr \_test |Generating a basic fixed burst read write Address transaction with len 1 on the AXI read Address Channel. and Write Address Channel respectively |DUT handles read and write transactions with a fixed burst, data width of 4 bytes, data size of 4 bytes, and 1 beat. If both read and write transactions are given at the same time to DUT, it prioritizes the read. |Completed|`  `PASS |Verify that if both read and write transaction is given at the same time to DUT, it prioritizes the read |[basic_rd…](https://drive.google.com/open?id=1BkSDzsbnryO4lN_Xoht8yDeWM3nFy026&usp=drive_copy)|
 |76 |incr\_rd\_wr \_len8\_test|Generating a INCR burst read write Address transaction with len 8 on the AXI read Address Channel. and Write Address Channel respectively |DUT handles read and write transactions with an INCR burst, data width of 4 bytes, data size of 32 bytes, and 8 beats. If both read and write transaction is given at the same time to DUT, it prioritizes the read |Completed|`  `PASS |Verify that if both read and write transaction is given at the same time to DUT, it prioritizes the read |[incr_rd_…](https://drive.google.com/open?id=1Ti23D33xDOTI5TieW4Vlz_hsvBoXSFAG&usp=drive_copy)|
 |77 |rd\_wr\_priorit y\_test |Generating a transaction having both read and write on AXI read address and write address channels |If both read and write transaction is given at the same time to DUT, it prioritizes the read |Completed|`  `PASS |Verify that if both read and write transaction is given at the same time to DUT, it prioritizes the read |[incr_rd_…](https://drive.google.com/open?id=1Ti23D33xDOTI5TieW4Vlz_hsvBoXSFAG&usp=drive_copy)|
-|<a name="_page26_x0.00_y61.65"></a>**9.  Assertions Plan** ||||||||
+|<a name="_page26_x0.00_y61.65"></a>
+
+**9.  Assertions Plan** ||||||||
 | - | :- | :- | :- | :- | :- | :- | :- |
 |**AXI to AHB Bridge Verification** ||||||||
 |**TYP E** |**TEST NO** |**TEST NAME** |**DESCRIPTION** |**FEATURE** |**STAT US** |**PA SS/ FAI L** |**PASS/FAIL Criterion** |
