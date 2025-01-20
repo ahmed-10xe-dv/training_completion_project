@@ -146,52 +146,66 @@ class ahb_slv_not_ready_seq extends ahb_sequence;
   // Slave Sequence Method Implemented
   //------------------------------------------------------------------------------
   task body();
+    `uvm_do_with(req,{HREADY_i ==0;})
     repeat(20) begin
       `uvm_do_with(req,{HREADY_i ==0;})
-      `uvm_do_with(rsp,{HREADY_i ==0;})
     end
 
     req = ahb_seq_item::type_id::create("req");
     rsp = ahb_seq_item::type_id::create("rsp");
 
     begin
-
-      // repeat(20)
-      //   begin
-      //     req.HREADY_i = 1'b0;
-      //     // Start new sequence to drive the values to the DUT
-      //     start_item(rsp);
-      //     rsp.copy(req);
-      //     rsp.print();
-      //     finish_item(rsp);
-      //   end
-
+      repeat(2) begin
         start_item(req);  
-        finish_item(req);
+              finish_item(req);
 
-        // Perform write or read operation based on DUT response
-        if (req.ACCESS_o == write) begin
-          `uvm_info("AHB Write Transaction", 
-          $sformatf("Writing to address %0h: data %0h", req.HADDR_o, 
-          req.HWDATA_o), UVM_LOW)
-          req.RESP_i <= okay;
-        end
-        else begin
-            `uvm_info("AHB Read Transaction",
-            $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
+              // Perform write or read operation based on DUT response
+              if (req.ACCESS_o == write) begin
+                `uvm_info("AHB Write Transaction", 
+                $sformatf("Writing to address %0h: data %0h", req.HADDR_o, 
+                req.HWDATA_o), UVM_LOW)
+                req.RESP_i <= okay;
+              end
+              else begin
+                  `uvm_info("AHB Read Transaction",
+                  $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
 
-            req.HRDATA_i = $urandom();
-            `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
-            req.HADDR_o, req.HRDATA_i), UVM_LOW)
-        end
-        req.HREADY_i <= 1'b1;
+                  req.HRDATA_i = $urandom();
+                  `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
+                  req.HADDR_o, req.HRDATA_i), UVM_LOW)
+              end
+              req.HREADY_i <= 1'b1;
 
-        start_item(rsp);
-        rsp.copy(req);
-        rsp.print();
-        finish_item(rsp);
+              start_item(rsp);
+              rsp.copy(req);
+              rsp.print();
+              finish_item(rsp);
+      end
+              start_item(req);  
+              finish_item(req);
+
+              // Perform write or read operation based on DUT response
+              if (req.ACCESS_o == write) begin
+                `uvm_info("AHB Write Transaction", 
+                $sformatf("Writing to address %0h: data %0h", req.HADDR_o, 
+                req.HWDATA_o), UVM_LOW)
+                req.RESP_i <= okay;
+              end
+              else begin
+                  `uvm_info("AHB Read Transaction",
+                  $sformatf("Reading from address %0h", req.HADDR_o), UVM_LOW)
+
+                  req.HRDATA_i = $urandom();
+                  `uvm_info("DATA_SEQ", $sformatf("Read from address %0h Data is:%0h ",
+                  req.HADDR_o, req.HRDATA_i), UVM_LOW)
+              end
+              req.HREADY_i <= 1'b0;
+
+              start_item(rsp);
+              rsp.copy(req);
+              rsp.print();
+              finish_item(rsp);
     end
-     
   endtask
 endclass : ahb_slv_not_ready_seq
 
