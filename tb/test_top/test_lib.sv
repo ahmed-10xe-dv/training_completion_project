@@ -1,6 +1,6 @@
 /*************************************************************************
    > File Name:   test_lib.sv
-   > Description: 
+   > Description: This file has all the tests extended from base test 
    > Author:      Ahmed Raza
    > Modified:    Ahmed Raza
    > Mail:        ahmed.raza@10xengineers.ai
@@ -2514,7 +2514,7 @@ endclass
 
 // -----------------------------------------------------------------------------  
 // Test: basic_rd_wr_test
-// Description: 
+// Description: Generating a basic fixed burst read write Address transaction with len 1 on the AXI read Address Channel. and Write Address Channel respectively 
 // -----------------------------------------------------------------------------  
 class basic_rd_wr_test extends axi2ahb_test;
   `uvm_component_utils(basic_rd_wr_test)
@@ -2562,7 +2562,7 @@ endclass
 
 // -----------------------------------------------------------------------------  
 // Test: incr_rd_wr_len8_test
-// Description: 
+// Description:  Generating a INCR burst read write Address transaction with len 8 on the AXI read Address Channel. and Write Address Channel respectively 
 // -----------------------------------------------------------------------------  
 class incr_rd_wr_len8_test extends axi2ahb_test;
   `uvm_component_utils(incr_rd_wr_len8_test)
@@ -2610,7 +2610,7 @@ endclass
 
 // -----------------------------------------------------------------------------  
 // Test: rd_timeout_test
-// Description: 
+// Description: Generating an INCR transaction and using the HREADY signal of AHB slave to control the behavior of DUT 
 // -----------------------------------------------------------------------------  
 class rd_timeout_test extends axi2ahb_test;
   `uvm_component_utils(rd_timeout_test)
@@ -2650,7 +2650,7 @@ endclass
 
 // -----------------------------------------------------------------------------  
 // Test: wr_timeout_test
-// Description: 
+// Description: Generating an INCR transaction and using the HREADY signal of AHB slave to control the behavior of DUT
 // -----------------------------------------------------------------------------  
 class wr_timeout_test extends axi2ahb_test;
   `uvm_component_utils(wr_timeout_test)
@@ -2677,7 +2677,7 @@ endclass
 
 // -----------------------------------------------------------------------------  
 // Test: wr_slverr_test
-// Description: 
+// Description: Generating a write transaction with a slave sequence giving an error response
 // -----------------------------------------------------------------------------  
 class wr_slverr_test extends axi2ahb_test;
   `uvm_component_utils(wr_slverr_test)

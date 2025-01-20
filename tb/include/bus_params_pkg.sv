@@ -16,14 +16,11 @@ package bus_params_pkg;
 
   // Bus transfer size width (number of bits needed to select the number of bytes)
   localparam int BUS_SZW = $clog2($clog2(BUS_DBW) + 1);
+  
+  // Data Size
+  localparam int BUS_DS = 3;
 
-  // Bus address info (source) width
-  localparam int BUS_AIW = 8;
-
-  // Bus data info (source) width
-  localparam int BUS_DIW = 1;
-
-  // Bus data user width
-  localparam int BUS_DUW = 16;
+  // ID Width
+  localparam int BUS_IDW = 4;
 
 endpackage

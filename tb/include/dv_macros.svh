@@ -16,7 +16,6 @@
 
 
 
-
 // UVM speficic macros
 `ifndef gfn
 `ifdef UVM

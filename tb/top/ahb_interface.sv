@@ -92,6 +92,25 @@ interface ahb_interface #(
     @(posedge HCLK);
   endtask : post_reset_ahb
 
+
+  // Assertion to ensure that when HREADY is low, HADDR, HWRITE, and HWDATA remain stable
+  // until HREADY goes high again. This checks the proper functioning of the AHB protocol
+  // where the address, write control, and data signals must not change during a wait state.
+
+  property HREADY_check;
+    @(posedge HCLK) 
+      (HREADY == 1'b0) |=> 
+        $stable( HADDR &&  HWRITE &&  HWDATA);
+  endproperty
+
+// Assertion instantiation
+  HREADY_check_assert: assert property (HREADY_check)
+  else begin
+    // Triggering UVM error when the assertion fails
+    `uvm_error("HREADY_Check", 
+      "Assertion failed: HADDR, HWRITE, and HWDATA are not stable while HREADY is low.");
+  end
+
 endinterface
 
 `endif // AHB_INTERFACE

@@ -29,9 +29,9 @@ class axi2ahb_test extends uvm_test;
     axi_wr_data_sequence  wr_data_seq;  // AXI Write Data Sequence
     axi_rd_data_sequence  rd_data_seq;  // AXI Read Data Sequence
     axi_wr_rsp_sequence   wr_rsp_seq;   // AXI Write Response Sequence
-    ahb_sequence          ahb_seq;              // AHB Sequence
-    ahb_error_seq         ahb_err_seq;
-    ahb_slv_not_ready_seq ahb_slverr_seq;
+    ahb_sequence          ahb_seq;      // AHB Sequence
+    ahb_error_seq         ahb_err_seq;   // AHB Sequence with error response
+    ahb_slv_not_ready_seq ahb_slverr_seq;  // AHB Sequence with HREADY deasserted first and then asserted
 
 
     // Read Sequences

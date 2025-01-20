@@ -37,6 +37,11 @@ class func_coverage extends uvm_component;
     axi_seq_item axi_rd_addr_item;
     axi_seq_item axi_wr_rsp_item;
 
+    // Queues to capture transaction item
+    axi_seq_item axi_wr_addr_q[$];
+    axi_seq_item axi_wr_rsp_q[$];
+    axi_seq_item axi_rd_addr_q[$];
+
     // Address alignment flag
     bit aligned_addr;
 
@@ -142,21 +147,48 @@ class func_coverage extends uvm_component;
     // Write Method for AXI Write Address Coverage
     virtual function void write_axi_wr_addr_cov(axi_seq_item axi_wr_addr_item);
         `uvm_info(get_type_name(), $sformatf("Received transaction on write_axi_wr_addr Analysis Port"), UVM_LOW)
-        aligned_addr = (axi_wr_addr_item.addr % 4 == 0) ? 1 : 0;
-        cg_axi_wr_addr.sample();
+        axi_wr_addr_q.push_back(axi_wr_addr_item);
+        wr_addr_cov_sample();
     endfunction
 
     // Write Method for AXI Read Address Coverage
     virtual function void write_axi_rd_addr_cov(axi_seq_item axi_rd_addr_item);
         `uvm_info(get_type_name(), $sformatf("Received transaction on write_axi_rd_addr Analysis Port"), UVM_LOW)
-        aligned_addr = (axi_rd_addr_item.addr % 4 == 0) ? 1 : 0;
-        cg_axi_rd_addr.sample();
+        axi_rd_addr_q.push_back(axi_rd_addr_item);
+        rd_addr_cov_sample();
     endfunction
 
     // Write Method for AXI Write Response Coverage
     virtual function void write_axi_wr_rsp_cov(axi_seq_item axi_wr_rsp_item);
         `uvm_info(get_type_name(), $sformatf("Received transaction on write_axi_wr_rsp Analysis Port"), UVM_LOW)
-        cg_axi_wr_rsp.sample();
+        axi_wr_rsp_q.push_back(axi_wr_rsp_item);
+        wr_rsp_cov_sample();
+    endfunction
+
+    // Sample read addr coverage
+    function void rd_addr_cov_sample();
+        if (axi_rd_addr_q.size()) begin
+            axi_rd_addr_item = axi_rd_addr_q.pop_front();
+            aligned_addr = (axi_rd_addr_item.addr % 4 == 0) ? 1 : 0;
+            cg_axi_rd_addr.sample();
+        end
+    endfunction
+
+    // Sample write addr coverage
+    function void wr_addr_cov_sample();
+        if (axi_wr_addr_q.size()) begin
+            axi_wr_addr_item = axi_wr_addr_q.pop_front();
+            aligned_addr = (axi_wr_addr_item.addr % 4 == 0) ? 1 : 0;
+            cg_axi_wr_addr.sample();
+        end
+    endfunction
+
+    // Sample write rsp coverage
+    function void wr_rsp_cov_sample();
+        if (axi_wr_rsp_q.size()) begin
+            axi_wr_rsp_item = axi_wr_rsp_q.pop_front();
+            cg_axi_wr_rsp.sample();
+        end
     endfunction
 endclass
 

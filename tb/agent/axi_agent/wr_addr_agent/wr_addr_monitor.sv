@@ -12,6 +12,7 @@
 `ifndef WR_ADDR_MONITOR
 `define WR_ADDR_MONITOR
 
+`define MON_IF axi_vif.monitor_cb
 class wr_addr_monitor extends uvm_monitor;
 
     `uvm_component_utils(wr_addr_monitor)
@@ -21,6 +22,7 @@ class wr_addr_monitor extends uvm_monitor;
 
     // Analysis Port Declaration
     uvm_analysis_port #(axi_seq_item) wr_addr_ap;
+    uvm_analysis_port #(axi_seq_item) wr_addr_ap_cov;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -32,6 +34,7 @@ class wr_addr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_addr_ap = new("wr_addr_ap", this);
+        wr_addr_ap_cov = new("wr_addr_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -64,21 +67,24 @@ class wr_addr_monitor extends uvm_monitor;
 
         // Create a new sequence item
         temp_wr_addr_item        = axi_seq_item::type_id::create("write_addr_monitor");
-        temp_wr_addr_item.addr   = axi_vif.AWADDR;
-        temp_wr_addr_item.id     = axi_vif.AWID;
-        temp_wr_addr_item.size   = axi_vif.AWSIZE;
+        temp_wr_addr_item.addr   = `MON_IF.AWADDR;
+        temp_wr_addr_item.id     = `MON_IF.AWID;
+        temp_wr_addr_item.size   = `MON_IF.AWSIZE;
         temp_wr_addr_item.access = WRITE_TRAN;
-        temp_wr_addr_item.burst_length  = axi_vif.AWLEN+1;
+        temp_wr_addr_item.burst_length  = `MON_IF.AWLEN+1;
 
         // Decode burst type
-        case (axi_vif.AWBURST)
+        case (`MON_IF.AWBURST)
             2'b00: temp_wr_addr_item.burst = FIXED;
             2'b01: temp_wr_addr_item.burst = INCR;
             2'b10: temp_wr_addr_item.burst = WRAP;
         endcase
 
+        // Write the monitored item to functional cov analysis port
+        wr_addr_ap_cov.write(temp_wr_addr_item);
+        
         // Write the monitored item to analysis port
-        if(axi_vif.AWVALID && axi_vif.AWREADY && axi_vif.AWSIZE) begin
+        if(`MON_IF.AWVALID && `MON_IF.AWREADY && `MON_IF.AWSIZE) begin
             wr_addr_ap.write(temp_wr_addr_item);
             temp_wr_addr_item.print();
             `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)
