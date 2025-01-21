@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 ﻿# **UVM Based Verification Of AXI-TO-AHB**  
 # **Bridge** 
 **Trainee Name:                                                                           [ Ahmed Raza](mailto:ahmed.raza@10xengineers.ai) ![](/images/Aspose.Words.dc60e07b-60ce-4f64-8dde-e30d484ba370.001.png)Manager:                                                                                    [ Rubab Fatima ](mailto:rubab@techhivesolutions.com)Tech Lead:                                                                                   [ Hassan Ashraf](mailto:hassan.ashraf@10xengineers.ai) Peer Mentor:                                                                              [ Abdullah Nadeem](mailto:abdullah.nadeem@10xengineers.ai)** 
+=======
+﻿# **UVM Based Verification Of AXI-TO-AHB Bridge** 
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 **CONTENTS** 
 
@@ -165,12 +169,17 @@ The  AHB  State  Machine  resides  within  the  AHB-Lite  master  interface  mod
 #### **AHB-Lite Master Interface:** 
 - Data<a name="_page8_x0.00_y114.50"></a> bus widths greater than 64 bits are not supported. 
 - Cacheable access is not supported. 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 865f772 (Committing untracked files before pull)
 5. **Testbench<a name="_page9_x0.00_y61.65"></a> Architecture![](/images/Aspose.Words.dc60e07b-60ce-4f64-8dde-e30d484ba370.003.png)**
 
 **Testbench Architecture** 
 
 1. **Sequences<a name="_page10_x0.00_y80.81"></a> and Sequence Items**
 
+<<<<<<< HEAD
 The  **AHB  Sequence  Item**  represents  the  fundamental  unit  of  AHB  protocol  transactions, encapsulating attributes like address, data, control signals, and transaction types (read/write). It uses  UVM  macros  for  automation,  introspection,  and  randomization  to  ensure  diverse  test scenarios.  Constraints  on  critical  signals  like  HREADY  guarantee protocol compliance while 
 
 enabling robust verification. The **AHB Sequence**, extending **uvm\_sequence**, generates and executes these transactions by using read and write operations. It verifies the DUT behavior by integrating randomized stimuli and response validation.
@@ -184,6 +193,15 @@ capturing responses in a structured manner.**
 The ahb\_agent.sv file defines the ahb\_agent class, which integrates key components for the  AHB  verification  process,  including  the sequencer, driver, and monitor. The agent class inherits from uvm\_agent and utilizes a configuration object to set up the environment. In the build  phase,  it  checks  the  configuration  and  creates  instances  of  the driver, sequencer, and monitor, if the agent is active. During the connect phase, it connects the driver’s sequence item port to the sequencer’s sequence item export. If the agent is inactive, it logs a message indicating the agent’s passive state. The file ensures the proper initialization and connection of components 
 
 to enable AHB verification. 
+=======
+The  **AHB  Sequence  Item**  represents  the  fundamental  unit  of  AHB  protocol  transactions, encapsulating attributes like address, data, control signals, and transaction types (read/write). It uses  UVM  macros  for  automation,  introspection,  and  randomization  to  ensure  diverse  test scenarios.  Constraints  on  critical  signals  like  HREADY  guarantee protocol compliance while enabling robust verification. The **AHB Sequence**, extending **uvm\_sequence**, generates and executes these transactions by using read and write operations. It verifies the DUT behavior by integrating randomized stimuli and response validation.
+
+The  **AXI  Sequence  Item**  is  a  modular  UVM  component  for  AXI4  protocol  verification, encapsulating  key  transaction  attributes  like  address,  burst  type,  and  operation  type.  Its randomization and constraints ensure protocol adherence, while utility methods like awsize enhance  flexibility.  The  **axi\_rd\_addr\_sequence,  axi\_wr\_addr\_seq,  axi\_wr\_data\_seq, axi\_rd\_data\_seq, axi\_wr\_rsp\_seq** ,  built  on  **uvm\_sequence**,  uses  the  sequence  item  to generate AXI4 transactions, handling scenarios like varying burst lengths and aligned addresses. This  sequence  validates  the  AXI4 protocol's integrity and robustness by driving stimuli and  capturing responses in a structured manner.** 
+
+2. **AHB<a name="_page10_x0.00_y342.73"></a> AGENT** 
+
+The ahb\_agent.sv file defines the ahb\_agent class, which integrates key components for the  AHB  verification  process,  including  the sequencer, driver, and monitor. The agent class inherits from uvm\_agent and utilizes a configuration object to set up the environment. In the build  phase,  it  checks  the  configuration  and  creates  instances  of  the driver, sequencer, and monitor, if the agent is active. During the connect phase, it connects the driver’s sequence item port to the sequencer’s sequence item export. If the agent is inactive, it logs a message indicating the agent’s passive state. The file ensures the proper initialization and connection of components  to enable AHB verification. 
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 3. **AXI<a name="_page10_x0.00_y476.38"></a> AGENTS** 
 
@@ -191,9 +209,13 @@ to enable AHB verification.
 
 4. **AHB<a name="_page10_x0.00_y642.97"></a> ENVIRONMENT** 
 
+<<<<<<< HEAD
 The  ahb\_environment  serves  as  the  environment  for  AHB-side  verification.  This  class manages the instantiation of the AHB agent and its connections within the testbench. In the build phase, the environment creates an instance of the ahb\_agent, which is responsible for driving and  monitoring  the  AHB  protocol.  During  the  connect  phase,  the  environment  sets  up  the necessary connections, though the specific connections for analysis ports to the scoreboard are 
 
 not detailed in this version. This class ensures proper integration and management of the AHB agent, playing a central role in the overall AHB verification process. 
+=======
+The  ahb\_environment  serves  as  the  environment  for  AHB-side  verification.  This  class manages the instantiation of the AHB agent and its connections within the testbench. In the build phase, the environment creates an instance of the ahb\_agent, which is responsible for driving and  monitoring  the  AHB  protocol.  During  the  connect  phase,  the  environment  sets  up  the necessary connections, though the specific connections for analysis ports to the scoreboard are not detailed in this version. This class ensures proper integration and management of the AHB agent, playing a central role in the overall AHB verification process. 
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 5. **AXI<a name="_page11_x0.00_y86.95"></a> ENVIRONMENT** 
 
@@ -205,9 +227,13 @@ The **axi2ahb\_env** serves as the environment for AXI-to-AHB protocol verificat
 
 7. **TEST<a name="_page11_x0.00_y375.84"></a>** 
 
+<<<<<<< HEAD
 The  **axi2ahb\_test**  implements  the  testbench  for  verifying  the  AXI  to  AHB  bridge functionality.  The  test  class  **axi2ahb\_test**  initializes  the  AXI-to-AHB  environment  and manages  the  execution  of  sequences  via  a  virtual  sequencer.  In  the  build  phase,  it  creates instances of the AXI2AHB environment, a virtual sequence, and configuration settings. The main phase of the testbench starts the sequence through the virtual sequencer, allowing the system to execute the test scenario. The test includes objections raised and dropped during the execution to manage the simulation flow. The file also provides for printing the topology at the end of the elaboration phase, ensuring the environment and sequence are set up correctly for the verification 
 
 process. 
+=======
+The  **axi2ahb\_test**  implements  the  testbench  for  verifying  the  AXI  to  AHB  bridge functionality.  The  test  class  **axi2ahb\_test**  initializes  the  AXI-to-AHB  environment  and manages  the  execution  of  sequences  via  a  virtual  sequencer.  In  the  build  phase,  it  creates instances of the AXI2AHB environment, a virtual sequence, and configuration settings. The main phase of the testbench starts the sequence through the virtual sequencer, allowing the system to execute the test scenario. The test includes objections raised and dropped during the execution to manage the simulation flow. The file also provides for printing the topology at the end of the elaboration phase, ensuring the environment and sequence are set up correctly for the verification process. 
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 8. **TESTBENCH<a name="_page11_x0.00_y522.14"></a> TOP** 
 
@@ -225,7 +251,10 @@ The  diagram  illustrates  a  verification  environment  for  a  bridge  module 
 
 On the AHB domain side, the AHB driver handles the converted transactions and communicates with  the ahb\_interface. The driver interacts with AHB sequences, which drive specific transaction  scenarios  to  test  the  bridge's  functionality  comprehensively.  This  environment demonstrates  a  layered  and  modular  approach  to  protocol  verification,  ensuring  accurate translation between AXI and AHB. 
 
+<<<<<<< HEAD
 14** 
+=======
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 7. **How<a name="_page13_x0.00_y61.65"></a> Does the Test Start and End?** 
 
@@ -233,6 +262,7 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 
    phase.drop\_objection is called, marking the end of the test. 
 
+<<<<<<< HEAD
    Similarly, in a read operation, the test initiates the appropriate sequences in a fork-join block, such  as starting the read address sequence, read data sequence, and the corresponding AHB sequence. Additionally, a specific mechanism monitors the progress of the read operation, such as 
 
    counting the number of valid read responses (RVALID) on the AXI interface. This monitoring is implemented in a while loop within a forked thread, ensuring that the test waits for the expected number of read responses before concluding. Once the conditions are met or the forked processes complete, the test uses phase.drop\_objection to signal the end of the simulation, allowing 
@@ -242,6 +272,10 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
    operations are executed and validated comprehensively. 
 
 14** 
+=======
+   Similarly, in a read operation, the test initiates the appropriate sequences in a fork-join block, such  as starting the read address sequence, read data sequence, and the corresponding AHB sequence. Additionally, a specific mechanism monitors the progress of the read operation, such as counting the number of valid read responses (RVALID) on the AXI interface. This monitoring is implemented in a while loop within a forked thread, ensuring that the test waits for the expected number of read responses before concluding. Once the conditions are met or the forked processes complete, the test uses phase.drop\_objection to signal the end of the simulation, allowing the  testbench  to  gracefully  exit.  This  structured  approach  ensures  that  both  write  and read operations are executed and validated comprehensively. 
+
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 
 8. **TEST<a name="_page14_x0.00_y61.65"></a> PLAN**
@@ -263,7 +297,11 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 |9 |fix\_wr\_nrw 2\_beat15x 2\_test|<p>Generating FIXED burst with 15 transactions, each containing 2 beats </p><p>using narrow transfer. Each beat has a Data Lane Width (DW) of 2 </p><p>bytes and a total Transfer Size of 4 bytes per transaction. </p>|DUT converts it into 15 separate transactions, each consisting of 2 beats with a total data size of 4 bytes per transaction. |Completed|`  `PASS |Data on AXI write data channel is correctly written to the AHB slave for all transactions, ensuring correct address and data alignment. |[fix_wr_nr…](https://drive.google.com/open?id=1I8jHDFkxTX0TdkqclAQsNPqZS8CC5Pl2&usp=drive_copy)|
 |10 |fix\_wr\_unal igned\_test|Generating FIXED burst with 2 transactions, each containing 1 beat using unaligned transfer. Each beat has a Data Lane Width (DW) of 4 bytes and a total Transfer Size of 4 bytes per transaction. |DUT processes 2 separate transactions, each with an unaligned address and writes 4 bytes per beat. DUT automatically aligns the address |Completed|`  `PASS |Data is correctly written to the AHB slave for all transactions on aligned address, ensuring proper handling of unaligned addresses. |[fix_wr_u…](https://drive.google.com/open?id=11S9N-a_h9ui4-44LWD501maXUzRh1S8J&usp=drive_copy)|
 |11 |incr\_wr\_len 1\_test|Generating an INCR burst Write Address transaction with a single beat. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 4 bytes per transaction. |DUT processes a single INCR burst transaction, writing 4 bytes to the specified address. |Completed|`  `PASS |Data is correctly written to the AHB slave at the specified address |[incr_wr_l…](https://drive.google.com/open?id=1LFea4qpNgxlGg95D2ANEz5EzqEExATP2&usp=drive_copy)|
+<<<<<<< HEAD
 |12 |incr\_wr\_len 2\_test|Generating an INCR burst Write Address transaction with 2 beats. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 8 bytes for the transaction. |DUT processes an INCR burst transaction with a length of 2 beats, writing 8 bytes to the specified address. |Completed|`  `PASS |Data is correctly written across 2 beats to the AHB slave at the specified address, and address has been incremented according to the DATA WIDTH which is 4 bytes in this case. |[incr_wr_l…](https://drive.google.com/open?id=1iHCvhRhRm8OnXbbVYFi6zYfJuw99sPpW&usp=drive_copy)| Generating an INCR ![](/images/Aspose.Words.dc60e07b-60ce-4f64-8dde-e30d484ba370.005.png)
+=======
+|12 |incr\_wr\_len 2\_test|Generating an INCR burst Write Address transaction with 2 beats. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 8 bytes for the transaction. |DUT processes an INCR burst transaction with a length of 2 beats, writing 8 bytes to the specified address. |Completed|`  `PASS |Data is correctly written across 2 beats to the AHB slave at the specified address, and address has been incremented according to the DATA WIDTH which is 4 bytes in this case. |[incr_wr_l…](https://drive.google.com/open?id=1iHCvhRhRm8OnXbbVYFi6zYfJuw99sPpW&usp=drive_copy)|
+>>>>>>> 865f772 (Committing untracked files before pull)
 | 13      | incr_wr_len_4_test | Generating an INCR burst Write Address transaction with 4 beats. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 16 bytes for the transaction.             | DUT processes an INCR burst transaction with a length of 4 beats, writing 16 bytes to the specified address.                                                        | Completed| `PASS`       | Data is correctly written across 4 beats to the AHB slave at the specified address, and address has been incremented according to the DATA WIDTH which is 4 bytes in this case. | [incr_wr_l…](https://drive.google.com/open?id=1VI9gHnJm2KKzdQV55siSi2U1C3FrFpY5&usp=drive_copy)                                                                                  |
 | 14      | incr_wr_len_8_test | Generating an INCR burst Write Address transaction with 8 beats. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 32 bytes for the transaction.             | DUT processes an INCR burst transaction with a length of 8 beats, writing 32 bytes to the specified address.                                                        | Completed| `PASS`       | Data is correctly written across 8 beats to the AHB slave at the specified address, and address has been incremented according to the DATA WIDTH which is 4 bytes in this case. | [incr_wr_l…](https://drive.google.com/open?id=1Z2CVt2vqgJEO5chSuielvrqT-hzjfgnJ&usp=drive_copy)                                                                                  |
 | 15      | incr_wr_len_16_test| Generating an INCR burst Write Address transaction with 16 beats. The burst has a Data Lane Width (DW) of 4 bytes, and the Transfer Size is 64 bytes for the transaction.            | DUT processes an INCR burst transaction with a length of 16 beats, writing 64 bytes to the specified address with no alignment or burst errors.                      | Completed| `PASS`       | Data is correctly written across 16 beats to the AHB slave at the specified address, with no issues in burst alignment or handling.                                              | [incr_wr_l…](https://drive.google.com/open?id=1-Hud7cNNSmPzTpPBCL5S543FJdCsFwM0&usp=drive_copy)                                                                                  |
@@ -274,7 +312,10 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 
 
 |25 |incr\_wr\_1k b\_cross\_te st|Generating an INCR burst Write Address transaction of length 2 on the AXI Write Address Channel, crossing a 1KB boundary. |DUT processes Write transactions that cross a 1KB address boundary, with a burst type of INCR, data size of 16 bytes, and 4 beats. |Completed|`  `PASS |Verify the transaction crosses the 1KB boundary correctly and processes with the expected burst and data size. |[incr_wr_l…](https://drive.google.com/open?id=1lZMFIbwEEeS4WDK0_UySobkwIh_fqLBU&usp=drive_copy)|
+<<<<<<< HEAD
 | - | :-: | :-: | :-: | - | - | :-: | - |
+=======
+>>>>>>> 865f772 (Committing untracked files before pull)
 |26 |incr\_wr\_un aligned\_tes t|Generating an INCR burst Write Address transaction of length 2 on the AXI Write Address Channel, with an unaligned address. |DUT handles Write transactions with unaligned addresses, burst type of INCR, data size of 8 bytes, and 2 beats. DUT aligns the address on AHB side |Completed|`  `PASS |<p>Verify that the transaction works correctly with an unaligned address (address is not aligned to 4-byte </p><p>boundary). And make sure DUT aligns the address on </p><p>AHB side </p>|[incr_wr_l…](https://drive.google.com/open?id=1lZMFIbwEEeS4WDK0_UySobkwIh_fqLBU&usp=drive_copy)|
 |27 |incr\_wr\_nr w\_unaligne d\_test|Generating an INCR burst Write Address transaction of length 2 on the AXI Write Address Channel, with an unaligned address and narrow data lane. |DUT handles Write transactions with unaligned addresses, burst type of INCR, data size of 8 bytes, and 4 beats. DUT aligns addr on AHB side |Completed|`  `PASS |<p>Verify that the transaction works correctly with an unaligned address (address is not aligned to 2-byte </p><p>boundary) and narrow data lane width. And make sure </p><p>DUT aligns the address on AHB side </p>|[incr_wr_l…](https://drive.google.com/open?id=1lZMFIbwEEeS4WDK0_UySobkwIh_fqLBU&usp=drive_copy)|
 |28 |wrp2\_wr\_t est|Generating a WRAP burst Write Address transaction with a data width of 4 bytes on the AXI Write Address Channel. |<p>DUT handles Write transactions with a WRAP burst, data width of 4 bytes, data size of 8 bytes, and 2 </p><p>beats. </p>|` `Completed|`  `PASS |Verify that the WRAP burst Write transaction works correctly with a data width of 4 bytes and the given data size. And DUT converts it to two single transactions |[wrp2_wr…](https://drive.google.com/open?id=1O5DAUlUH1-Zsu2kR4NIYPoaoIitdmEuq&usp=drive_copy)|
@@ -282,7 +323,10 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 |30 |wrp8\_wr\_t est|Generating a WRAP burst Write Address transaction with a data width of 4 bytes on the AXI Write Address Channel. |<p>DUT handles Write transactions with a WRAP burst, data width of 4 bytes, data size of 32 bytes, and </p><p>8 beats. </p>|` `Completed|`  `PASS |Verify that the WRAP burst Write transaction works correctly with a data width of 4 bytes and the given data size. |[wrp8_wr…](https://drive.google.com/open?id=1_LuM8dATv_NulHH8qK3BgLwzXZaakbX3&usp=drive_copy)|
 |31 |wrp16\_wr\_ test|Generating a WRAP burst Write Address transaction with a data width of 4 bytes on the AXI Write Address Channel. |<p>DUT handles Write transactions with a WRAP burst, data width of 4 bytes, data size of 64 bytes, and </p><p>16 beats. </p>|` `Completed|`  `PASS |Verify that the WRAP burst Write transaction works correctly with a data width of 4 bytes and the given data size. |[wrp16_w…](https://drive.google.com/open?id=1tuK-l5HSzPGWeXd6DqsPrtqIm1mhHKc3&usp=chrome_ntp)|
 |32 |wrp2\_wr\_n rw1\_test|Generating a WRAP burst Write Address transaction with a data width of 1 byte on the AXI Write Address Channel. |DUT handles Write transactions with a WRAP burst, data width of 1 byte, data size of 2 bytes, and 2 beats. |Completed|`  `PASS |<p>Verify that the WRAP burst Write transaction works </p><p>correctly with a data width of 1 byte and the given data size. And DUT converts it to two single transactions </p>|[wrp2_wr…](https://drive.google.com/open?id=1qj3jHkBWYhs9eqvWxyDPZ2owWPqz_Z9H&usp=drive_copy)|
+<<<<<<< HEAD
 | - | :-: | :-: | :-: | - | - | :-: | - |
+=======
+>>>>>>> 865f772 (Committing untracked files before pull)
 |33 |wrp4\_wr\_n rw2\_test|Generating a WRAP burst Write Address transaction with a data width of 2 bytes on the AXI Write Address Channel. |<p>DUT handles Write transactions with a WRAP burst, data width of 2 bytes, data size of 8 bytes, and 4 </p><p>beats. </p>|` `Completed|`  `PASS |Verify that the WRAP burst Write transaction works correctly with a data width of 2 bytes and the given data size. |[wrp4_wr…](https://drive.google.com/open?id=1YDa4wtt6hhJTsTbzaqxbhXNLUvMbb81B&usp=drive_copy)|
 |34 |wrp8\_wr\_n rw2\_test|Generating a WRAP burst Write Address transaction with a data width of 2 bytes on the AXI Write Address Channel. |<p>DUT handles Write transactions with a WRAP burst, data width of 2 bytes, data size of 16 bytes, and </p><p>8 beats. </p>|` `Completed|`  `PASS |Verify that the WRAP burst Write transaction works correctly with a data width of 2 bytes and the given data size. |[wrp8_wr…](https://drive.google.com/open?id=1PjDnKxdYkGSWmyfE_IZgt-m-mxEtaau9&usp=drive_copy)|
 |35 |wrp16\_wr\_ nrw1\_test|Generating a WRAP burst Write Address transaction with a data width of 1 byte on the AXI Write Address Channel. |DUT handles Write transactions with a WRAP burst, data width of 1 byte, data size of 64 bytes, and 16 beats. |Completed|`  `PASS |<p>Verify that the WRAP burst Write transaction works </p><p>correctly with a data width of 1 byte and the given data size. </p>|[wrp16_w…](https://drive.google.com/open?id=1hmqGEzWNS1h0ol1LMwCBjBl77NRA4fZn&usp=drive_copy)|
@@ -310,12 +354,19 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 | 57      | incr_rd_len_32_test       | Generating an INCR burst read Address transaction with 32 beats. The burst has a DW of 4 bytes, and the Transfer Size is 4 bytes per transaction. | DUT processes thirty-two separate INCR burst transactions, each with a 4-byte data size and 1 beat per transaction. | Completed  | PASS   | Verify that the data on the AHB Slave is given to the AXI READ channel for all thirty-two beats. | [incr_rd_len_32_test](https://drive.google.com/open?id=1JfukjZXo5hgF1We2sq3fdSAg_Gc59T_i&usp=drive_copy)    |
 
 |58 |incr\_rd\_nr w1\_len256 \_test|Generating an INCR burst read Address transaction with 256 beats and a Data Lane Width (DW) of 1 byte, reading 256 bytes in total. |DUT processes an INCR burst transaction with a length of 256 beats, and all beats reading 4 bytes of data in each byte. DUT has no functionality of handling the narrow read transfers, so it always reads 4 bytes per transaction. |Completed|`  `PASS |Verify that the INCR burst read transaction works correctly reading 4 bytes in single transfer |[incr_rd_n…](https://drive.google.com/open?id=1NaxzepOki6mA7hPmGvnuBYhOYQ0W0c_U&usp=drive_copy)|
+<<<<<<< HEAD
 | - | :-: | :-: | :-: | - | - | :-: | - |
+=======
+>>>>>>> 865f772 (Committing untracked files before pull)
 |59 |incr\_rd\_nr w2\_len8\_te st|Generating an INCR burst read Address transaction with 8 beats and a Data Lane Width (DW) of 2 bytes, reading 15 bytes in total. |<p>DUT processes an INCR burst transaction with a </p><p>` `length of 8 beats. DUT has no functionality of handling the narrow read transfers, so it always reads 4 bytes </p><p>per transaction. </p>|Completed|`  `PASS |Verify that the INCR burst read transaction works correctly reading 4 bytes in single transfer |[incr_rd_n…](https://drive.google.com/open?id=1Ce1mb11wEU8GDdmb99lYArCKKzuyVE0X&usp=drive_copy)|
 |60 |incr\_rd\_mi xed\_test|Generating an incremental read Address transaction with mixed data sizes (1, 2, or 4 bytes) on the AXI read Address Channel. |DUT processes incremental reads with varying data sizes (1, 2, or 4 bytes) and bursts across multiple beats. DUT has no functionality of handling the narrow read transfers, so it always reads 4 bytes per transaction. |Completed|`  `PASS |Verify that the INCR burst read transaction works correctly reading 4 bytes in single transfer |[incr_rd_…](https://drive.google.com/open?id=13I-X3cgcS5d1PnbPPx4C0lJqqVPP3Ary&usp=drive_copy)|
 |61 |incr\_rd\_nr w2\_test|Generating an INCR burst read Address transaction of length 2 on the AXI read Address Channel with a narrow data lane width. |DUT has no functionality of handling the narrow read transfers, so it always reads 4 bytes per transaction. |Completed|`  `PASS |Verify that the INCR burst read transaction works correctly reading 4 bytes in single transfer |[incr_rd_n…](https://drive.google.com/open?id=12M_Z3vdjptRXTwSc9ryNy_Zl8rQ848B4&usp=drive_copy)|
 |62 |incr\_rd\_1k b\_cross\_te st|Generating an INCR burst read Address transaction of length 2 on the AXI read Address Channel, crossing a 1KB boundary. |DUT processes read transactions that cross a 1KB address boundary, with a burst type of INCR, data size of 16 bytes, and 4 beats. |Completed|`  `PASS |Verify the transaction crosses the 1KB boundary correctly and processes with the expected burst and data size. |[incr_rd_1…](https://drive.google.com/open?id=1p3w7356SrbZy864FogTkBj6Mb345jtNM&usp=drive_copy)|
+<<<<<<< HEAD
 |63 |incr\_rd\_un aligned\_tes t|Generating an INCR burst read Address transaction of length 2 on the AXI read Address Channel, with an unaligned address. |DUT handles read transactions with unaligned addresses, burst type of INCR, data size of 8 bytes, and 2 beats. DUT aligns the address on AHB side |Completed|`  `PASS |<p>Verify that the transaction works correctly with an unaligned address (address is not aligned to 4-byte </p><p>boundary). And make sure DUT aligns the address on </p><p>AHB side </p>|[incr_rd_u…](https://drive.google.com/open?id=1NM36mpXai3UbFZFvv5bfJ1HtVf1pBlVH&usp=drive_copy)| Verify that the transaction works correctly with an unaligned address (address Generating an INCR DUT handles read  is not aligned to 2-byte |
+=======
+|63 |incr\_rd\_un aligned\_tes t|Generating an INCR burst read Address transaction of length 2 on the AXI read Address Channel, with an unaligned address. |DUT handles read transactions with unaligned addresses, burst type of INCR, data size of 8 bytes, and 2 beats. DUT aligns the address on AHB side |Completed|`  `PASS |<p>Verify that the transaction works correctly with an unaligned address (address is not aligned to 4-byte </p><p>boundary). And make sure DUT aligns the address on </p><p>AHB side </p>|[incr_rd_u…](https://drive.google.com/open?id=1NM36mpXai3UbFZFvv5bfJ1HtVf1pBlVH&usp=drive_copy)|
+>>>>>>> 865f772 (Committing untracked files before pull)
 | 64      | address_mismatch_test      | Generating transactions with mismatched addresses for verification. | DUT correctly identifies address mismatches and generates appropriate error signals. | Completed  | PASS   | Verify that the DUT identifies and handles address mismatches correctly.                        | [address_mismatch_test](https://drive.google.com/open?id=1mc6Bq3h4JdpIZIpWUE4XhO9pPlkPpIJ1&usp=drive_copy)  |
 | 65      | boundary_condition_test    | Testing for boundary conditions such as the maximum addressable range. | DUT correctly processes transactions at the boundary of its addressable range. | Completed  | PASS   | Verify that the DUT handles boundary conditions properly without errors.                      | [boundary_condition_test](https://drive.google.com/open?id=1GdVeJST1wqbv7LMuEp2Uksz0nybcXXrR&usp=drive_copy) |
 |71 |wrp8\_rd\_nr w2\_test|Generating a WRAP burst read Address transaction with a data width of 2 bytes on the AXI read Address Channel. |DUT has no functionality of handling the narrow read transfers, so it always reads 4 bytes |Completed|`  `PASS |Verify that the WRAP burst read transaction works correctly reading 4 bytes in single transfer |[wrp8_rd_…](https://drive.google.com/open?id=1f4bBQEEj7X8Ewwzf5z4Pr8O86EYyWVId&usp=drive_copy)|
@@ -328,10 +379,17 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 |77 |rd\_wr\_priorit y\_test |Generating a transaction having both read and write on AXI read address and write address channels |If both read and write transaction is given at the same time to DUT, it prioritizes the read |Completed|`  `PASS |Verify that if both read and write transaction is given at the same time to DUT, it prioritizes the read |[incr_rd_…](https://drive.google.com/open?id=1Ti23D33xDOTI5TieW4Vlz_hsvBoXSFAG&usp=drive_copy)|
 |<a name="_page26_x0.00_y61.65"></a>
 
+<<<<<<< HEAD
 **9.  Assertions Plan** ||||||||
 | - | :- | :- | :- | :- | :- | :- | :- |
 |**AXI to AHB Bridge Verification** ||||||||
 |**TYP E** |**TEST NO** |**TEST NAME** |**DESCRIPTION** |**FEATURE** |**STAT US** |**PA SS/ FAI L** |**PASS/FAIL Criterion** |
+=======
+**9.  Assertions Plan** 
+
+|**AXI to AHB Bridge Verification** ||||||||
+|**TYP E** |**TEST NO** |**TEST NAME** |**DESCRIPTION** |**FEATURE** |**STAT US** |**PA SS/ FAIL**  |**PASS/FAIL Criterion** |
+>>>>>>> 865f772 (Committing untracked files before pull)
 |AXI |1 |RESERVED\_BU RST |Verifies AWBURST does not have a reserved value (2'b11). |Ensures AWBURST is always valid. |Compl eted |PA SS |AWBURST should not equal 2'b11 when AWVALID is asserted. |
 |AXI |2 |AXI\_ADDRESS\_ BOUNDARY |Verifies AWADDR is within a valid range (< 4095). |Prevents invalid address access. |Compl eted |PA SS |AWADDR must always be less than 4095 when AWVALID is asserted. |
 |AXI |3 |ARVALID\_ARRE ADY\_HANDSHA KE |Checks proper handshake between ARVALID and ARREADY. |Ensures ARVALID remains asserted properly. |Compl eted |PA SS |ARVALID must remain high if ARREADY is low for one clock cycle. |
@@ -340,7 +398,10 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 |AXI |6 |WVALID\_WREA DY\_HANDSHAK E |Checks proper handshake between WVALID and WREADY. |Ensures WVALID remains asserted properly. |Compl eted |PA SS |WVALID must remain high if WREADY is low for one clock cycle. |
 |AXI |7 |BVALID\_BREAD Y\_HANDSHAKE |Checks proper handshake between BVALID and BREADY. |Ensures BVALID remains asserted properly. |Compl eted |PA SS |BVALID must remain high if BREADY is low for one clock cycle. |
 |AH B |8 |HREADY\_CHEC K |Verifies stability of HADDR, HWRITE, and HWDATA when HREADY is low. |Ensures proper signal stability during wait states. |Compl eted |PA SS |HADDR, HWRITE, and HWDATA should not change when HREADY is low. |
+<<<<<<< HEAD
 |27** ||||||||
+=======
+>>>>>>> 865f772 (Committing untracked files before pull)
 
 10. **Directory Structure** 
 
