@@ -84,7 +84,7 @@ class wr_addr_monitor extends uvm_monitor;
         wr_addr_ap_cov.write(temp_wr_addr_item);
         
         // Write the monitored item to analysis port
-        if(`MON_IF.AWVALID && `MON_IF.AWREADY && `MON_IF.AWSIZE) begin
+        if(`MON_IF.AWVALID && `MON_IF.AWREADY) begin
             wr_addr_ap.write(temp_wr_addr_item);
             temp_wr_addr_item.print();
             `uvm_info(get_name(), "Completed Monitoring AXI_write_data_monitor transactions", UVM_LOW)

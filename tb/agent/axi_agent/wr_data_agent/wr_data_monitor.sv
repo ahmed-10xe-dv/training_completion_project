@@ -68,7 +68,7 @@ class wr_data_monitor extends uvm_monitor;
         temp_data_item.write_strobe[0] = axi_vif.WSTRB;
         temp_data_item.access = WRITE_TRAN;
         
-        if(axi_vif.WVALID && axi_vif.WREADY && axi_vif.WSTRB && axi_vif.WDATA) begin
+        if(axi_vif.WVALID && axi_vif.WREADY) begin
         // Write the monitored item to scb analysis port
             wr_data_ap.write(temp_data_item);
             temp_data_item.print();

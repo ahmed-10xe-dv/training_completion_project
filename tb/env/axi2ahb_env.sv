@@ -69,9 +69,9 @@ class axi2ahb_env extends uvm_env;
         ahb_env.ahb_agnt.ahb_mon.ahb_ap.connect(scoreboard.ahb_data_imp);
 
         // Connect AXI Monitors to Functional Coverage
-        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap_cov.connect(func_cov.axi_wr_addr_imp_cov);
-        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap_cov.connect(func_cov.axi_rd_addr_imp_cov);
-        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap_cov.connect(func_cov.axi_wr_rsp_imp_cov);
+        axi_env.wr_addr_agnt.wr_addr_mon.wr_addr_ap.connect(func_cov.axi_wr_addr_imp_cov);
+        axi_env.rd_addr_agnt.rd_addr_mon.rd_addr_ap.connect(func_cov.axi_rd_addr_imp_cov);
+        axi_env.wr_rsp_agnt.wr_rsp_mon.wr_rsp_ap.connect(func_cov.axi_wr_rsp_imp_cov);
     endfunction
 
 endclass

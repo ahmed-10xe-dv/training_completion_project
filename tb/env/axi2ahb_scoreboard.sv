@@ -39,6 +39,8 @@ class axi2ahb_scoreboard extends uvm_component;
     axi_seq_item axi_rd_addr_q[$];
     axi_seq_item axi_rd_data_q[$];
     ahb_seq_item ahb_data_q[$];
+    logic [31:0] axi_addr_queue[$];
+    logic [31:0] temp_addr;  
 
 
     // Transaction items for comparison
@@ -112,23 +114,61 @@ class axi2ahb_scoreboard extends uvm_component;
     /*************************************************************************
     * Compare Write and Read Data Transfer: AXI to AHB Write and Read Transaction Comparison
     *************************************************************************/
-    function void compare_write_txns();
+    // function void compare_write_txns();
 
-            if ((/*axi_wr_addr_q.size() && */ (axi_wr_data_q.size()) && (ahb_data_q.size()))) begin
-                axi_wr_addr_item = axi_wr_addr_q.pop_front();
-                axi_wr_data_item = axi_wr_data_q.pop_front();
-                ahb_data_item    = ahb_data_q.pop_front();
+    //         if ((/*axi_wr_addr_q.size() && */ (axi_wr_data_q.size()) && (ahb_data_q.size()))) begin
+    //             axi_wr_addr_item = axi_wr_addr_q.pop_front();
+    //             axi_wr_data_item = axi_wr_data_q.pop_front();
+    //             ahb_data_item    = ahb_data_q.pop_front();
             
+    //             // Check for valid write transactions
+    //             if (/* axi_wr_addr_item.access == WRITE_TRAN &&*/ axi_wr_data_item.access == WRITE_TRAN ) begin
+    //                     // Retrieve data from the AHB FIFO
+    //                     if (ahb_data_item.ACCESS_o == write /*&& (ahb_data_item.HADDR_o == axi_wr_addr_item.addr)*/ ) begin
+    //                         //Compare AXI and AHB write data
+    //                         if (ahb_data_item.HWDATA_o == axi_wr_data_item.write_data[0]) begin
+    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+    //                             `uvm_info(get_name(), "---    WRITE TRANSACTION PASSED    ---", UVM_NONE)
+    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+    //                             `uvm_info("BRIDGE_WRITE_TXN_PASS", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
+    //                         end else begin
+    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+    //                             `uvm_info(get_name(), "---   WRITE TRANSACTION FAILED     ---", UVM_NONE)
+    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+    //                             `uvm_error("BRIDGE_WRITE_TXN_FAIL", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
+    //                         end
+                            
+    //                     end
+    //             end
+    //         end  
+    // endfunction
+
+    function void compare_write_txns();
+        if (((axi_wr_data_q.size()))) begin
+                ahb_data_item    = ahb_data_q.pop_front();
+                axi_wr_data_item = axi_wr_data_q.pop_front();
+                if (((axi_wr_addr_q.size()))) begin
+                    axi_wr_addr_item = axi_wr_addr_q.pop_front();
+                    calculate_and_store_axi_addrs(axi_wr_addr_item, axi_addr_queue);
+                end    
+                if (ahb_data_item.HTRANS_o[1]) begin
+                    
                 // Check for valid write transactions
-                if (/* axi_wr_addr_item.access == WRITE_TRAN &&*/ axi_wr_data_item.access == WRITE_TRAN ) begin
-                        // Retrieve data from the AHB FIFO
-                        if (ahb_data_item.ACCESS_o == write /*&& (ahb_data_item.HADDR_o == axi_wr_addr_item.addr)*/ ) begin
+                if (axi_wr_data_item.access == WRITE_TRAN ) begin
+                    // if (axi_wr_data_item.burst == FIXED) begin
+                    //     temp_addr = axi_wr_data_item.addr;
+                    // end
+                    // else begin
+                        temp_addr = axi_addr_queue.pop_front();
+                    // end
+                        if (ahb_data_item.ACCESS_o == write && (ahb_data_item.HADDR_o == temp_addr )) begin
                             //Compare AXI and AHB write data
                             if (ahb_data_item.HWDATA_o == axi_wr_data_item.write_data[0]) begin
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
                                 `uvm_info(get_name(), "---    WRITE TRANSACTION PASSED    ---", UVM_NONE)
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
                                 `uvm_info("BRIDGE_WRITE_TXN_PASS", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
+                                `uvm_info(get_name(), $sformatf("AXI Addr : %h, AHB Addr : %h",temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
                             end else begin
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
                                 `uvm_info(get_name(), "---   WRITE TRANSACTION FAILED     ---", UVM_NONE)
@@ -137,8 +177,14 @@ class axi2ahb_scoreboard extends uvm_component;
                             end
                             
                         end
+                        else begin
+                            `uvm_info(get_name(), $sformatf("Addr Mismatch AXI Addr : %h, AHB Addr : %h",temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
+                        end
                 end
-            end  
+                end
+
+            // end  
+        end
     endfunction
 
 
@@ -174,6 +220,94 @@ class axi2ahb_scoreboard extends uvm_component;
                 end
             end
     endfunction
+
+
+      // Function to calculate and store AXI addresses based on transaction item details
+      function void calculate_and_store_axi_addrs(
+        input axi_seq_item axi_item,          // AXI transaction item
+        output logic [31:0] axi_addr_queue[$]  // Queue to store the addresses
+    );
+        // Temporary variables
+        int unsigned wrap_boundary;
+        int unsigned num_bytes;
+        int unsigned addr;
+        int unsigned burst_length;
+
+        // Clear the queue
+        axi_addr_queue.delete();
+
+        // Initialize parameters from the transaction item
+        addr = axi_item.addr;
+        burst_length = axi_item.burst_length;
+
+        // Calculate the number of bytes per transfer based on size
+        // Size = 0 -> 1 byte, Size = 1 -> 2 bytes (half-word), Size = 2 -> 4 bytes (word)
+        case (axi_item.size)
+            0: num_bytes = 1;
+            1: num_bytes = 2;
+            2: num_bytes = 4;
+            default: num_bytes = 1; // Default to byte transfer if size is invalid
+        endcase
+
+        // Align the address if the size is half-word (1) or word (2)
+        if (axi_item.size == 1 || axi_item.size == 2) begin
+            addr = addr & ~(num_bytes - 1);
+        end
+
+        // Handle burst types
+        case (axi_item.burst)
+            FIXED: begin
+                // For FIXED burst, store the same address repeatedly
+                repeat (burst_length) begin
+                    if (axi_addr_queue.size() < 256) begin
+                        axi_addr_queue.push_back(addr);
+                    end else begin
+                        `uvm_warning("ADDR_QUEUE_FULL", "Queue size exceeded 256 items")
+                        break;
+                    end
+                end
+            end
+
+            INCR: begin
+                // For INCR burst, increment the address by `num_bytes` for each beat
+                repeat (burst_length) begin
+                    if (axi_addr_queue.size() < 256) begin
+                        axi_addr_queue.push_back(addr);
+                        addr += num_bytes; // Increment by number of bytes
+                    end else begin
+                        `uvm_warning("ADDR_QUEUE_FULL", "Queue size exceeded 256 items")
+                        break;
+                    end
+                end
+            end
+
+            WRAP: begin
+                // Calculate wrap boundary
+                wrap_boundary = (addr / (num_bytes * burst_length)) * (num_bytes * burst_length);
+
+                // For WRAP burst, increment the address with wrapping behavior
+                repeat (burst_length) begin
+                    if (axi_addr_queue.size() < 256) begin
+                        axi_addr_queue.push_back(addr);
+                        addr += num_bytes; // Increment by number of bytes
+
+                        // Check if wrapping is required
+                        if (addr == (wrap_boundary + (num_bytes * burst_length))) begin
+                            addr = wrap_boundary; // Wrap back to the boundary
+                        end
+                    end else begin
+                        `uvm_warning("ADDR_QUEUE_FULL", "Queue size exceeded 256 items")
+                        break;
+                    end
+                end
+            end
+
+            default: begin
+                `uvm_error("INVALID_BURST_TYPE", "Invalid burst type specified in AXI item")
+            end
+        endcase
+    endfunction
+
 endclass
 
 `endif
