@@ -497,11 +497,11 @@ interface axi_interface #(
   assert property (bvalid_bready_handshake)
     else `uvm_error("BVALID_HANDSHAKE", "BVALID handshake protocol violated!")
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Assertion: Check WREADY after AWVALID and AWREADY within 1 to 16 cycles
-  // Description: Ensures that once AWVALID and AWREADY are asserted together,
-  //              WREADY must be asserted within 1 to 16 cycles.
-  /////////////////////////////////////////////////////////////////////////////
+  /*
+   Assertion: Check WREADY after AWVALID and AWREADY within 1 to 16 cycles
+   Description: Ensures that once AWVALID and AWREADY are asserted together,
+                WREADY must be asserted within 1 to 16 cycles.
+ */
   property p_aw_wready_timeout;
     @(posedge ACLK) disable iff (!ARESETn)
     (AWVALID && AWREADY) |-> ##[1:16] WREADY;
@@ -511,11 +511,11 @@ interface axi_interface #(
     `uvm_error("AXI_PROTOCOL", "TIMEOUT ERROR: WREADY not asserted within 1 to 16 cycles after AWVALID and AWREADY.")
   end
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Assertion: Check RVALID after ARVALID and ARREADY within 1 to 16 cycles
-  // Description: Ensures that once ARVALID and ARREADY are asserted together,
-  //              RVALID must be asserted within 1 to 16 cycles.
-  /////////////////////////////////////////////////////////////////////////////
+  /*
+  *Assertion: Check RVALID after ARVALID and ARREADY within 1 to 16 cycles
+  *Description: Ensures that once ARVALID and ARREADY are asserted together,
+  *RVALID must be asserted within 1 to 16 cycles.
+  */
   property p_ar_rvalid_timeout;
     @(posedge ACLK) disable iff (!ARESETn)
     (ARVALID && ARREADY) |-> ##[1:16] RVALID;
