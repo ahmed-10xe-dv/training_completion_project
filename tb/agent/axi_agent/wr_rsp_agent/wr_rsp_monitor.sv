@@ -22,7 +22,6 @@ class wr_rsp_monitor extends uvm_monitor;
 
     // Analysis Port Declaration
     uvm_analysis_port #(axi_seq_item) wr_rsp_ap;
-    uvm_analysis_port #(axi_seq_item) wr_rsp_ap_cov;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -34,7 +33,6 @@ class wr_rsp_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         wr_rsp_ap = new("wr_rsp_ap", this);
-        wr_rsp_ap_cov = new("wr_rsp_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -75,9 +73,6 @@ class wr_rsp_monitor extends uvm_monitor;
             2'b10 : temp_wr_rsp_item.response = SLVERR;
             2'b11 : temp_wr_rsp_item.response = DECERR;
         endcase
-
-        // Write the monitored item to functional cov analysis port
-        wr_rsp_ap_cov.write(temp_wr_rsp_item);
 
         if (`MON_IF.BVALID) begin
             // Write the monitored item to functional cov analysis port

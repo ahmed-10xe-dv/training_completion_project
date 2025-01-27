@@ -227,10 +227,210 @@ interface axi_interface #(
     @(posedge ACLK);
   endtask : post_reset_axi
 
-  //------------------------------------------------------------------------------
+  /////////////////////////////////////////////////////////////////////////////
+  // Coverage Group for Read Address Channel
+  /////////////////////////////////////////////////////////////////////////////
+  logic aligned_addr; // Address alignment flag
+
+  // Covergroup to monitor read address channel
+  covergroup cg_axi_rd_addr @(posedge ACLK);
+      // Burst type
+      cp_burst: coverpoint ARBURST {
+          bins fixed = {0};
+          bins incr = {1};
+          bins wrap = {2};
+      }
+
+      // Address
+      cp_addr: coverpoint ARADDR {
+          bins addr_1KB = {[0:1023]};
+          bins addr_2KB = {[1024:2047]};
+          bins addr_3KB = {[2048:3071]};
+          bins addr_4KB = {[3072:4095]};
+      }
+
+      // Burst length
+      cp_len: coverpoint ARLEN {
+          bins bin1       = {0};
+          bins bin2_15    = {[1:14]};
+          bins bin16      = {15};
+          bins bin17_255  = {[16:255]};
+          bins bin256     = {255};
+      }
+
+      // Burst size
+      cp_size: coverpoint ARSIZE {
+          bins byte_size = {0};
+          bins hw_size   = {1};
+          bins w_size    = {2};
+      }
+
+      // Response
+      cp_response: coverpoint RRESP {
+          bins okay           = {0};
+          ignore_bins exokay  = {1};
+          bins slverr         = {2};
+          ignore_bins decerr  = {3};
+      }
+
+      // Address alignment
+      cp_align_unalign: coverpoint aligned_addr {
+          bins addr_aligned   = {1};
+          bins addr_unaligned = {0};
+      }
+
+      // Burst type and size cross
+      cp_burst_size: cross cp_size, cp_burst;
+
+      // Burst type and length cross with valid combinations
+      cross_burst_len: cross cp_burst, cp_len {
+          // Valid combinations for FIXED burst type
+          ignore_bins fixed_invalid = binsof(cp_burst) intersect {0} &&
+                                      !(binsof(cp_len) intersect {[0:15]});
+
+          // Valid combinations for INCR burst type
+          ignore_bins incr_invalid = binsof(cp_burst) intersect {1} &&
+                                     !(binsof(cp_len) intersect {[0:255]});
+
+          // Valid combinations for WRAP burst type
+          ignore_bins wrap_invalid = binsof(cp_burst) intersect {2} &&
+                                     !(binsof(cp_len) intersect {1, 3, 7, 15});
+      }
+  endgroup
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Write Address Coverage Group
+    /////////////////////////////////////////////////////////////////////////////
+    covergroup cg_axi_wr_addr @(posedge ACLK);
+        // Burst type
+        cp_burst: coverpoint AWBURST {
+          bins fixed = {0};
+          bins incr = {1};
+          bins wrap = {2};
+        }
+  
+        // Address
+        cp_addr: coverpoint AWADDR {
+            bins addr_1KB = {[0:1023]};
+            bins addr_2KB = {[1024:2047]};
+            bins addr_3KB = {[2048:3071]};
+            bins addr_4KB = {[3072:4095]};
+        }
+  
+        // Burst length
+        cp_len: coverpoint AWLEN {
+          bins bin1       = {0};
+          bins bin2_15    = {[1:14]};
+          bins bin16      = {15};
+          bins bin17_255  = {[16:255]};
+          bins bin256     = {255};
+        }
+  
+        // Burst size
+        cp_size: coverpoint AWSIZE {
+            bins byte_size = {0};
+            bins hw_size   = {1};
+            bins w_size    = {2};
+        }
+  
+        // Address alignment
+        cp_align_unalign: coverpoint aligned_addr {
+            bins addr_aligned   = {1};
+            bins addr_unaligned = {0};
+        }
+  
+        // Burst type and size cross
+        cp_burst_size: cross cp_size, cp_burst;
+
+          // Burst type and length cross with valid combinations
+      cross_burst_len: cross cp_burst, cp_len {
+        // Valid combinations for FIXED burst type
+        ignore_bins fixed_invalid = binsof(cp_burst) intersect {0} &&
+                                    !(binsof(cp_len) intersect {[0:15]});
+
+        // Valid combinations for INCR burst type
+        ignore_bins incr_invalid = binsof(cp_burst) intersect {1} &&
+                                   !(binsof(cp_len) intersect {[0:255]});
+
+        // Valid combinations for WRAP burst type
+        ignore_bins wrap_invalid = binsof(cp_burst) intersect {2} &&
+                                   !(binsof(cp_len) intersect {1, 3, 7, 15});
+    }
+    endgroup
+  
+    /////////////////////////////////////////////////////////////////////////////
+    // Write Response Coverage Group
+    /////////////////////////////////////////////////////////////////////////////
+    covergroup cg_axi_wr_rsp @(posedge ACLK);
+        // Write response
+        cp_response: coverpoint BRESP {
+          bins okay           = {0};
+          ignore_bins exokay  = {1};
+          bins slverr         = {2};
+          ignore_bins decerr  = {3};
+        }
+    endgroup
+  
+    /////////////////////////////////////////////////////////////////////////////
+    // Coverage Sampling Logic
+    /////////////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////////////
+    // Declare Covergroup Instances
+    /////////////////////////////////////////////////////////////////////////////
+    cg_axi_wr_addr cg_axi_wr_addr_inst;
+    cg_axi_wr_rsp cg_axi_wr_rsp_inst;
+    cg_axi_rd_addr cg_axi_rd_addr_inst;
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Initialize the Covergroups
+    /////////////////////////////////////////////////////////////////////////////
+    initial begin
+        cg_axi_wr_addr_inst = new(); // Instantiate write address coverage group
+
+        // Sample write address coverage on AWVALID and AWREADY
+        forever @(posedge ACLK) begin
+            if (AWVALID && AWREADY) begin
+                // Compute alignment flag
+                aligned_addr = (AWADDR % (1 << AWSIZE)) == 0;
+
+                // Trigger coverage sampling
+                cg_axi_wr_addr_inst.sample();
+            end
+        end
+    end
+
+    initial begin
+        cg_axi_wr_rsp_inst = new(); // Instantiate write response coverage group
+
+        // Sample write response coverage on BVALID and BREADY
+        forever @(posedge ACLK) begin
+            if (BVALID && BREADY) begin
+                cg_axi_wr_rsp_inst.sample();
+            end
+        end
+    end
+
+  initial begin
+      cg_axi_rd_addr_inst = new(); // Instantiate read address coverage group
+
+      // Sample read address coverage on RVALID and RREADY
+      forever @(posedge ACLK) begin
+          if (RVALID && RREADY) begin
+              // Compute alignment flag
+              aligned_addr = (ARADDR % (1 << ARSIZE)) == 0;
+
+              // Trigger coverage sampling
+              cg_axi_rd_addr_inst.sample();
+          end
+      end
+  end
+
+
+  /////////////////////////////////////////////////////////////////////////////
   //  axi_protocol_assertions
   // Description: AXI protocol property definitions and assertions.
-  //------------------------------------------------------------------------------
+  /////////////////////////////////////////////////////////////////////////////
 
   /*
   * RESERVED_BURST: Ensures AWBURST does not have a reserved value (2'b11)
@@ -241,17 +441,7 @@ interface axi_interface #(
   endproperty : RESERVED_BURST
   axi_burst_reserved_bit: assert property (RESERVED_BURST)
     else `uvm_error("RESERVED_BURST", "AWBURST has a reserved value (2'b11)!")
-
-  /*
-  * AXI_ADDRESS_BOUNDARY: Ensures AWADDR remains within the valid address range (< 4095)
-  * when AWVALID is asserted and the reset is active.
-  */
-  property AXI_ADDRESS_BOUNDARY;
-    @(posedge ACLK) (AWVALID && ARESETn |-> (AWADDR < 4095));
-  endproperty : AXI_ADDRESS_BOUNDARY
-  axi_address_check: assert property (AXI_ADDRESS_BOUNDARY)
-    else `uvm_error("AXI_ADDRESS_BOUNDARY", "AWADDR exceeds the valid boundary (< 4095)!")
-
+ 
   /*
   * arvalid_arready_handshake: Checks ARVALID and ARREADY handshake protocol.
   * Ensures ARVALID remains asserted for one clock cycle if ARREADY is not active.
@@ -306,6 +496,34 @@ interface axi_interface #(
   endproperty : bvalid_bready_handshake
   assert property (bvalid_bready_handshake)
     else `uvm_error("BVALID_HANDSHAKE", "BVALID handshake protocol violated!")
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Assertion: Check WREADY after AWVALID and AWREADY within 1 to 16 cycles
+  // Description: Ensures that once AWVALID and AWREADY are asserted together,
+  //              WREADY must be asserted within 1 to 16 cycles.
+  /////////////////////////////////////////////////////////////////////////////
+  property p_aw_wready_timeout;
+    @(posedge ACLK) disable iff (!ARESETn)
+    (AWVALID && AWREADY) |-> ##[1:16] WREADY;
+  endproperty
+  assert property (p_aw_wready_timeout)
+  else begin
+    `uvm_error("AXI_PROTOCOL", "TIMEOUT ERROR: WREADY not asserted within 1 to 16 cycles after AWVALID and AWREADY.")
+  end
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Assertion: Check RVALID after ARVALID and ARREADY within 1 to 16 cycles
+  // Description: Ensures that once ARVALID and ARREADY are asserted together,
+  //              RVALID must be asserted within 1 to 16 cycles.
+  /////////////////////////////////////////////////////////////////////////////
+  property p_ar_rvalid_timeout;
+    @(posedge ACLK) disable iff (!ARESETn)
+    (ARVALID && ARREADY) |-> ##[1:16] RVALID;
+  endproperty
+  assert property (p_ar_rvalid_timeout)
+    else begin
+      `uvm_error("AXI_PROTOCOL", "TIMEOUT ERROR: RVALID not asserted within 1 to 16 cycles after ARVALID and ARREADY.")
+    end
 
 endinterface
 

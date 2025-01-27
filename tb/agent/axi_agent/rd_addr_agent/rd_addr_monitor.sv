@@ -18,7 +18,6 @@ class rd_addr_monitor extends uvm_monitor;
 
     virtual axi_interface axi_vif;
     uvm_analysis_port #(axi_seq_item) rd_addr_ap;
-    uvm_analysis_port #(axi_seq_item) rd_addr_ap_cov;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -27,7 +26,6 @@ class rd_addr_monitor extends uvm_monitor;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
         rd_addr_ap = new("rd_addr_ap", this);
-        rd_addr_ap_cov = new("rd_addr_ap_cov", this);
     endfunction
 
     //-----------------------------------------------------------------------------
@@ -72,9 +70,6 @@ class rd_addr_monitor extends uvm_monitor;
             2'b10 : temp_rd_addr_item.response = SLVERR;
             2'b11 : temp_rd_addr_item.response = DECERR;
         endcase
-
-         // Write the monitored item to functional cov analysis port
-         rd_addr_ap_cov.write(temp_rd_addr_item);  
 
         // Write the monitored item to analysis port
         if(`MON_IF.ARVALID && `MON_IF.ARREADY) begin

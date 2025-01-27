@@ -1160,16 +1160,7 @@ class basic_read_test extends axi2ahb_test;
         rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
         ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
       join
-      begin
-        int count =0;
-        while (count<1) begin
-          @(posedge axi_vif.ACLK);
-          if (axi_vif.RVALID) begin
-            count++; 
-          end
-        end
-        disable fork;
-      end
+      terminate_after_beats(1);
     join_any
     #20;
     phase.drop_objection(this, "MAIN - drop_objection");
@@ -1201,16 +1192,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1239,16 +1221,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<16) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(16);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1280,16 +1253,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<19) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(19);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1320,16 +1284,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<15) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+      terminate_after_beats(15);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1360,16 +1315,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<60) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(60);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1399,16 +1345,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<15) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(15);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1438,16 +1375,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<30) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(30);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1477,16 +1405,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1515,16 +1434,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<1) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(1);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1554,16 +1464,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1592,16 +1493,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1630,16 +1522,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<8) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(8);
   join_any
   #1000;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1669,16 +1552,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<16) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(16);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1709,16 +1583,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<50) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(50);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -1747,16 +1612,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<13) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(13);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1786,16 +1642,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<5) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(5);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1825,16 +1672,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
   join
-  begin
-    int count =0;
-    while (count<256) begin
-      @(posedge axi_vif.ACLK);
-      if (axi_vif.RVALID) begin
-        count++; 
-      end
-    end
-    disable fork;
-  end
+  terminate_after_beats(256);
     join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1864,16 +1702,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1903,16 +1732,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<256) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(256);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1943,16 +1763,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<8) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(8);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -1982,16 +1793,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<1) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(1);
   join_any
   #1000;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -2021,16 +1823,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -2061,16 +1854,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -2100,16 +1884,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -2139,16 +1914,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   #50;
   phase.drop_objection(this, "MAIN - drop_objection");
@@ -2180,16 +1946,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2219,16 +1976,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2258,16 +2006,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<8) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(8);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2297,16 +2036,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<16) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(16);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2335,16 +2065,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<2) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(2);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2375,16 +2096,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2413,16 +2125,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<8) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(8);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2452,16 +2155,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<16) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(16);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2491,16 +2185,7 @@ task main_phase(uvm_phase phase);
       rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
       ahb_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
     join
-    begin
-      int count =0;
-      while (count<4) begin
-        @(posedge axi_vif.ACLK);
-        if (axi_vif.RVALID) begin
-          count++; 
-        end
-      end
-      disable fork;
-    end
+    terminate_after_beats(4);
   join_any
   phase.drop_objection(this, "MAIN - drop_objection");
   `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
@@ -2538,7 +2223,6 @@ class basic_rd_wr_test extends axi2ahb_test;
           fix_rd_beat1_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
           rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
         join
-          
         begin
           int count =0;
           while (count<1) begin
@@ -2586,7 +2270,6 @@ class incr_rd_wr_len8_test extends axi2ahb_test;
           incr_rd_len8_h.start(env.axi_env.rd_addr_agnt.rd_addr_sqr);
           rd_data_seq.start(env.axi_env.rd_data_agnt.rd_data_sqr);
         join
-          
         begin
           int count =0;
           while (count<8) begin
@@ -2630,16 +2313,7 @@ class rd_timeout_test extends axi2ahb_test;
             ahb_slverr_seq.start(env.ahb_env.ahb_agnt.ahb_sqr);
           end
         join
-        begin
-          int count =0;
-          while (count<2) begin
-            @(posedge axi_vif.ACLK);
-            if (axi_vif.RVALID) begin
-              count++; 
-            end
-          end
-          disable ahb_fork;
-        end
+        terminate_after_beats(2);
     join_any
     #1000;
     phase.drop_objection(this, "MAIN - drop_objection");

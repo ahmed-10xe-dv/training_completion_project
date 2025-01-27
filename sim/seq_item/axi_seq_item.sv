@@ -23,7 +23,7 @@ class axi_seq_item extends uvm_sequence_item;
 
   // Randomized variables
   bit    [bus_params_pkg::BUS_AW-1:0]      addr;                     // Address        
-  randc  bit [bus_params_pkg::BUS_IDW-1:0] id;                       // Transaction ID                     // Transaction ID  
+  randc  bit [bus_params_pkg::BUS_IDW-1:0] id;                       // Transaction ID                   
   rand   int                               size;                     // Data size
   rand   burst_type                        burst;                    // Burst type      
   rand   bit [7:0]                         data[];                   // Data array
@@ -98,7 +98,6 @@ function void burst_strobe_data_gen();
     int aligned_add;
     int data_index = 0;
 
-  
     address_alignment = this.addr[1:0]; // Extract lower 2 bits of the address for alignment
     remaining_data_size = this.data.size - (this.size * (address_alignment % this.size));
 
@@ -108,31 +107,32 @@ function void burst_strobe_data_gen();
 
     this.burst_length = temp_length+1; // Final burst length includes the initial beat
 
-    aligned_add =this.addr & ~(this.size - 1);
-
-
-    // If transaction is WRITE, then generate strobe and data
+    aligned_add = (this.addr / this.size) * this.size;
+    // Handle WRITE transactions
     if (this.access == WRITE_TRAN) begin
-        for (int j = this.addr % `WIDTH; j < (aligned_add + `WIDTH); j++) begin
-          this.write_strobe[i][j] = 1;
-      end
-    
-      for (int k = 1; k < this.burst_length; k++) begin
-          aligned_add = aligned_add + this.size;
-          i = i + 1;
-          if (k == (this.burst_length - 1)) begin
-              for (int l = aligned_add % `WIDTH; l < ((aligned_add % `WIDTH) + ((remaining_data_size % this.size == 0) ? this.size : (remaining_data_size % this.size))); l++) begin
-                  this.write_strobe[i][l] = 1;
-              end
-          end 
-          else begin
-              for (int l = aligned_add % `WIDTH; l < (aligned_add % `WIDTH) + this.size; l++) begin
-                  this.write_strobe[i][l] = 1;
-              end
-          end
-      end
+    // First transfer
+    for (int j = this.addr % `WIDTH; j < ((this.addr % `WIDTH) + this.size); j++) begin
+        this.write_strobe[i][j] = 1;
+    end
 
+    // Handle subsequent bursts
+    for (int k = 1; k < this.burst_length; k++) begin
+        aligned_add += this.size; // Increment aligned address
+        i += 1;
 
+        if (k == (this.burst_length - 1)) begin
+            // Handle the last transfer (remaining data size)
+            int last_transfer_size = (remaining_data_size % this.size == 0) ? this.size : (remaining_data_size % this.size);
+            for (int l = aligned_add % `WIDTH; l < (aligned_add % `WIDTH) + last_transfer_size; l++) begin
+                this.write_strobe[i][l] = 1;
+            end
+        end else begin
+            // Handle intermediate bursts
+            for (int l = aligned_add % `WIDTH; l < (aligned_add % `WIDTH) + this.size; l++) begin
+                this.write_strobe[i][l] = 1;
+            end
+        end
+    end
       /*------------------------------------------------------------------------------
       Generate write data:
         This code generates the write_data for each burst beat by iterating 

@@ -22,6 +22,10 @@ class axi2ahb_test extends uvm_test;
     virtual axi_interface axi_vif;           // Virtual interface for AXI signals
     virtual ahb_interface ahb_vif;           // Virtual interface for AXI signals
     configurations  cnfg;                    // Configurations
+    // Command-line processor and variables
+    uvm_cmdline_processor cmd_proc;
+    string   value_as_string;
+    int       Trans_Count;
 
 
     axi_wr_addr_sequence  wr_addr_seq;  // AXI Write Address Sequence
@@ -284,15 +288,28 @@ class axi2ahb_test extends uvm_test;
             `uvm_error(get_name(), "Failed to connect axi_vif interface")
         if (!uvm_config_db#(virtual ahb_interface)::get(null, "*", "ahb_vif", ahb_vif))
             `uvm_error(get_name(), "Failed to connect ahb_vif interface")
-        
-        // Create environment
-        env = axi2ahb_env::type_id::create("env", this);              
+
+        // Create environment Set Configuration get inst from cmdline
+        env = axi2ahb_env::type_id::create("env", this);   
+        uvm_config_db #(configurations)::set(this, "*", "cnfg", cnfg);
+        cmd_proc = uvm_cmdline_processor::get_inst ();
     endfunction : build_phase
 
     //-----------------------------------------------------------------------------  
     // Function: end_of_elaboration_phase
     //-----------------------------------------------------------------------------  
     function void end_of_elaboration_phase(uvm_phase phase);
+        //The argument is named VALUE and it is expected to be a string
+        if (cmd_proc.get_arg_value("+VALUE=", value_as_string))begin
+              //convert to int
+               Trans_Count = value_as_string.atoi();
+              cnfg.Trans_Count = Trans_Count;
+             `uvm_info("CMD_Value", $sformatf("Trans_Count is %d", Trans_Count), UVM_LOW)
+         end
+         else begin
+            `uvm_info("CMD_Value", "It didnt work", UVM_LOW)
+         end
+
         uvm_top.print_topology();
     endfunction : end_of_elaboration_phase
 
@@ -319,6 +336,19 @@ class axi2ahb_test extends uvm_test;
         phase.drop_objection(this, "MAIN - drop_objection");
         `uvm_info(get_name(), "MAIN PHASE ENDED", UVM_LOW);
     endtask : main_phase
+
+    // This task is used to check the valid write transaction and controls the 
+    //  test termination for read
+    task terminate_after_beats(input int number);
+        int count = 0;
+        while (count < number) begin
+          @(posedge axi_vif.ACLK);
+          if (axi_vif.RVALID) begin
+            count++; 
+          end
+        end
+        disable fork;
+      endtask
 
 endclass : axi2ahb_test
 

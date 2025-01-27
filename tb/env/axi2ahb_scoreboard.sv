@@ -78,6 +78,23 @@ class axi2ahb_scoreboard extends uvm_component;
         ahb_data_item           = ahb_seq_item::type_id::create("ahb_data_item");
     endfunction
 
+    function void report_phase(uvm_phase phase);
+        uvm_report_server svr;
+        super.report_phase(phase);
+         svr = uvm_report_server::get_server();
+        if(svr.get_severity_count(UVM_FATAL)+svr.get_severity_count(UVM_ERROR)>0) 
+         begin
+                  `uvm_info(get_type_name(), "---------------------------------------", UVM_NONE)
+                  `uvm_info(get_type_name(), "----            TEST FAIL          ----", UVM_NONE)
+                  `uvm_info(get_type_name(), "---------------------------------------", UVM_NONE)
+             end
+         else 
+         begin
+                  `uvm_info(get_type_name(), "---------------------------------------", UVM_NONE)
+                  `uvm_info(get_type_name(), "----           TEST PASS           ----", UVM_NONE)
+                  `uvm_info(get_type_name(), "---------------------------------------", UVM_NONE)
+             end
+   endfunction 
 
     virtual function void write_axi_wr_addr(axi_seq_item axi_wr_addr_item);
         `uvm_info(get_type_name(),$sformatf("Received trans On write_axi_wr_addr Analysis Imp Port"),UVM_LOW)
@@ -114,116 +131,101 @@ class axi2ahb_scoreboard extends uvm_component;
     /*************************************************************************
     * Compare Write and Read Data Transfer: AXI to AHB Write and Read Transaction Comparison
     *************************************************************************/
-    // function void compare_write_txns();
-
-    //         if ((/*axi_wr_addr_q.size() && */ (axi_wr_data_q.size()) && (ahb_data_q.size()))) begin
-    //             axi_wr_addr_item = axi_wr_addr_q.pop_front();
-    //             axi_wr_data_item = axi_wr_data_q.pop_front();
-    //             ahb_data_item    = ahb_data_q.pop_front();
-            
-    //             // Check for valid write transactions
-    //             if (/* axi_wr_addr_item.access == WRITE_TRAN &&*/ axi_wr_data_item.access == WRITE_TRAN ) begin
-    //                     // Retrieve data from the AHB FIFO
-    //                     if (ahb_data_item.ACCESS_o == write /*&& (ahb_data_item.HADDR_o == axi_wr_addr_item.addr)*/ ) begin
-    //                         //Compare AXI and AHB write data
-    //                         if (ahb_data_item.HWDATA_o == axi_wr_data_item.write_data[0]) begin
-    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-    //                             `uvm_info(get_name(), "---    WRITE TRANSACTION PASSED    ---", UVM_NONE)
-    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-    //                             `uvm_info("BRIDGE_WRITE_TXN_PASS", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
-    //                         end else begin
-    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-    //                             `uvm_info(get_name(), "---   WRITE TRANSACTION FAILED     ---", UVM_NONE)
-    //                             `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-    //                             `uvm_error("BRIDGE_WRITE_TXN_FAIL", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
-    //                         end
-                            
-    //                     end
-    //             end
-    //         end  
-    // endfunction
-
     function void compare_write_txns();
-        if (((axi_wr_data_q.size()))) begin
-                ahb_data_item    = ahb_data_q.pop_front();
-                axi_wr_data_item = axi_wr_data_q.pop_front();
-                if (((axi_wr_addr_q.size()))) begin
-                    axi_wr_addr_item = axi_wr_addr_q.pop_front();
-                    calculate_and_store_axi_addrs(axi_wr_addr_item, axi_addr_queue);
-                end    
-                if (ahb_data_item.HTRANS_o[1]) begin
-                    
-                // Check for valid write transactions
-                if (axi_wr_data_item.access == WRITE_TRAN ) begin
-                    // if (axi_wr_data_item.burst == FIXED) begin
-                    //     temp_addr = axi_wr_data_item.addr;
-                    // end
-                    // else begin
+
+        // Check if AXI Write Data Queue has transactions
+        if (axi_wr_data_q.size()) begin
+    
+            // Pop AHB data and AXI write data items from respective queues
+            ahb_data_item    = ahb_data_q.pop_front();
+            axi_wr_data_item = axi_wr_data_q.pop_front();
+    
+            // Check if AXI Write Address Queue has transactions
+            if (axi_wr_addr_q.size()) begin
+                axi_wr_addr_item = axi_wr_addr_q.pop_front();
+                calculate_and_store_axi_addrs(axi_wr_addr_item, axi_addr_queue);
+            end    
+    
+            // Check for valid AHB transaction
+            if (ahb_data_item.HTRANS_o[1] && ahb_data_item.ACCESS_o == write && (ahb_data_item.HADDR_o || ahb_data_item.HWDATA_o)) begin
+                if (ahb_data_item.RESP_i==okay) begin
+                     // Check if AXI transaction is a write
+                    if (axi_wr_data_item.access == WRITE_TRAN) begin
+                        
+                        // Retrieve address
                         temp_addr = axi_addr_queue.pop_front();
-                    // end
-                        if (ahb_data_item.ACCESS_o == write && (ahb_data_item.HADDR_o == temp_addr )) begin
-                            //Compare AXI and AHB write data
+        
+                        // Compare AXI and AHB address and transaction type
+                        if (ahb_data_item.ACCESS_o == write && (ahb_data_item.HADDR_o == temp_addr)) begin
+                            
+                            // Compare AXI and AHB write data
                             if (ahb_data_item.HWDATA_o == axi_wr_data_item.write_data[0]) begin
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
                                 `uvm_info(get_name(), "---    WRITE TRANSACTION PASSED    ---", UVM_NONE)
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_info("BRIDGE_WRITE_TXN_PASS", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
-                                `uvm_info(get_name(), $sformatf("AXI Addr : %h, AHB Addr : %h",temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
+                                `uvm_info("BRIDGE_WRITE_TXN_PASS", 
+                                    $sformatf("AXI Write Data : %h, AHB Write Data : %h", 
+                                    axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o), UVM_LOW)
+                                `uvm_info(get_name(), 
+                                    $sformatf("AXI Addr : %h, AHB Addr : %h", temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
                             end else begin
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
                                 `uvm_info(get_name(), "---   WRITE TRANSACTION FAILED     ---", UVM_NONE)
                                 `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_error("BRIDGE_WRITE_TXN_FAIL", $sformatf("AXI Write Data : %h, AHB Write Data : %h", axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
+                                `uvm_error("BRIDGE_WRITE_TXN_FAIL", 
+                                    $sformatf("AXI Write Data : %h, AHB Write Data : %h", 
+                                    axi_wr_data_item.write_data[0], ahb_data_item.HWDATA_o))
                             end
-                            
+        
+                        end else begin
+                            `uvm_info(get_name(), 
+                                $sformatf("Addr Mismatch AXI Addr : %h, AHB Addr : %h", 
+                                temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
                         end
-                        else begin
-                            `uvm_info(get_name(), $sformatf("Addr Mismatch AXI Addr : %h, AHB Addr : %h",temp_addr, ahb_data_item.HADDR_o), UVM_LOW)
-                        end
+                    end 
                 end
-                end
-
-            // end  
-        end
-    endfunction
-
-
-    function void compare_read_txns();
-
-        $display("Scoreboard for Started read ");
-
-        if ((axi_rd_data_q.size()) && (ahb_data_q.size())) begin
-            // ahb_data_item    = (ahb_data_q.size() == 1) ? ahb_data_q.pop_front(): ahb_data_q.pop_back();  //  Sometimes ahb_gets the same data twice 
-            // to make sure it always have one item in queue, we're doing that
-                $display("In Read Compare Loop");
-                axi_rd_addr_item = axi_rd_addr_q.pop_front();
-                axi_rd_data_item = axi_rd_data_q.pop_front();
-                ahb_data_item    = ahb_data_q.pop_front();
-
-                // Check for valid write transactions
-                if (/* axi_rd_addr_item.access == READ_TRAN &&*/ axi_rd_data_item.access == READ_TRAN ) begin
-                        // Retrieve data from the AHB FIFO
-                        if (ahb_data_item.ACCESS_o == read) begin
-                            //Compare AXI and AHB Read data
-                            if (ahb_data_item.HRDATA_i == axi_rd_data_item.write_data[0]) begin
-                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_info(get_name(), "---     READ TRANSACTION PASSED    ---", UVM_NONE)
-                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_info("BRIDGE_READ_TXN_PASS", $sformatf("AXI Read Data : %h, AHB Read Data : %h", axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i), UVM_LOW)
-                            end else begin
-                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_info(get_name(), "---    READ TRANSACTION FAILED     ---", UVM_NONE)
-                                `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
-                                `uvm_error("BRIDGE_READ_TXN_FAIL", $sformatf("AXI Read Data : %h, AHB Read Data : %h", axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i))
-                            end
-                        end
+                else begin
+                    `uvm_error("BRIDGE_WRITE_TXN_FAIL","AHB Slave inserted SLVERR")
                 end
             end
+        end
     endfunction
+    
 
-
-      // Function to calculate and store AXI addresses based on transaction item details
-      function void calculate_and_store_axi_addrs(
+    function void compare_read_txns();
+        if ((axi_rd_data_q.size()) && (ahb_data_q.size())) begin    
+            axi_rd_addr_item = axi_rd_addr_q.pop_front();
+            axi_rd_data_item = axi_rd_data_q.pop_front();
+            ahb_data_item    = ahb_data_q.pop_front();
+    
+            // Check for valid write transactions
+            if (axi_rd_data_item.access == READ_TRAN) begin
+                // Retrieve data from the AHB FIFO
+                if (ahb_data_item.ACCESS_o == read) begin
+                    // Compare AXI and AHB Read data
+                    if (ahb_data_item.HRDATA_i == axi_rd_data_item.write_data[0]) begin
+                        `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                        `uvm_info(get_name(), "---     READ TRANSACTION PASSED    ---", UVM_NONE)
+                        `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                        `uvm_info("BRIDGE_READ_TXN_PASS", 
+                            $sformatf("AXI Read Data : %h, AHB Read Data : %h", 
+                            axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i), 
+                            UVM_LOW)
+                    end else begin
+                        `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                        `uvm_info(get_name(), "---    READ TRANSACTION FAILED     ---", UVM_NONE)
+                        `uvm_info(get_name(), "---------------------------------------", UVM_NONE)
+                        `uvm_error("BRIDGE_READ_TXN_FAIL", 
+                            $sformatf("AXI Read Data : %h, AHB Read Data : %h", 
+                            axi_rd_data_item.write_data[0], ahb_data_item.HRDATA_i))
+                    end
+                end
+            end
+        end
+    endfunction
+    
+    // Function to calculate and store AXI addresses based on transaction item details
+    function void calculate_and_store_axi_addrs(
         input axi_seq_item axi_item,          // AXI transaction item
         output logic [31:0] axi_addr_queue[$]  // Queue to store the addresses
     );
