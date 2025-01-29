@@ -62,50 +62,7 @@ class fix_wr_addr_txn_beat1 extends axi_wr_addr_sequence;
   
     endtask
   endclass : fix_wr_addr_txn_beat1
-
-
-
-//------------------------------------------------------------------------------
-// Seq 2:
-//
-// FIXED Burst with length 2
-// This sequence generates a FIXED burst Write Address transaction with 2 beats.
-// It contains:
-//             Burst:            FIXED
-//             Data Lane Width:  4 bytes
-//             Transaction Type: Write
-//             Data Size:        4 bytes
-//             Number of Beats:  1 per transaction
-//------------------------------------------------------------------------------
-class fix_wr_addr_txn_beat2 extends axi_wr_addr_sequence;
-  `uvm_object_utils(fix_wr_addr_txn_beat2)
-
-  axi_seq_item req;
-
-  function new(string name = "fix_wr_addr_txn_beat2");
-      super.new(name);
-  endfunction
-
-  task body();
-      for (int i = 1; i <= 2; i++) begin
-          wait_for_grant();
-          req = axi_seq_item::type_id::create($sformatf("fixed_wr_seq_data_inc_req_%0d", i));
-          if (!req.randomize() with {
-                  access == WRITE_TRAN;
-                  burst == FIXED;
-                  size == 4;
-                  data.size == 4; 
-              }) begin
-              `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
-          end
-          req.id = 1 + i;
-          req.addr = 32'h700 + (i * 4);
-          send_request(req);
-          wait_for_item_done();
-      end
-  endtask
-endclass : fix_wr_addr_txn_beat2
-
+  
 //------------------------------------------------------------------------------
 // Seq 3:
 //
@@ -874,89 +831,6 @@ class incr_wr_addr_nrw2_txn_len8 extends axi_wr_addr_sequence;
       wait_for_item_done();
   endtask
 endclass : incr_wr_addr_nrw2_txn_len8
-
-//------------------------------------------------------------------------------
-// Seq 22: 
-//
-// Incremental Write with Mixed Data Sizes
-// This sequence generates an incremental write Address transaction on the AXI Write Address Channel.
-// It contains:
-//             Burst:            INCR
-//             Data Lane Width:  1 to 4 bytes
-//             Transaction Type: Write
-//             Data Size:        Mixed
-//             Number of Beats:  
-//------------------------------------------------------------------------------
-
-class incr_wr_mixed_size_txn extends axi_wr_addr_sequence;
-  `uvm_object_utils(incr_wr_mixed_size_txn)
-
-  axi_seq_item req;
-
-  function new(string name = "incr_wr_mixed_size_txn");
-    super.new(name);
-  endfunction
-
-  task body();
-    begin
-      wait_for_grant();
-      req = axi_seq_item::type_id::create("incr_wr_mixed_size_req");
-      if (!req.randomize() with {
-              access == WRITE_TRAN;
-              burst == INCR;
-              size inside {1, 2, 4};
-              data.size inside {1, 2, 4};
-          }) begin
-          `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
-      end
-      req.id = 4;
-      req.addr = 32'h120;
-      send_request(req);
-      wait_for_item_done();
-    end
-  endtask
-endclass : incr_wr_mixed_size_txn
-
-//------------------------------------------------------------------------------
-// Seq 23:
-//
-// INCR Write Address Narrow Transaction With Length 2
-// This sequence generates an INCR burst Write Address transaction of len 2 on the AXI Write Address Channel.
-// It contains:
-//             Burst:            INCR
-//             Data Lane Width:  2 bytes
-//             Transaction Type: Write
-//             Data Size:        4 bytes
-//             Number of Beats:  2
-//------------------------------------------------------------------------------
-class incr_wr_addr_txn_nrw2 extends axi_wr_addr_sequence;
-  `uvm_object_utils(incr_wr_addr_txn_nrw2)
-
-  axi_seq_item req;
-
-  function new(string name = "incr_wr_addr_txn_nrw2");
-      super.new(name);
-  endfunction
-
-  task body();
-      wait_for_grant();
-      req = axi_seq_item::type_id::create("incr_wr_addr_req");
-      if (!req.randomize() with {
-              access == WRITE_TRAN;
-              burst == INCR;
-              size == 2;
-              data.size == 4;
-          }) begin
-          `uvm_error(get_name(), "REQ Randomization Failed @axi_sequence")
-      end
-      req.id = 2;
-      req.addr = 32'hCAF4;
-      send_request(req);
-      wait_for_item_done();
-  endtask
-endclass : incr_wr_addr_txn_nrw2
-
-
 
 //------------------------------------------------------------------------------
 // Seq 24:

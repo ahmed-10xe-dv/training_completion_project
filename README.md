@@ -1,4 +1,4 @@
-﻿**1.  INTRODUCTION** 
+**1.  INTRODUCTION** 
 
 Integrated circuits have entered the era of System-on-Chip (SoC), a design paradigm where all components of a computer or electronic system are integrated onto a single chip.  These  components  may  include  digital,  analog,  mixed-signal,  and  often radio-frequency  functionalities,  all  implemented  on  a  unified  substrate.  With  the increasing complexity of designs, Intellectual Property (IP) integration has become an indispensable aspect of SoC development. The widespread adoption of various IPs has significantly  influenced  the  design  flow,  making  On-Chip  Buses  (OCBs)  a  critical component of modern SoC architectures. 
 
@@ -185,23 +185,14 @@ On the AHB domain side, the AHB driver handles the converted transactions and co
 
 7. **How Does the Test Start and End?** 
 
-   In the testbench top, the verification process starts by calling the  r un\_t es t method, where the name of the specific test to be executed is provided. This test contains the handles of all the AXI and AHB sequences needed for simulation. During the  mai n\_phas e of the test, the sequences are started on their respective sequencers based on the test scenario being executed. For example, in a write operation, the  phas e. r ai s e\_obj ect i on is used to signal the beginning of the test, ensuring the simulation does not terminate prematurely. The test executes multiple sequences concurrently in a fork-join block, such as starting the write address, write data, and write response sequences on their respective AXI agents while simultaneously executing the AHB sequence on the  AHB  agent.  Once  the  sequences  complete  or  a  specified  condition  is  met,  the 
-
-   ` `phas e. dr op\_obj ect i on is called, marking the end of the test. 
+   In the testbench top, the verification process starts by calling the  r un\_t es t method, where the name of the specific test to be executed is provided. This test contains the handles of all the AXI and AHB sequences needed for simulation. During the  mai n\_phas e of the test, the sequences are started on their respective sequencers based on the test scenario being executed. For example, in a write operation, the  phas e. r ai s e\_obj ect i on is used to signal the beginning of the test, ensuring the simulation does not terminate prematurely. The test executes multiple sequences concurrently in a fork-join block, such as starting the write address, write data, and write response sequences on their respective AXI agents while simultaneously executing the AHB sequence on the  AHB  agent.  Once  the  sequences  complete  or  a  specified  condition  is  met,  the phase.drop\_objection is called, marking the end of the test. 
 
    Similarly, in a read operation, the test initiates the appropriate sequences in a fork-join block, such  as starting the read address sequence, read data sequence, and the corresponding AHB sequence. Additionally, a specific mechanism monitors the progress of the read operation, such as counting the number of valid read responses ( RVALI D) on the AXI interface. This monitoring is implemented in a while loop within a forked thread, ensuring that the test waits for the expected number of read responses before concluding. Once the conditions are met or the forked processes complete, the test uses  phas e. dr op\_obj ect i on to signal the end of the simulation, allowing the  testbench  to  gracefully  exit.  This  structured  approach  ensures  that  both  write  and read operations are executed and validated comprehensively. 
-
-14 
 
 10. **Directory Structure ![](/resources/images/Aspose.Words.25fe250b-43e2-4ae7-8ab1-487efd5c7180.004.jpeg)**
 
     The AXI2AHB\_Verification project is organized in a layered and modular directory structure to facilitate clarity, scalability, and efficient verification. At the root level, directories such as  docs ,  r es our ces ,  s i m, and  t b ensure separation of concerns and ease of navigation. The  docs directory houses documentation for the project, while  r es our ces contains reusable assets like scripts or utilities. The  s i m folder is designated for simulation results and related configurations. The core testbench resides in the  t b directory, encompassing key components like sequences, agents, and environment files. 
 
-    Within the  t b directory, the testbench's building blocks are further subdivided. Sequences are managed in the  s eq\_l i b folder, with  bas e\_s eq serving as the foundational sequence. Agents, which drive or monitor protocol-specific transactions, are categorized under the  agent directory, with  dedicated  subdirectories  for  ahb\_agent  and  axi \_agent .  These  agents  are  further decomposed  into  specialized  modules  such  as  r d\_addr \_agent ,  wr \_addr \_agent ,  and  wr \_r s p\_agent ,  ensuring  precise  handling  of  AXI  and  AHB  protocol  operations.  The environment  ( env)  integrates  all  these  components  for  comprehensive  testing,  while  the 
-
-25 
-
-` `i ncl ude folder organizes common header files. Top-level modules like  t es t \_t op and  t op define and execute the test scenarios. 
+    Within the  t b directory, the testbench's building blocks are further subdivided. Sequences are managed in the  s eq\_l i b folder, with  bas e\_s eq serving as the foundational sequence. Agents, which drive or monitor protocol-specific transactions, are categorized under the  agent directory, with  dedicated  subdirectories  for  ahb\_agent  and  axi \_agent .  These  agents  are  further decomposed  into  specialized  modules  such  as  r d\_addr \_agent ,  wr \_addr \_agent ,  and  wr \_r s p\_agent ,  ensuring  precise  handling  of  AXI  and  AHB  protocol  operations.  The environment  ( env)  integrates  all  these  components  for  comprehensive  testing,  while  the include folder organizes common header files. Top-level modules like  test\_top and  top define and execute the test scenarios. 
 
 11. **How to setup the project** 
-26 

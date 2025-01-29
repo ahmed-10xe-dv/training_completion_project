@@ -230,9 +230,7 @@ interface axi_interface #(
   /////////////////////////////////////////////////////////////////////////////
   // Coverage Group for Read Address Channel
   /////////////////////////////////////////////////////////////////////////////
-  logic aligned_addr; // Address alignment flag
 
-  // Covergroup to monitor read address channel
   covergroup cg_axi_rd_addr @(posedge ACLK);
       // Burst type
       cp_burst: coverpoint ARBURST {
@@ -274,19 +272,16 @@ interface axi_interface #(
       }
 
       // Address alignment
-      cp_align_unalign: coverpoint aligned_addr {
-          bins addr_aligned   = {1};
-          bins addr_unaligned = {0};
+      cp_araddr_align: coverpoint (ARADDR % (1 << ARSIZE)) {
+        bins addr_aligned   = {0};  // Aligned if remainder is 0
+        bins addr_unaligned = {1};  // Unaligned if remainder is 1
       }
-
-      // Burst type and size cross
-      cp_burst_size: cross cp_size, cp_burst;
 
       // Burst type and length cross with valid combinations
       cross_burst_len: cross cp_burst, cp_len {
           // Valid combinations for FIXED burst type
           ignore_bins fixed_invalid = binsof(cp_burst) intersect {0} &&
-                                      !(binsof(cp_len) intersect {[0:15]});
+                                      !(binsof(cp_len) intersect {0});
 
           // Valid combinations for INCR burst type
           ignore_bins incr_invalid = binsof(cp_burst) intersect {1} &&
@@ -333,12 +328,11 @@ interface axi_interface #(
             bins w_size    = {2};
         }
   
-        // Address alignment
-        cp_align_unalign: coverpoint aligned_addr {
-            bins addr_aligned   = {1};
-            bins addr_unaligned = {0};
+        cp_awaddr_align: coverpoint (AWADDR % (1 << AWSIZE)) {
+          bins addr_aligned   = {0};  // Aligned if remainder is 0
+          bins addr_unaligned = {1};  // Unaligned if remainder is 1
         }
-  
+        
         // Burst type and size cross
         cp_burst_size: cross cp_size, cp_burst;
 
@@ -346,7 +340,7 @@ interface axi_interface #(
       cross_burst_len: cross cp_burst, cp_len {
         // Valid combinations for FIXED burst type
         ignore_bins fixed_invalid = binsof(cp_burst) intersect {0} &&
-                                    !(binsof(cp_len) intersect {[0:15]});
+                                    !(binsof(cp_len) intersect {[0:14]});
 
         // Valid combinations for INCR burst type
         ignore_bins incr_invalid = binsof(cp_burst) intersect {1} &&
@@ -357,7 +351,50 @@ interface axi_interface #(
                                    !(binsof(cp_len) intersect {1, 3, 7, 15});
     }
     endgroup
-  
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Coverage Group for Write Data Channel
+    /////////////////////////////////////////////////////////////////////////////
+    covergroup cg_write_data_channel @(posedge ACLK);
+
+      // Coverpoint for WDATA: Dividing 32-bit data into bins
+      cp_data : coverpoint WDATA {
+        bins low_values   = {[1:255]};        // Low-range values (0-255)
+        bins mid_high     = {[256:65535]};    // Mid-high range values (1024-65535)
+        bins high_values  = {[65536:$]};      // High-range values (65536 and above)
+        ignore_bins zeros = {0};              // Exclude cases where WDATA is all zeros
+      }
+    
+      // Coverpoint for WSTRB
+      cp_strb : coverpoint WSTRB {
+        bins full_strobe   = {4'b1111};       // All bytes valid
+        bins no_strobe     = {4'b0000};       // No bytes valid
+        bins upper_two     = {4'b1100};       // Upper two bytes valid
+        bins lower_two     = {4'b0011};       // Lower two bytes valid
+        bins upper_one     = {4'b1000};       // Only the highest byte valid
+        bins second_byte   = {4'b0100};       // Only the second highest byte valid
+        bins third_byte    = {4'b0010};       // Only the third byte valid
+        bins fourth_byte   = {4'b0001};       // Only the third byte valid
+        bins first3_byte   = {4'b0111};       // Only the first three byte valid
+      }
+    endgroup : cg_write_data_channel
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Coverage Group for Read Data Channel
+    ///////////////////////////////////////////////////////////////////////////
+    // covergroup cg_read_data_channel @(posedge ACLK);
+
+    //   cp_data_size: coverpoint RDATA {
+
+    //     // bins hw_size   = {1};
+    //     // bins w_size    = {2};
+    //     // bins low_values   = {[0:255]};        // Low-range values (0-255)
+    //     // bins mid_high     = {[256:65535]};    // Mid-high range values (1024-65535)
+    //     // bins high_values  = {[65536:$]};      // High-range values (65536 and above)
+    //     // ignore_bins zeros = {0};              // Exclude cases where WDATA is all zeros
+    //   }
+    // endgroup : cg_read_data_channel
+
     /////////////////////////////////////////////////////////////////////////////
     // Write Response Coverage Group
     /////////////////////////////////////////////////////////////////////////////
@@ -370,62 +407,26 @@ interface axi_interface #(
           ignore_bins decerr  = {3};
         }
     endgroup
-  
-    /////////////////////////////////////////////////////////////////////////////
-    // Coverage Sampling Logic
-    /////////////////////////////////////////////////////////////////////////////
-    
+
     /////////////////////////////////////////////////////////////////////////////
     // Declare Covergroup Instances
     /////////////////////////////////////////////////////////////////////////////
     cg_axi_wr_addr cg_axi_wr_addr_inst;
     cg_axi_wr_rsp cg_axi_wr_rsp_inst;
     cg_axi_rd_addr cg_axi_rd_addr_inst;
+    // cg_read_data_channel cg_read_data_channel_inst;
+    cg_write_data_channel cg_write_data_channel_inst;
 
     /////////////////////////////////////////////////////////////////////////////
     // Initialize the Covergroups
     /////////////////////////////////////////////////////////////////////////////
     initial begin
         cg_axi_wr_addr_inst = new(); // Instantiate write address coverage group
-
-        // Sample write address coverage on AWVALID and AWREADY
-        forever @(posedge ACLK) begin
-            if (AWVALID && AWREADY) begin
-                // Compute alignment flag
-                aligned_addr = (AWADDR % (1 << AWSIZE)) == 0;
-
-                // Trigger coverage sampling
-                cg_axi_wr_addr_inst.sample();
-            end
-        end
+        cg_axi_wr_rsp_inst  = new(); // Instantiate write response coverage group
+        cg_axi_rd_addr_inst = new(); // Instantiate read address coverage group
+        // cg_read_data_channel_inst = new(); // Instantiate read  Data coverage group
+        cg_write_data_channel_inst = new(); // Instantiate Write Data coverage group
     end
-
-    initial begin
-        cg_axi_wr_rsp_inst = new(); // Instantiate write response coverage group
-
-        // Sample write response coverage on BVALID and BREADY
-        forever @(posedge ACLK) begin
-            if (BVALID && BREADY) begin
-                cg_axi_wr_rsp_inst.sample();
-            end
-        end
-    end
-
-  initial begin
-      cg_axi_rd_addr_inst = new(); // Instantiate read address coverage group
-
-      // Sample read address coverage on RVALID and RREADY
-      forever @(posedge ACLK) begin
-          if (RVALID && RREADY) begin
-              // Compute alignment flag
-              aligned_addr = (ARADDR % (1 << ARSIZE)) == 0;
-
-              // Trigger coverage sampling
-              cg_axi_rd_addr_inst.sample();
-          end
-      end
-  end
-
 
   /////////////////////////////////////////////////////////////////////////////
   //  axi_protocol_assertions
